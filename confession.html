@@ -50,7 +50,7 @@
           <textarea id="message"></textarea>
         </div>
         <div>
-          <label>Impression (opsional)</label>
+          <label>Impression</label>
           <textarea id="impression"></textarea>
         </div>
       </div>
@@ -60,46 +60,23 @@
     </div>
   </div>
 </div>
-
-    <div class="card">
-      <h2>📝 Tulis Confession</h2>
-      <div class="row">
-        <div>
-          <label>Nama (opsional)</label>
-          <input id="name" placeholder="Kosongkan untuk anonim" />
-          <small>Kalau kosong, akan tampil sebagai <b>Anonim</b>.</small>
-        </div>
-
-        <div>
-          <label>Link Lagu Spotify (opsional)</label>
-          <input id="spotify_url" placeholder="https://open.spotify.com/track/..." />
-          <small>Tempel link track Spotify untuk muncul player embed.</small>
-        </div>
-
-        <div class="grid2">
-          <div>
-            <label>Message</label>
-            <textarea id="message" placeholder="Tulis pesan kamu..." required></textarea>
-          </div>
-          <div>
-            <label>Impression (opsional)</label>
-            <textarea id="impression" placeholder="Kesan/impresi kamu..."></textarea>
-          </div>
-        </div>
-
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button id="submitBtn" class="btn">Kirim</button>
-          <span id="status" class="badge" style="display:none;"></span>
-        </div>
-      </div>
-    </div>
-
+  
     <hr />
+  
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <h2 style="margin:0;">📬 Feed Confession</h2>
+        <button id="refreshBtn" class="btn secondary">Refresh</button>
+      </div>
+      <div id="list" class="list" style="margin-top:12px;"></div>
+    </div>
+  </div>
 
 
   <script type="module" src="confession.js"></script>
 </body>
 </html>
+
 
 
 
