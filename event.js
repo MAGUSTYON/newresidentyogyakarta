@@ -4,76 +4,76 @@ const list = document.getElementById("list");
 const statusEl = document.getElementById("status");
 const refreshBtn = document.getElementById("refreshBtn");
 
-const esc = (s="") =>
-  String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+const esc = (s = "") =>
+  String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
-function fmtDate(d){
+function fmtDate(d) {
   if (!d) return "-";
-  try{
+  try {
     return new Date(d).toLocaleDateString("id-ID");
-  }catch{
-    return d;
+  } catch {
+    return String(d);
   }
 }
 
-function renderEvent(e){
+function renderEvent(e) {
   const title = esc(e.title || "");
-  const desc  = e.description ? esc(e.description) : "";
+  const desc = e.description ? esc(e.description) : "";
   const start = fmtDate(e.start_date);
-  const end   = fmtDate(e.end_date);
+  const end = fmtDate(e.end_date);
 
-  const banner = e.banner_url
-    ? `<img class="eventBanner" src="${e.banner_url}" alt="">`
+  const bannerHtml = e.banner_url
+    ? `<img class="eventBanner" src="${e.banner_url}" alt="Banner event">`
     : "";
 
-  const hasDesc = !!desc;
+  const hasDesc = desc.trim().length > 0;
 
   return `
-    <div class="card" data-event>
-      ${banner}
+    <div class="card eventCard" data-event>
+      ${bannerHtml}
 
       <div class="eventMeta">
         <div>
           <div class="eventTitle">${title}</div>
           <div class="eventDates">${esc(start)} → ${esc(end)}</div>
         </div>
-
-        ${hasDesc ? `<span style="color:var(--muted);font-size:12px;">Klik detail</span>` : ""}
       </div>
 
       ${hasDesc ? `<div class="eventDesc" data-desc>${desc}</div>` : ""}
 
       ${hasDesc ? `
         <div class="eventActions">
-          <button class="eventBtn" type="button" data-toggle> Lihat detail </button>
+          <button class="eventBtn" type="button" data-toggle>Lihat detail</button>
         </div>
       ` : ""}
     </div>
   `;
 }
 
+function applyToggleHandlers() {
+  list.querySelectorAll("[data-event]").forEach((card) => {
+    const btn = card.querySelector("[data-toggle]");
+    const desc = card.querySelector("[data-desc]");
+    if (!btn || !desc) return;
 
-  const banner = e.banner_url
-    ? `<div style="margin-top:10px;">
-         <img src="${e.banner_url}" alt="" style="width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.14);" />
-       </div>`
-    : "";
+    // default hidden
+    desc.classList.remove("show");
 
-  return `
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
-        <div>
-          <b style="font-size:16px;">${title}</b><br/>
-          <small>${esc(start)} → ${esc(end)}</small>
-        </div>
-      </div>
-      ${desc ? `<p style="white-space:pre-wrap;margin:10px 0 0;line-height:1.6;">${desc}</p>` : ""}
-      ${banner}
-    </div>
-  `;
+    btn.addEventListener("click", () => {
+      const isOpen = desc.classList.toggle("show");
+      btn.textContent = isOpen ? "Tutup detail" : "Lihat detail";
+    });
+  });
 }
 
-async function loadEvents(){
+async function loadEvents() {
+  if (!list) return;
+
   statusEl.textContent = "Loading...";
   list.innerHTML = "";
 
@@ -83,13 +83,13 @@ async function loadEvents(){
     .order("start_date", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
 
-  if (error){
-    statusEl.textContent = "Gagal load: " + error.message;
+  if (error) {
+    statusEl.textContent = "Gagal load event: " + error.message;
     list.innerHTML = `<div class="card"><small>${esc(error.message)}</small></div>`;
     return;
   }
 
-  if (!data || data.length === 0){
+  if (!data || data.length === 0) {
     statusEl.textContent = "Belum ada event.";
     list.innerHTML = `<div class="card"><small>Belum ada event.</small></div>`;
     return;
@@ -97,8 +97,11 @@ async function loadEvents(){
 
   statusEl.textContent = `${data.length} event ditampilkan`;
   list.innerHTML = data.map(renderEvent).join("");
+
+  applyToggleHandlers();
 }
 
-refreshBtn.addEventListener("click", loadEvents);
+refreshBtn?.addEventListener("click", loadEvents);
 
+// load pertama kali
 loadEvents();
