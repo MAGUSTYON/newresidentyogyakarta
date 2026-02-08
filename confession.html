@@ -15,6 +15,44 @@
       </div>
       <a class="btn secondary" href="index.html">← Beranda</a>
     </div>
+<!-- Floating Button -->
+<button id="fab" class="fab">✏️</button>
+
+<!-- Modal -->
+<div id="confessionModal" class="modal hidden">
+  <div class="modalBox">
+    <div class="modalHeader">
+      <h2>Tulis Confession</h2>
+      <button id="closeModal">✕</button>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Nama (opsional)</label>
+        <input id="name" placeholder="Anonim jika kosong">
+      </div>
+
+      <div>
+        <label>Link Lagu Spotify (opsional)</label>
+        <input id="spotify_url" placeholder="https://open.spotify.com/track/...">
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label>Message</label>
+          <textarea id="message"></textarea>
+        </div>
+        <div>
+          <label>Impression (opsional)</label>
+          <textarea id="impression"></textarea>
+        </div>
+      </div>
+
+      <button id="submitBtn" class="btn">Kirim</button>
+      <small id="status"></small>
+    </div>
+  </div>
+</div>
 
     <div class="card">
       <h2>📝 Tulis Confession</h2>
@@ -63,4 +101,5 @@
   <script type="module" src="confession.js"></script>
 </body>
 </html>
+
 
