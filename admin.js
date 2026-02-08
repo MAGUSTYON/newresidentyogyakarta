@@ -1,5 +1,23 @@
 import { supabase } from "supabaseClient.js";
 
+window.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginBtn");
+  const status = document.getElementById("loginStatus");
+
+  if (!loginBtn) {
+    if (status) status.textContent = "loginBtn tidak ketemu. Cek id=loginBtn di admin.html";
+    return;
+  }
+
+  console.log("Login button ready ✅");
+
+  loginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    console.log("Login clicked ✅");
+    // … isi logic login kamu di sini …
+  });
+});
+
 console.log("admin.js loaded ✅");
 
 /* =========================
