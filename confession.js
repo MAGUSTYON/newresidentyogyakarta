@@ -123,3 +123,14 @@ elSubmit.addEventListener("click", submitConfession);
 elRefresh.addEventListener("click", loadFeed);
 
 loadFeed();
+const fab = document.getElementById("fab");
+const modal = document.getElementById("confessionModal");
+const closeModal = document.getElementById("closeModal");
+
+fab.addEventListener("click", () => {
+  modal.classList.remove("hidden");
+});
+
+closeModal.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
