@@ -3,30 +3,106 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Confession</title>
+  <title>Confession • New Resident Yogyakarta</title>
+
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* === Quick add: modal + fab (kalau styles.css kamu belum ada) === */
+    .fab{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      color: #0b0a12;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      z-index: 1000;
+    }
+    .modal{
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+    }
+    .modal.hidden{ display:none; }
+    .modalBox{
+      width: 100%;
+      max-width: 560px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(12,10,24,.92);
+      box-shadow: 0 28px 90px rgba(0,0,0,.7);
+      padding: 16px;
+    }
+    .modalHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 12px;
+    }
+    .iconBtn{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      cursor: pointer;
+    }
+    .feedHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 12px 0 12px;
+    }
+  </style>
 </head>
+
 <body>
   <div class="container">
 
+    <!-- Header -->
     <div class="topbar">
       <div>
         <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
         <h1 class="title">Confession</h1>
-        <p class="sub">Baca semua confession. Klik tombol ✏️ untuk nulis.</p>
+        <p class="sub">Semua confession tampil di sini. Klik tombol ✏️ untuk nulis.</p>
       </div>
+
       <a class="btn secondary" href="index.html">← Beranda</a>
     </div>
 
-    <h2 style="margin:10px 0 12px;">💬 Semua Confession</h2>
+    <!-- Feed -->
+    <div class="feedHeader">
+      <h2 style="margin:0;">💬 Semua Confession</h2>
+      <button id="refreshBtn" class="btn secondary">Refresh</button>
+    </div>
+
     <div id="list" class="list"></div>
+
+    <div style="margin-top:14px;">
+      <small>Tips: kosongin nama kalau mau anonim. Tempel link Spotify track biar muncul player.</small>
+    </div>
 
   </div>
 
-  <!-- Floating Button -->
+  <!-- Floating Action Button -->
   <button id="fab" class="fab" aria-label="Tulis confession">✏️</button>
 
-  <!-- Modal -->
+  <!-- Modal Form -->
   <div id="confessionModal" class="modal hidden" aria-hidden="true">
     <div class="modalBox">
       <div class="modalHeader">
@@ -57,16 +133,28 @@
           </div>
         </div>
 
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
-        </div>
-
+        <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
         <small id="status"></small>
       </div>
     </div>
   </div>
 
+  <!-- Modal toggle script (tidak ganggu confession.js kamu) -->
+  <script>
+    const fab = document.getElementById("fab");
+    const modal = document.getElementById("confessionModal");
+    const closeModal = document.getElementById("closeModal");
+
+    fab.addEventListener("click", () => modal.classList.remove("hidden"));
+    closeModal.addEventListener("click", () => modal.classList.add("hidden"));
+
+    // klik background gelap untuk tutup
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  </script>
+
+  <!-- Your existing logic -->
   <script type="module" src="js/confession.js"></script>
 </body>
 </html>
-
