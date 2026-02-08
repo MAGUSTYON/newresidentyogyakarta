@@ -5,37 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Panel • New Resident Yogyakarta</title>
 
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 
   <style>
-    .wrap{
-      max-width: 1000px;
+    .adminWrap{
+      max-width: 980px;
       margin: 0 auto;
-      padding: 24px 16px 60px;
+      padding: 22px 18px 46px;
     }
-    #loginSection{ position: relative; z-index: 10; }
-    #loginBtn{ pointer-events: auto; }
-    .grid{
+    .logoutBtn{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      color: #fff;
+    }
+    .split{
       display:grid;
-      grid-template-columns:1fr;
-      gap:14px;
+      grid-template-columns: 1fr;
+      gap:12px;
     }
     @media (min-width:900px){
-      .grid{ grid-template-columns:1fr 1fr; }
+      .split{ grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+
+  <div class="adminWrap">
 
     <!-- LOGIN -->
     <div id="loginSection" class="card">
       <h2>Admin Login</h2>
+
       <div class="row">
-        <input id="email" placeholder="Email admin" autocomplete="username" />
-        <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-        <button id="loginBtn" type="button" class="btn">Login</button>
+        <input id="email" placeholder="Email admin" />
+        <input id="password" type="password" placeholder="Password" />
+        <button id="loginBtn" class="btn">Login</button>
         <small id="loginStatus"></small>
       </div>
     </div>
@@ -43,16 +48,18 @@
     <!-- ADMIN PANEL -->
     <div id="adminPanel" style="display:none;">
 
-      <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h2 style="margin:0;">Admin Panel</h2>
-        <button id="logoutBtn" type="button" class="btn secondary">Logout</button>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2 style="margin:0;">Admin Panel</h2>
+          <button id="logoutBtn" class="btn logoutBtn">Logout</button>
+        </div>
       </div>
 
-      <div class="grid">
+      <div class="split">
 
         <!-- CONFESSIONS -->
         <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 style="margin:0;">Confessions</h3>
             <button id="refreshConfBtn" class="btn secondary">Refresh</button>
           </div>
@@ -65,12 +72,16 @@
 
           <div class="row">
             <input id="eventTitle" placeholder="Judul event" />
+
             <div class="grid2">
               <input id="eventStart" type="date" />
               <input id="eventEnd" type="date" />
             </div>
+
             <textarea id="eventDesc" placeholder="Deskripsi event"></textarea>
+
             <input id="eventBanner" type="file" accept="image/*" />
+
             <button id="createEventBtn" class="btn">Tambah Event</button>
             <small id="eventStatus"></small>
           </div>
