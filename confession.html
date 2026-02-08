@@ -4,81 +4,68 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Confession</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <div class="container">
-    <div style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
+
+    <div class="topbar">
       <div>
+        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
         <h1 class="title">Confession</h1>
-        <p class="sub">Kirim confession dan lihat kiriman orang lain.</p>
+        <p class="sub">Baca semua confession. Klik tombol ✏️ untuk nulis.</p>
       </div>
-      <a class="btn secondary" href="index.html">← Beranda</a> 
-       </div>
-    
-      <!-- FEED CONFESSION (INI YANG KAMU TANYAIN) -->
-    <h2>💬 Semua Confession</h2>
+      <a class="btn secondary" href="index.html">← Beranda</a>
+    </div>
+
+    <h2 style="margin:10px 0 12px;">💬 Semua Confession</h2>
     <div id="list" class="list"></div>
 
   </div>
-  
-<!-- Floating Button -->
-<button id="fab" class="fab">✏️</button>
 
-<!-- Modal -->
-<div id="confessionModal" class="modal hidden">
-  <div class="modalBox">
-    <div class="modalHeader">
-      <h2>Tulis Confession</h2>
-      <button id="closeModal">✕</button>
-    </div>
+  <!-- Floating Button -->
+  <button id="fab" class="fab" aria-label="Tulis confession">✏️</button>
 
-    <div class="row">
-      <div>
-        <label>Nama (opsional)</label>
-        <input id="name" placeholder="Anonim jika kosong">
+  <!-- Modal -->
+  <div id="confessionModal" class="modal hidden" aria-hidden="true">
+    <div class="modalBox">
+      <div class="modalHeader">
+        <h2 style="margin:0;">Tulis Confession</h2>
+        <button id="closeModal" class="iconBtn" aria-label="Tutup">✕</button>
       </div>
 
-      <div>
-        <label>Link Lagu Spotify (opsional)</label>
-        <input id="spotify_url" placeholder="https://open.spotify.com/track/...">
-      </div>
-
-      <div class="grid2">
+      <div class="row">
         <div>
-          <label>Message</label>
-          <textarea id="message"></textarea>
+          <label>Nama (opsional)</label>
+          <input id="name" placeholder="Anonim jika kosong" />
         </div>
-        <div>
-          <label>Impression</label>
-          <textarea id="impression"></textarea>
-        </div>
-      </div>
 
-      <button id="submitBtn" class="btn">Kirim</button>
-      <small id="status"></small>
-    </div>
-  </div>
-</div>
-  
-    <hr />
-  
-    <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <h2 style="margin:0;">📬 Feed Confession</h2>
-        <button id="refreshBtn" class="btn secondary">Refresh</button>
+        <div>
+          <label>Link Lagu Spotify (opsional)</label>
+          <input id="spotify_url" placeholder="https://open.spotify.com/track/..." />
+          <small>Tempel link track Spotify untuk muncul player embed.</small>
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label>Message</label>
+            <textarea id="message" placeholder="Tulis pesan kamu..."></textarea>
+          </div>
+          <div>
+            <label>Impression (opsional)</label>
+            <textarea id="impression" placeholder="Kesan/impresi kamu..."></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
+        </div>
+
+        <small id="status"></small>
       </div>
-      <div id="list" class="list" style="margin-top:12px;"></div>
     </div>
   </div>
 
-
-  <script type="module" src="confession.js"></script>
+  <script type="module" src="js/confession.js"></script>
 </body>
 </html>
-
-
-
-
-
-
