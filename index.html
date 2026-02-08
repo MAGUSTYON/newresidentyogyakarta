@@ -5,28 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>New Resident Yogyakarta</title>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 
   <style>
-    /* Beranda tetap "web menu" */
-    .menuGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
+    /* ===== Sticky Header ===== */
+    .header{
+      position: sticky;
+      top: 0;
+      z-index: 3000;
+      background: rgba(7,6,17,.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.14);
     }
-    @media (min-width: 760px){
-      .menuGrid{ grid-template-columns: 1fr 1fr; }
-      .menuGrid.three{ grid-template-columns: 1fr 1fr 1fr; }
+    .headerInner{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
     }
-
-    .menuCard{
+    .brand{
       display:flex;
       flex-direction:column;
-      gap:10px;
-      padding:16px;
+      gap:2px;
     }
-    .menuCard h2{ margin:0; }
-    .menuCard p{ margin:0; color: var(--muted); line-height:1.5; }
+    .brand b{
+      font-family: Pacifico, cursive;
+      font-weight: 400;
+      font-size: 20px;
+      color: var(--pink);
+      line-height:1;
+    }
+    .brand small{
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav{
+      display:flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .nav a{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      transition: all .15s ease;
+    }
+    .nav a:hover{
+      color: #fff;
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.14);
+    }
+    .nav a.active{
+      color: #0b0a12;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      border-color: rgba(255,255,255,.18);
+      font-weight: 700;
+    }
+
+    /* Page spacing */
+    .page{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 18px 46px;
+    }
 
     .sectionTitle{ margin:0 0 10px; }
     .sectionSub{ margin:0 0 14px; color: var(--muted); }
@@ -48,40 +97,35 @@
 </head>
 
 <body>
-  <div class="container">
 
-    <!-- Header -->
-    <div class="topbar">
-      <div>
-        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
-        <h1 class="title">Beranda</h1>
-        <p class="sub">
-          Pilih menu di bawah. Kamu juga bisa baca prologue, lihat profil karakter, dan (kalau mau) beli novel AU-nya.
-        </p>
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="headerInner">
+
+      <div class="brand">
+        <b>New Resident</b>
+        <small>Yogyakarta</small>
       </div>
+
+      <nav class="nav">
+        <a class="active" href="index.html">Beranda</a>
+        <a href="confession.html">Confession</a>
+        <a href="event.html">Event</a>
+        <a href="profiles.html">Profil</a>
+      </nav>
+
     </div>
+  </header>
 
-    <!-- Menu utama -->
-    <div class="menuGrid three">
+  <!-- ===== PAGE CONTENT ===== -->
+  <main class="page">
 
-      <a class="card menuCard" href="confession.html">
-        <h2>💌 Confession</h2>
-        <p>Kirim confession (boleh anonim), tempel link lagu Spotify, dan semua orang bisa baca.</p>
-        <div class="badge" style="width:max-content;">Buka Confession →</div>
-      </a>
-
-      <a class="card menuCard" href="event.html">
-        <h2>📅 Event</h2>
-        <p>Lihat event / pengumuman yang ada di dunia New Resident Yogyakarta.</p>
-        <div class="badge" style="width:max-content;">Buka Event →</div>
-      </a>
-
-      <a class="card menuCard" href="profiles.html">
-        <h2>🧑‍🤝‍🧑 Profil Karakter</h2>
-        <p>Daftar karakter (banyak). Ada fitur search biar gampang nyari.</p>
-        <div class="badge" style="width:max-content;">Buka Profil →</div>
-      </a>
-
+    <div>
+      <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
+      <h1 class="title">Beranda</h1>
+      <p class="sub">
+        Cerita, confession, event, dan karakter — semua dikumpulin di satu web.
+      </p>
     </div>
 
     <div class="hr"></div>
@@ -89,44 +133,42 @@
     <!-- Prologue -->
     <div class="card">
       <h2 class="sectionTitle">Prologue</h2>
-      <p class="sectionSub">Pembuka singkat untuk ngebangun suasana.</p>
+      <p class="sectionSub">Pembuka singkat sebelum cerita berjalan lebih jauh.</p>
 
       <div class="prologue">
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
 Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
 
-Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper.
-Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.
+Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.
       </div>
 
       <div style="margin-top:12px;">
-
+        <small>*Nanti tinggal ganti teks ini dengan prologue aslinya.*</small>
       </div>
     </div>
 
     <div class="hr"></div>
 
-    <!-- Link beli (tetap konsep web: card sederhana) -->
+    <!-- Buy Novel -->
     <div class="card">
       <div class="buyRow">
         <div>
           <h2 class="sectionTitle" style="margin-bottom:6px;">🛒 Beli Novel AU</h2>
-          <small>Taruh link toko di sini (Shopee/Tokopedia/Gramedia/dll).</small>
+          <small>Kalau mau baca versi lengkapnya.</small>
         </div>
 
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <!-- GANTI href -->
           <a class="btn" href="https://example.com" target="_blank" rel="noreferrer">Beli Sekarang</a>
           <a class="btn secondary" href="https://example.com" target="_blank" rel="noreferrer">Lihat Info</a>
         </div>
       </div>
     </div>
 
-    <div style="margin-top:16px;">
+    <div style="margin-top:18px;">
       <small>© New Resident Yogyakarta</small>
     </div>
 
-  </div>
+  </main>
+
 </body>
 </html>
-
