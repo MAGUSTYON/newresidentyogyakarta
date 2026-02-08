@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profil Karakter • New Resident Yogyakarta</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .toolbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .search{
+      max-width: 420px;
+      width: 100%;
+    }
+    .charGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 760px){
+      .charGrid{ grid-template-columns: 1fr 1fr; }
+    }
+    .charCard{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .avatar{
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(242,163,199,.28), rgba(255,255,255,.06));
+      flex: 0 0 auto;
+    }
+    .charMeta b{
+      display:block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .role{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .desc{
+      margin: 8px 0 0;
+      color: rgba(255,255,255,.88);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <div>
+        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
+        <h1 class="title">Profil Karakter</h1>
+        <p class="sub">Daftar karakter dan bio singkat. (Nanti tinggal kamu ganti nama/role/deskripsi.)</p>
+      </div>
+      <a class="btn secondary" href="index.html">← Beranda</a>
+    </div>
+
+    <div class="card toolbar">
+      <div>
+        <b>Cari karakter</b><br/>
+        <small>Ketik nama / role. Filter langsung.</small>
+      </div>
+      <input id="q" class="search" placeholder="contoh: Raisya / teman / antagonis / dll" />
+    </div>
+
+    <div class="hr"></div>
+
+    <div id="grid" class="charGrid"></div>
+
+    <div style="margin-top:16px;">
+      <small>Tips: nanti kalau kamu punya gambar tiap karakter, aku bisa bikin avatar beneran (bukan placeholder).</small>
+    </div>
+
+  </div>
+
+  <script>
+    // ====== Data karakter (edit di sini) ======
+    const CHARACTERS = [
+      {
+        name: "Karakter 01",
+        role: "Protagonis",
+        tagline: "“Tagline pendek.”",
+        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed non risus. Suspendisse lectus tortor."
+      },
+      {
+        name: "Karakter 02",
+        role: "Sahabat",
+        tagline: "“Tagline pendek.”",
+        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nCras elementum ultrices diam."
+      },
+      {
+        name: "Karakter 03",
+        role: "Rival",
+        tagline: "“Tagline pendek.”",
+        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nMaecenas ligula massa, varius a."
+      },
+      {
+        name: "Karakter 04",
+        role: "Misterius",
+        tagline: "“Tagline pendek.”",
+        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nProin porttitor, orci nec nonummy molestie."
+      },
+      // tambahin sebanyak yang kamu mau...
+    ];
+
+    const grid = document.getElementById("grid");
+    const q = document.getElementById("q");
+
+    function esc(s=""){
+      return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+              .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+
+    function render(list){
+      grid.innerHTML = list.map(c => `
+        <div class="card charCard">
+          <div class="avatar"></div>
+          <div class="charMeta" style="flex:1;">
+            <b>${esc(c.name)}</b>
+            <div style="color: var(--muted); font-size: 13px;">${esc(c.tagline || "")}</div>
+            <div class="role">
+              <span class="badge">${esc(c.role || "—")}</span>
+            </div>
+            <p class="desc">${esc(c.bio || "")}</p>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function applyFilter(){
+      const term = (q.value || "").toLowerCase().trim();
+      if (!term) return render(CHARACTERS);
+
+      const filtered = CHARACTERS.filter(c => {
+        const hay = `${c.name} ${c.role} ${c.tagline} ${c.bio}`.toLowerCase();
+        return hay.includes(term);
+      });
+      render(filtered);
+    }
+
+    q.addEventListener("input", applyFilter);
+    render(CHARACTERS);
+  </script>
+</body>
+</html>
