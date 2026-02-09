@@ -5,13 +5,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Confession • New Resident Yogyakarta</title>
 
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* === Quick add: modal + fab (kalau styles.css kamu belum ada) === */
+    .fab{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      color: #0b0a12;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      z-index: 1000;
+    }
+    .modal{
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+    }
+    .modal.hidden{ display:none; }
+    .modalBox{
+      width: 100%;
+      max-width: 560px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(12,10,24,.92);
+      box-shadow: 0 28px 90px rgba(0,0,0,.7);
+      padding: 16px;
+    }
+    .modalHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 12px;
+    }
+    .iconBtn{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      cursor: pointer;
+    }
+    .feedHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 12px 0 12px;
+    }
+  </style>
+
+  <header class="siteHeader">
+    <div class="inner">
+      ...
+    </div>
+  </header>
+
+  <main class="mainContent">
+    <!-- semua isi halaman -->
+  </main>
+
+  <main class="mainContent">
+    <!-- semua isi halaman -->
+  </main>
+
 </head>
 
 <body>
-
-  <!-- STICKY HEADER -->
- <header class="siteHeader">
+  <div class="container">
+      <!-- ===== HEADER ===== -->
+  <header class="siteHeader">
   <div class="headerWrap">
     <div class="logoBlock">
       <div class="logoTitle">New Resident</div>
@@ -26,60 +104,90 @@
     </nav>
   </div>
 </header>
-
-
-  <!-- PAGE CONTENT -->
-  <main class="mainContent">
-    <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
-    <h1 class="title">Confession</h1>
-    <p class="sub">Baca semua confession. Klik tombol ✍️ untuk menulis.</p>
-
-    <div class="hr"></div>
-
-    <!-- LIST -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-        <h2 style="margin:0;">💬 Semua Confession</h2>
-        <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
+    <div class="topbar">
+      <div>
+        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
+        <h1 class="title">Confession</h1>
+        <p class="sub">Semua confession tampil di sini. Klik tombol ✏️ untuk nulis.</p>
       </div>
-      <div id="list" class="list" style="margin-top:14px;"></div>
+
+      <a class="btn secondary" href="index.html">← Beranda</a>
     </div>
 
-    <!-- FLOATING BUTTON -->
-    <button id="openForm" class="fab" type="button" title="Tulis Confession">✍️</button>
-
-    <!-- MODAL FORM -->
-    <div id="modal" class="modal hidden">
-      <div class="modalCard">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-          <h2 style="margin:0;">Tulis Confession</h2>
-          <button id="closeForm" class="btn secondary" type="button">✕</button>
-        </div>
-
-        <div class="row" style="margin-top:12px;">
-          <input id="name" placeholder="Nama (optional) — kosong = Anonim" />
-          <input id="spotify_url" placeholder="Link Lagu Spotify (optional)" />
-          <textarea id="message" placeholder="Message (wajib)"></textarea>
-          <textarea id="impression" placeholder="Impression (optional)"></textarea>
-
-          <button id="sendBtn" class="btn primary" type="button">Kirim</button>
-          <small id="status"></small>
-        </div>
-      </div>
+    <!-- Feed -->
+    <div class="feedHeader">
+      <h2 style="margin:0;">💬 Semua Confession</h2>
+      <button id="refreshBtn" class="btn secondary">Refresh</button>
     </div>
 
-  </main>
+    <div id="list" class="list"></div>
 
-  <script type="module" src="./confession.js"></script>
+    <div style="margin-top:14px;">
+      <small>Tips: kosongin nama kalau mau anonim. Tempel link Spotify track biar muncul player.</small>
+    </div>
 
-  <!-- UI modal (tanpa ganggu confession.js) -->
+  </div>
+
+  <!-- Floating Action Button -->
+  <button id="fab" class="fab" aria-label="Tulis confession">✏️</button>
+
+  <!-- Modal Form -->
+  <div id="confessionModal" class="modal hidden" aria-hidden="true">
+    <div class="modalBox">
+      <div class="modalHeader">
+        <h2 style="margin:0;">Tulis Confession</h2>
+        <button id="closeModal" class="iconBtn" aria-label="Tutup">✕</button>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Nama (opsional)</label>
+          <input id="name" placeholder="Anonim jika kosong" />
+        </div>
+
+        <div>
+          <label>Link Lagu Spotify (opsional)</label>
+          <input id="spotify_url" placeholder="https://open.spotify.com/track/..." />
+          <small>Tempel link track Spotify untuk muncul player embed.</small>
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label>Message</label>
+            <textarea id="message" placeholder="Tulis pesan kamu..."></textarea>
+          </div>
+          <div>
+            <label>Impression (opsional)</label>
+            <textarea id="impression" placeholder="Kesan/impresi kamu..."></textarea>
+          </div>
+        </div>
+
+        <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
+        <small id="status"></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal toggle script (tidak ganggu confession.js kamu) -->
   <script>
-    const modal = document.getElementById("modal");
-    document.getElementById("openForm").onclick = () => modal.classList.remove("hidden");
-    document.getElementById("closeForm").onclick = () => modal.classList.add("hidden");
-    modal.addEventListener("click", (e) => { if(e.target === modal) modal.classList.add("hidden"); });
+    const fab = document.getElementById("fab");
+    const modal = document.getElementById("confessionModal");
+    const closeModal = document.getElementById("closeModal");
+
+    fab.addEventListener("click", () => modal.classList.remove("hidden"));
+    closeModal.addEventListener("click", () => modal.classList.add("hidden"));
+
+    // klik background gelap untuk tutup
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
   </script>
 
+  <!-- Your existing logic -->
+  <script type="module" src="confession.js"></script>
 </body>
 </html>
+
+
+
 
