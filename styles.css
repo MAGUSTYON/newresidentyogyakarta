@@ -137,10 +137,10 @@ body{
   background: rgba(255,255,255,.12);
 }
 
-/* Biar konten nggak ketutup header */
+/* Biar konten nggak ketutup header 
 body{
   padding-top: 72px;
-}
+} */
 
 
 /* =========================
@@ -344,4 +344,5 @@ footer{
   .container, .wrap{ padding: 18px 14px 60px; }
   .card{ padding: 16px; border-radius: 20px; }
 }
+
 
