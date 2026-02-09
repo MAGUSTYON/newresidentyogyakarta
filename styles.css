@@ -345,4 +345,34 @@ footer{
   .card{ padding: 16px; border-radius: 20px; }
 }
 
+/* ===== FIX HEADER GAP (FORCE) ===== */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
+.siteHeader {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.siteHeader .inner {
+  margin: 0 auto !important;
+  padding: 12px 18px !important;
+}
+
+/* Pastikan konten benar-benar mulai tepat setelah header */
+.mainContent {
+  margin: 0 !important;
+  padding: 24px 18px 70px !important;
+}
+
+/* Jika sebelumnya kamu pakai padding-top di body, matikan total */
+body {
+  padding-top: 0 !important;
+}
