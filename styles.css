@@ -286,3 +286,30 @@ footer{
   color: var(--text-muted);
   font-size: 13px;
 }
+
+
+/* ===== FORCE BACKGROUND CONSISTENT (OVERRIDE OLD) ===== */
+html, body {
+  background: none !important;
+}
+
+body{
+  background:
+    radial-gradient(1000px 500px at 10% -10%, rgba(242,161,179,.08), transparent 40%),
+    radial-gradient(900px 500px at 90% 110%, rgba(242,161,179,.06), transparent 45%),
+    linear-gradient(180deg, #0b0c14 0%, #12132a 50%, #0b0c14 100%) !important;
+  background-attachment: fixed !important;
+}
+
+/* Matikan background yang biasanya bikin "strip" */
+.container, .wrap, section, main, header, footer, .card {
+  background-image: none !important;
+}
+
+/* Kalau kamu punya overlay global */
+body::before, body::after,
+.container::before, .container::after,
+.wrap::before, .wrap::after{
+  background: none !important;
+  content: none !important;
+}
