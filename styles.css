@@ -73,48 +73,75 @@ body{
   .grid{ grid-template-columns: 1fr 1fr; }
 }
 
-/* =========================
-   STICKY HEADER (MENU)
-========================= */
+/* ===== STICKY HEADER ===== */
 .siteHeader{
   position: sticky;
   top: 0;
-  z-index: 50;
-  padding: 12px 0;
+  z-index: 100;
   backdrop-filter: blur(14px);
-  background: linear-gradient(180deg, rgba(11,12,20,.85), rgba(11,12,20,.35));
+  background: linear-gradient(
+    180deg,
+    rgba(11,12,20,.9),
+    rgba(11,12,20,.55)
+  );
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .siteHeader .inner{
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
+/* Brand */
 .brand{
-  display:flex;
-  flex-direction:column;
-  gap: 2px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brandTitle{
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--pink);
 }
 
 .kicker{
   font-size: 11px;
-  letter-spacing: .24em;
+  letter-spacing: .28em;
   color: var(--muted);
 }
 
-.brandTitle{
-  font-family: "Playfair Display", serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--pink);
-  text-shadow: 0 0 18px rgba(242,161,179,.25);
+/* Navigation */
+.nav{
+  display: flex;
+  gap: 10px;
 }
+
+.nav a{
+  padding: 8px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  transition: .2s ease;
+}
+
+.nav a:hover{
+  background: rgba(255,255,255,.12);
+}
+
+/* Biar konten nggak ketutup header */
+body{
+  padding-top: 72px;
+}
+
 
 /* =========================
    TITLES
@@ -317,3 +344,4 @@ footer{
   .container, .wrap{ padding: 18px 14px 60px; }
   .card{ padding: 16px; border-radius: 20px; }
 }
+
