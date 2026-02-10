@@ -453,3 +453,111 @@ body {
   margin: 0 auto;
   padding: 22px 18px 70px;
 }
+
+/* ===== UNIFY HEADER SIZE (INDEX / CONFESSION / EVENT) ===== */
+.siteHeader{
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(11,12,20,.90), rgba(11,12,20,.50));
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+/* apapun wrapper header kamu, kita samain */
+.siteHeader .headerWrap,
+.siteHeader .siteInner,
+.siteHeader .inner{
+  max-width: 1100px;
+  margin: 0 auto;
+  height: 72px;                 /* <- ini yang menyamakan ukuran */
+  padding: 0 18px;              /* <- jangan pakai padding vertikal beda-beda */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+/* logo block */
+.siteHeader .brand,
+.siteHeader .logoBlock{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.05;
+}
+
+/* judul logo */
+.siteHeader .brandTitle,
+.siteHeader .logoTitle{
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--pink);
+}
+
+/* sub logo */
+.siteHeader .kicker,
+.siteHeader .logoSub{
+  font-size: 11px;
+  letter-spacing: .26em;
+  color: var(--muted);
+}
+
+/* nav pills */
+.siteHeader .nav,
+.siteHeader .pillNav{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* link pill */
+.siteHeader .nav a,
+.siteHeader .pill{
+  display: inline-flex;
+  align-items: center;
+  height: 36px;                 /* <- samain tinggi tombol */
+  padding: 0 14px;              /* <- samain padding tombol */
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  transition: .2s ease;
+}
+
+.siteHeader .nav a:hover,
+.siteHeader .pill:hover{
+  background: rgba(255,255,255,.12);
+  transform: translateY(-1px);
+}
+
+/* active */
+.siteHeader .nav a.active,
+.siteHeader .pill.active{
+  background: linear-gradient(135deg, var(--pink), var(--pink-2));
+  color: #1b0b12;
+  border: none;
+}
+
+/* mobile biar gak kegedean */
+@media (max-width: 520px){
+  .siteHeader .headerWrap,
+  .siteHeader .siteInner,
+  .siteHeader .inner{
+    height: 68px;
+    padding: 0 14px;
+  }
+
+  .siteHeader .nav a,
+  .siteHeader .pill{
+    height: 34px;
+    padding: 0 12px;
+    font-size: 12.5px;
+  }
+}
