@@ -1,5 +1,8 @@
 import { supabase } from "./supabaseClient.js";
 
+(async () => {
+  await supabase.auth.signOut();
+  
 const joinCard = document.getElementById("joinCard");
 const gameCard = document.getElementById("gameCard");
 
