@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Games - Cerdas Cermat</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-title">New Resident</div>
+    <div class="brand-sub">YOGYAKARTA</div>
+  </div>
+  <nav class="nav">
+    <a class="pill" href="index.html">Beranda</a>
+    <a class="pill" href="confession.html">Confession</a>
+    <a class="pill" href="event.html">Event</a>
+    <a class="pill active" href="games.html">Games</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <!-- JOIN -->
+  <section id="joinCard" class="card">
+    <h2>Cerdas Cermat (Live)</h2>
+    <p>Masukkan kode room dari admin dan nickname kamu.</p>
+
+    <div class="grid2">
+      <div>
+        <label>Kode Room</label>
+        <input id="roomCode" placeholder="contoh: A1B2C3" />
+      </div>
+      <div>
+        <label>Nickname</label>
+        <input id="nickname" placeholder="nama kamu" />
+      </div>
+    </div>
+
+    <button id="joinBtn" class="btn primary" type="button">Join</button>
+    <small id="joinStatus"></small>
+  </section>
+
+  <!-- GAME -->
+  <section id="gameCard" class="card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div>
+        <h2 style="margin:0;">Room: <span id="roomLabel">-</span></h2>
+        <small id="gameStatus"></small>
+      </div>
+      <button id="leaveBtn" class="btn secondary" type="button">Keluar</button>
+    </div>
+
+    <div class="hr"></div>
+
+    <h3 id="qTitle">Pertanyaan</h3>
+    <p id="qText">—</p>
+
+    <div class="hr"></div>
+
+    <button id="buzzBtn" class="btn primary" type="button">BUZZ</button>
+    <small id="buzzInfo"></small>
+
+    <!-- Kolom jawab (muncul hanya jika kamu BUZZ tercepat) -->
+    <div id="answerBox" style="display:none;margin-top:18px;">
+      <h3>Jawab Sekarang</h3>
+      <textarea id="answerText" rows="4" placeholder="Tulis jawaban kamu..."></textarea>
+      <button id="sendAnswerBtn" class="btn primary" type="button">Kirim Jawaban</button>
+      <small id="answerStatus"></small>
+    </div>
+
+    <div class="hr"></div>
+
+    <h3>Jawaban yang Masuk</h3>
+    <small id="feedStatus"></small>
+    <div id="feedList" class="list" style="margin-top:12px;"></div>
+  </section>
+
+</main>
+
+<script type="module" src="games.js"></script>
+</body>
+</html>
