@@ -208,12 +208,20 @@ import { supabase } from "./supabaseClient.js";
     buzzBtn.disabled = true;
     buzzInfo.textContent = "Mengirim buzz…";
 
-    const { error } = await supabase.from("quiz_buzzes").insert({
+ const { error } = await supabase
+  .from("quiz_answers")
+  .upsert(
+    {
       room_id: state.room_id,
       question_id: state.current_question_id,
       player_id: state.player_id,
+      answer_text: text,
       round_no: currentBuzzRound,
-    });
+      verdict: "pending",
+      submitted_at: new Date().toISOString()
+    },
+    { onConflict: "question_id,round_no,player_id" }
+  );
 
     if (error) {
       buzzBtn.disabled = false;
