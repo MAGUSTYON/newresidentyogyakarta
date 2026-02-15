@@ -2,84 +2,258 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Games - Cerdas Cermat</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Games — New Resident Yogyakarta</title>
+  <style>
+    :root{
+      --bg:#0b0c16;
+      --card:rgba(255,255,255,.07);
+      --stroke:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.90);
+      --muted:rgba(255,255,255,.65);
+      --pink:#f19bb7;
+      --pink2:#e57aa0;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(241,155,183,.20), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(120,150,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 40% 90%, rgba(241,155,183,.12), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+    }
+    .header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: rgba(5,6,12,.55);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .header-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{line-height:1}
+    .brand b{display:block; font-weight:800; letter-spacing:.2px}
+    .brand small{color:var(--muted); letter-spacing:2px; font-size:11px}
+    .nav{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .pill{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color:var(--text); text-decoration:none; font-weight:700; font-size:13px;
+    }
+    .pill.active{background: linear-gradient(180deg, rgba(241,155,183,.95), rgba(229,122,160,.90)); color:#160712; border-color:transparent}
+    .wrap{max-width:1100px; margin:22px auto; padding:0 18px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns: 1fr;}
+    }
+    h2{margin:0 0 10px; font-size:22px}
+    .muted{color:var(--muted)}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    input, textarea{
+      width:100%;
+      border-radius:14px;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{min-height:120px; resize:vertical}
+    .btn{
+      border:0; cursor:pointer;
+      padding:11px 14px;
+      border-radius:999px;
+      font-weight:800;
+      color:#160712;
+      background: linear-gradient(180deg, rgba(241,155,183,.95), rgba(229,122,160,.90));
+    }
+    .btn.ghost{
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .leaderboard-mini{
+      position:sticky; top:86px;
+      padding:16px;
+    }
+    .lb-item{
+      display:flex; justify-content:space-between; gap:10px;
+      padding:10px 10px; border-radius:14px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      margin-top:10px;
+    }
+    .tag{
+      display:inline-flex; padding:6px 10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      font-weight:700; font-size:12px;
+    }
+    .split{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    }
+    @media (max-width: 520px){ .split{grid-template-columns:1fr;} }
+    .hr{height:1px; background: rgba(255,255,255,.10); margin:14px 0}
+    .answers .a{
+      margin-top:10px;
+      padding:12px;
+      border-radius:14px;
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .verdict{
+      font-weight:900;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      font-size:12px;
+    }
+    .overlay{
+      position:fixed; inset:0; z-index:999;
+      display:none;
+      align-items:center; justify-content:center;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      padding:18px;
+    }
+    .overlay .modal{
+      width:min(760px, 100%);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,10,18,.88);
+      box-shadow: 0 30px 120px rgba(0,0,0,.55);
+      padding:18px;
+    }
+    .modal h2{font-size:26px}
+  </style>
 </head>
+
 <body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <b>New Resident</b>
+        <small>YOGYAKARTA</small>
+      </div>
+      <nav class="nav">
+        <a class="pill" href="./index.html">Beranda</a>
+        <a class="pill" href="./confession.html">Confession</a>
+        <a class="pill" href="./event.html">Event</a>
+        <a class="pill active" href="./games.html">Games</a>
+      </nav>
+    </div>
+  </header>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-title">New Resident</div>
-    <div class="brand-sub">YOGYAKARTA</div>
+  <main class="wrap">
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card" id="joinCard">
+        <h2>Cerdas Cermat (Live)</h2>
+        <p class="muted">Masukkan kode room dari admin dan nickname kamu.</p>
+
+        <div class="split" style="margin-top:10px;">
+          <div>
+            <div class="muted" style="margin:0 0 6px;">Kode Room</div>
+            <input id="roomCode" placeholder="contoh: V8BXA9" />
+          </div>
+          <div>
+            <div class="muted" style="margin:0 0 6px;">Nickname</div>
+            <input id="nickname" placeholder="nama kamu" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="btn" id="joinBtn">Join</button>
+          <span class="muted" id="joinStatus"></span>
+        </div>
+      </section>
+
+      <section class="card" id="gameCard" style="display:none;">
+        <div class="row" style="justify-content:space-between; align-items:flex-start;">
+          <div>
+            <h2 style="margin-bottom:6px;">Room: <span id="roomLabel" style="color:var(--pink)"></span></h2>
+            <div class="muted" id="gameStatus"></div>
+          </div>
+          <button class="btn ghost" id="leaveBtn">Keluar</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2 style="margin-bottom:6px;">Pertanyaan</h2>
+        <div class="muted" id="qText" style="white-space:pre-wrap;">—</div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="justify-content:space-between;">
+          <button class="btn" id="buzzBtn">BUZZ</button>
+          <span class="muted" id="buzzInfo"></span>
+        </div>
+
+        <!-- ANSWER RIGHT (di card kanan nanti) tapi di mobile tetap kebaca -->
+        <div id="answerBox" style="display:none; margin-top:14px;">
+          <h2 style="margin-bottom:8px;">Jawab Sekarang</h2>
+          <textarea id="answerText" placeholder="Tulis jawabanmu..."></textarea>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn" id="sendAnswerBtn">Kirim Jawaban</button>
+            <span class="muted" id="answerStatus"></span>
+          </div>
+          <div class="muted" style="margin-top:6px;">* Setelah kirim, kamu tidak bisa jawab lagi untuk soal ini.</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2 style="margin-bottom:6px;">Jawaban yang Masuk</h2>
+        <div class="muted" id="feedStatus"></div>
+        <div class="answers" id="feedList"></div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="card leaderboard-mini">
+        <div class="row" style="justify-content:space-between;align-items:center;">
+          <h2 style="margin:0;">Leaderboard</h2>
+          <span class="tag" id="meTag">—</span>
+        </div>
+        <div class="muted" id="lbStatus" style="margin-top:8px;"></div>
+        <div id="lbList"></div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="overlay" id="endOverlay">
+    <div class="modal">
+      <h2>🏆 Leaderboard Akhir</h2>
+      <p class="muted" id="finalSub"></p>
+      <div id="finalList" style="margin-top:12px;"></div>
+      <div class="row" style="margin-top:14px; justify-content:flex-end;">
+        <button class="btn ghost" id="closeOverlay">Tutup</button>
+      </div>
+    </div>
   </div>
-  <nav class="nav">
-    <a class="pill" href="index.html">Beranda</a>
-    <a class="pill" href="confession.html">Confession</a>
-    <a class="pill" href="event.html">Event</a>
-    <a class="pill active" href="games.html">Games</a>
-  </nav>
-</header>
 
-<main class="container">
-
-  <!-- JOIN -->
-  <section id="joinCard" class="card">
-    <h2>Cerdas Cermat (Live)</h2>
-    <p>Masukkan kode room dari admin dan nickname kamu.</p>
-
-    <div class="grid2">
-      <div>
-        <label>Kode Room</label>
-        <input id="roomCode" placeholder="contoh: A1B2C3" />
-      </div>
-      <div>
-        <label>Nickname</label>
-        <input id="nickname" placeholder="nama kamu" />
-      </div>
-    </div>
-
-    <button id="joinBtn" class="btn primary" type="button">Join</button>
-    <small id="joinStatus"></small>
-  </section>
-
-  <!-- GAME -->
-  <section id="gameCard" class="card" style="display:none;">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-      <div>
-        <h2 style="margin:0;">Room: <span id="roomLabel">-</span></h2>
-        <small id="gameStatus"></small>
-      </div>
-      <button id="leaveBtn" class="btn secondary" type="button">Keluar</button>
-    </div>
-
-    <div class="hr"></div>
-
-    <h3 id="qTitle">Pertanyaan</h3>
-    <p id="qText">—</p>
-
-    <div class="hr"></div>
-
-    <button id="buzzBtn" class="btn primary" type="button">BUZZ</button>
-    <small id="buzzInfo"></small>
-
-    <!-- Kolom jawab (muncul hanya jika kamu BUZZ tercepat) -->
-    <div id="answerBox" style="display:none;margin-top:18px;">
-      <h3>Jawab Sekarang</h3>
-      <textarea id="answerText" rows="4" placeholder="Tulis jawaban kamu..."></textarea>
-      <button id="sendAnswerBtn" class="btn primary" type="button">Kirim Jawaban</button>
-      <small id="answerStatus"></small>
-    </div>
-
-    <div class="hr"></div>
-
-    <h3>Jawaban yang Masuk</h3>
-    <small id="feedStatus"></small>
-    <div id="feedList" class="list" style="margin-top:12px;"></div>
-  </section>
-
-</main>
-
-<script type="module" src="games.js"></script>
+  <script type="module" src="./games.js"></script>
 </body>
 </html>
