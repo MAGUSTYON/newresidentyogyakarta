@@ -1,369 +1,394 @@
 import { supabase } from "./supabaseClient.js";
 
-(async () => {
-  await supabase.auth.signOut();
+const joinCard = document.getElementById("joinCard");
+const gameCard = document.getElementById("gameCard");
 
-  const joinCard = document.getElementById("joinCard");
-  const gameCard = document.getElementById("gameCard");
+const roomCodeEl = document.getElementById("roomCode");
+const nickEl = document.getElementById("nickname");
+const joinBtn = document.getElementById("joinBtn");
+const joinStatus = document.getElementById("joinStatus");
 
-  const roomCodeEl = document.getElementById("roomCode");
-  const nickEl = document.getElementById("nickname");
-  const joinBtn = document.getElementById("joinBtn");
-  const joinStatus = document.getElementById("joinStatus");
+const roomLabel = document.getElementById("roomLabel");
+const gameStatus = document.getElementById("gameStatus");
 
-  const roomLabel = document.getElementById("roomLabel");
-  const gameStatus = document.getElementById("gameStatus");
+const qText = document.getElementById("qText");
 
-  const qTitle = document.getElementById("qTitle");
-  const qText = document.getElementById("qText");
+const buzzBtn = document.getElementById("buzzBtn");
+const buzzInfo = document.getElementById("buzzInfo");
 
-  const buzzBtn = document.getElementById("buzzBtn");
-  const buzzInfo = document.getElementById("buzzInfo");
+const answerBox = document.getElementById("answerBox");
+const answerText = document.getElementById("answerText");
+const sendAnswerBtn = document.getElementById("sendAnswerBtn");
+const answerStatus = document.getElementById("answerStatus");
 
-  const answerBox = document.getElementById("answerBox");
-  const answerText = document.getElementById("answerText");
-  const sendAnswerBtn = document.getElementById("sendAnswerBtn");
-  const answerStatus = document.getElementById("answerStatus");
+const leaveBtn = document.getElementById("leaveBtn");
 
-  const leaveBtn = document.getElementById("leaveBtn");
+const feedStatus = document.getElementById("feedStatus");
+const feedList = document.getElementById("feedList");
 
-  // feed jawaban
-  const feedStatus = document.getElementById("feedStatus");
-  const feedList = document.getElementById("feedList");
+const lbStatus = document.getElementById("lbStatus");
+const lbList = document.getElementById("lbList");
+const meTag = document.getElementById("meTag");
 
-  const LS_KEY = "cc_state_v1";
+const endOverlay = document.getElementById("endOverlay");
+const closeOverlay = document.getElementById("closeOverlay");
+const finalSub = document.getElementById("finalSub");
+const finalList = document.getElementById("finalList");
 
-  let state = {
-    room_id: null,
-    room_code: null,
-    player_id: null,
-    nickname: null,
-    current_question_id: null,
-    winner_player_id: null,
-  };
+const LS_KEY = "cc_state_final_v1";
 
-  let currentBuzzRound = 1;
+let state = {
+  room_id: null,
+  room_code: null,
+  player_id: null,
+  nickname: null,
+  current_question_id: null,
+};
 
-  function esc(s = "") {
-    return String(s).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  }
+let roomCh = null, buzzCh = null, ansCh = null, playersCh = null;
 
-  function saveState() {
-    localStorage.setItem(LS_KEY, JSON.stringify(state));
-  }
-  function loadState() {
-    try {
-      const s = JSON.parse(localStorage.getItem(LS_KEY) || "null");
-      if (s) state = s;
-    } catch {}
-  }
-  function clearState() {
-    localStorage.removeItem(LS_KEY);
-    state = { room_id: null, room_code: null, player_id: null, nickname: null, current_question_id: null, winner_player_id: null };
-  }
+function esc(s=""){
+  return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
 
-  function showGame() {
-    joinCard.style.display = "none";
-    gameCard.style.display = "block";
-    roomLabel.textContent = state.room_code || "-";
-  }
-  function showJoin(msg = "") {
-    joinCard.style.display = "block";
-    gameCard.style.display = "none";
-    joinStatus.textContent = msg;
-  }
+function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function loadState(){
+  try{
+    const s = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (s) state = s;
+  }catch{}
+}
+function clearState(){
+  localStorage.removeItem(LS_KEY);
+  state = { room_id:null, room_code:null, player_id:null, nickname:null, current_question_id:null };
+}
 
-  function setQuestion(text) {
-    qTitle.textContent = "Pertanyaan";
-    qText.textContent = text || "—";
-  }
+function showJoin(msg=""){
+  joinCard.style.display = "block";
+  gameCard.style.display = "none";
+  joinStatus.textContent = msg;
+}
+function showGame(){
+  joinCard.style.display = "none";
+  gameCard.style.display = "block";
+  roomLabel.textContent = state.room_code || "-";
+  meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
+}
 
-  function setStatus(msg = "") {
-    gameStatus.textContent = msg;
-  }
+async function fetchRoomByCode(code){
+  const { data, error } = await supabase
+    .from("cc_rooms")
+    .select("id, code, status, current_question_id, question_index")
+    .eq("code", code)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
 
-  let roomChannel = null;
-  let buzzChannel = null;
-  let answerChannel = null;
+async function fetchQuestion(qid){
+  if (!qid) return null;
+  const { data, error } = await supabase
+    .from("cc_questions")
+    .select("id, question_text")
+    .eq("id", qid)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
 
-  async function fetchRoomByCode(code) {
-    const { data, error } = await supabase
-      .from("quiz_rooms")
-      .select("id, code, status, current_question_id, buzz_round")
-      .eq("code", code)
-      .maybeSingle();
-    if (error) throw error;
-    return data;
-  }
+async function joinRoom(code, nickname){
+  const room = await fetchRoomByCode(code);
+  if (!room) throw new Error("Room tidak ditemukan.");
 
-  async function fetchQuestion(qid) {
-    if (!qid) return null;
-    const { data, error } = await supabase.from("quiz_questions").select("id, question_text").eq("id", qid).maybeSingle();
-    if (error) throw error;
-    return data;
-  }
+  const { data: player, error } = await supabase
+    .from("cc_players")
+    .insert({ room_id: room.id, nickname })
+    .select("id")
+    .single();
 
-  async function joinRoom(code, nickname) {
-    const room = await fetchRoomByCode(code);
-    if (!room) throw new Error("Room tidak ditemukan.");
+  if (error) throw error;
 
-    const { data: player, error } = await supabase
-      .from("quiz_players")
-      .insert({ room_id: room.id, nickname })
-      .select("id")
-      .single();
-    if (error) throw error;
+  state.room_id = room.id;
+  state.room_code = room.code;
+  state.player_id = player.id;
+  state.nickname = nickname;
+  state.current_question_id = room.current_question_id;
+  saveState();
 
-    state.room_id = room.id;
-    state.room_code = room.code;
-    state.player_id = player.id;
-    state.nickname = nickname;
-    state.current_question_id = room.current_question_id;
-    saveState();
+  showGame();
+  await syncRoomUI(room);
+  subscribeRealtime();
+  await refreshLeaderboard();
+}
 
-    showGame();
-    await syncRoomUI(room);
-    subscribeRealtime();
-  }
+async function syncRoomUI(room){
+  state.current_question_id = room.current_question_id;
+  saveState();
 
-  async function syncRoomUI(room) {
-    state.current_question_id = room.current_question_id;
-    saveState();
-
-    currentBuzzRound = room.buzz_round || 1;
-
-    if (room.status !== "live") {
-      setStatus(`Status: ${room.status}. Menunggu admin mulai…`);
-      setQuestion("—");
-      buzzBtn.disabled = true;
-      buzzInfo.textContent = "Buzz akan aktif saat live.";
-      answerBox.style.display = "none";
-      await loadAnswerFeed();
-      return;
-    }
-
-    setStatus(`LIVE! Round buzz: ${currentBuzzRound}`);
-    buzzBtn.disabled = false;
-    buzzInfo.textContent = "";
-
-    const q = await fetchQuestion(room.current_question_id);
-    setQuestion(q?.question_text || "—");
-
-    answerBox.style.display = "none";
-    answerStatus.textContent = "";
-    answerText.value = "";
-    sendAnswerBtn.disabled = false;
-
-    state.winner_player_id = null;
-    saveState();
-
-    await loadAnswerFeed();
-  }
-
-  async function loadAnswerFeed() {
-    if (!feedStatus || !feedList) return;
-
-    if (!state.current_question_id) {
-      feedStatus.textContent = "";
-      feedList.innerHTML = "";
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from("quiz_answers")
-      .select("id, answer_text, verdict, submitted_at, round_no, quiz_players(nickname)")
-      .eq("question_id", state.current_question_id)
-      .order("submitted_at", { ascending: true })
-      .limit(50);
-
-    if (error) {
-      feedStatus.textContent = "Feed error: " + error.message;
-      feedList.innerHTML = "";
-      return;
-    }
-
-    if (!data?.length) {
-      feedStatus.textContent = "Belum ada jawaban.";
-      feedList.innerHTML = `<div class="card"><small>Belum ada jawaban.</small></div>`;
-      return;
-    }
-
-    feedStatus.textContent = `${data.length} jawaban`;
-    feedList.innerHTML = data
-      .map(
-        (a) => `
-      <div class="card">
-        <b>${esc(a.quiz_players?.nickname || "Player")}</b>
-        <small>• round ${a.round_no ?? 1} • ${esc(a.verdict)}</small>
-        <p style="white-space:pre-wrap;margin-top:8px;">${esc(a.answer_text)}</p>
-      </div>
-    `
-      )
-      .join("");
-  }
-
-  async function buzz() {
-    if (!state.room_id || !state.player_id || !state.current_question_id) return;
-
+  if (room.status === "ended"){
+    gameStatus.textContent = "Sesi sudah berakhir.";
     buzzBtn.disabled = true;
-    buzzInfo.textContent = "Mengirim buzz…";
-
- const { error } = await supabase
-  .from("quiz_answers")
-  .upsert(
-    {
-      room_id: state.room_id,
-      question_id: state.current_question_id,
-      player_id: state.player_id,
-      answer_text: text,
-      round_no: currentBuzzRound,
-      verdict: "pending",
-      submitted_at: new Date().toISOString()
-    },
-    { onConflict: "question_id,round_no,player_id" }
-  );
-
-    if (error) {
-      buzzBtn.disabled = false;
-      buzzInfo.textContent = "Gagal buzz: " + error.message;
-      return;
-    }
-
-    buzzInfo.textContent = `Buzz terkirim (round ${currentBuzzRound}). Silakan jawab sekarang.`;
-    answerBox.style.display = "block";
-    sendAnswerBtn.disabled = false;
+    answerBox.style.display = "none";
+    await refreshLeaderboard();
+    await loadAnswerFeed();
+    await showFinalOverlay();
+    return;
   }
 
-  async function sendAnswer() {
-    answerStatus.textContent = "Mengirim jawaban…";
+  if (room.status !== "live"){
+    gameStatus.textContent = `Status: ${room.status}. Menunggu admin mulai…`;
+    qText.textContent = "—";
+    buzzBtn.disabled = true;
+    buzzInfo.textContent = "Buzz akan aktif saat live.";
+    answerBox.style.display = "none";
+    await refreshLeaderboard();
+    await loadAnswerFeed();
+    return;
+  }
 
-    const text = (answerText.value || "").trim();
-    if (!text) {
-      answerStatus.textContent = "Jawaban tidak boleh kosong.";
-      return;
-    }
+  gameStatus.textContent = `LIVE • Soal #${(room.question_index || 0) + 1}`;
+  buzzBtn.disabled = false;
+  buzzInfo.textContent = "";
 
-    const { error } = await supabase.from("quiz_answers").insert({
+  const q = await fetchQuestion(room.current_question_id);
+  qText.textContent = q?.question_text || "—";
+
+  // reset area jawab tiap soal baru
+  answerBox.style.display = "none";
+  answerStatus.textContent = "";
+  answerText.value = "";
+  sendAnswerBtn.disabled = false;
+
+  await refreshLeaderboard();
+  await loadAnswerFeed();
+}
+
+async function refreshLeaderboard(){
+  if (!state.room_id) return;
+
+  const { data, error } = await supabase
+    .from("cc_players")
+    .select("id, nickname, points, kicked")
+    .eq("room_id", state.room_id)
+    .order("points", { ascending: false })
+    .order("created_at", { ascending: true })
+    .limit(20);
+
+  if (error){
+    lbStatus.textContent = "Leaderboard error: " + error.message;
+    lbList.innerHTML = "";
+    return;
+  }
+
+  const clean = (data||[]).filter(p => !p.kicked);
+  lbStatus.textContent = `${clean.length} peserta`;
+  lbList.innerHTML = clean.map((p, i) => `
+    <div class="lb-item">
+      <div><b>${i+1}. ${esc(p.nickname)}</b></div>
+      <div><b>${p.points}</b></div>
+    </div>
+  `).join("") || `<div class="lb-item"><div class="muted">Belum ada peserta.</div></div>`;
+}
+
+async function loadAnswerFeed(){
+  if (!state.current_question_id){
+    feedStatus.textContent = "";
+    feedList.innerHTML = "";
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("cc_answers")
+    .select("id, answer_text, verdict, created_at, cc_players(nickname)")
+    .eq("question_id", state.current_question_id)
+    .order("created_at", { ascending: true })
+    .limit(50);
+
+  if (error){
+    feedStatus.textContent = "Feed error: " + error.message;
+    feedList.innerHTML = "";
+    return;
+  }
+
+  if (!data?.length){
+    feedStatus.textContent = "Belum ada jawaban.";
+    feedList.innerHTML = `<div class="a"><span class="muted">Belum ada jawaban.</span></div>`;
+    return;
+  }
+
+  feedStatus.textContent = `${data.length} jawaban`;
+  feedList.innerHTML = data.map(a => `
+    <div class="a">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+        <b>${esc(a.cc_players?.nickname || "Player")}</b>
+        <span class="verdict">${esc(a.verdict)}</span>
+      </div>
+      <div style="white-space:pre-wrap;margin-top:8px;">${esc(a.answer_text)}</div>
+    </div>
+  `).join("");
+}
+
+async function buzz(){
+  if (!state.room_id || !state.player_id || !state.current_question_id) return;
+
+  buzzBtn.disabled = true;
+  buzzInfo.textContent = "Mengirim buzz…";
+
+  // kunci: yang pertama insert is_winner=true akan lolos,
+  // yang kedua dst akan gagal karena unique winner per question
+  const { error } = await supabase
+    .from("cc_buzzes")
+    .insert({
       room_id: state.room_id,
       question_id: state.current_question_id,
       player_id: state.player_id,
-      answer_text: text,
-      round_no: currentBuzzRound,
+      is_winner: true
     });
 
-    if (error) {
-      answerStatus.textContent = "Gagal kirim: " + error.message;
-      return;
-    }
-
-    answerStatus.textContent = "Jawaban terkirim. Menunggu verifikasi admin…";
-    sendAnswerBtn.disabled = true;
-
-    await loadAnswerFeed();
+  if (error){
+    buzzBtn.disabled = false;
+    buzzInfo.textContent = "Kamu telat 😭 (" + error.message + ")";
+    return;
   }
 
-  function subscribeRealtime() {
-    unsubscribeRealtime();
+  buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
+  answerBox.style.display = "block";
+  sendAnswerBtn.disabled = false;
+}
 
-    roomChannel = supabase
-      .channel(`cc-room-${state.room_id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "quiz_rooms", filter: `id=eq.${state.room_id}` }, async (payload) => {
-        await syncRoomUI(payload.new);
-      })
-      .subscribe();
+async function sendAnswer(){
+  const text = (answerText.value || "").trim();
+  if (!text){
+    answerStatus.textContent = "Jawaban tidak boleh kosong.";
+    return;
+  }
 
-    buzzChannel = supabase
-      .channel(`cc-buzz-${state.room_id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "quiz_buzzes", filter: `room_id=eq.${state.room_id}` }, (payload) => {
-        const b = payload.new;
-        if (b.question_id !== state.current_question_id) return;
-        if ((b.round_no ?? 1) !== currentBuzzRound) return;
+  sendAnswerBtn.disabled = true;
+  answerStatus.textContent = "Mengirim jawaban…";
 
-        if (b.is_winner && b.status === "answering") {
-          state.winner_player_id = b.player_id;
-          saveState();
+  const { error } = await supabase
+    .from("cc_answers")
+    .insert({
+      room_id: state.room_id,
+      question_id: state.current_question_id,
+      player_id: state.player_id,
+      answer_text: text
+    });
 
-          if (b.player_id === state.player_id) {
-            buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
-            answerBox.style.display = "block";
-            sendAnswerBtn.disabled = false;
-          } else {
-            buzzInfo.textContent = "Ada yang menang buzz. Menunggu jawaban…";
-            answerBox.style.display = "none";
-          }
-        }
+  if (error){
+    sendAnswerBtn.disabled = false;
+    answerStatus.textContent = "Gagal kirim: " + error.message;
+    return;
+  }
 
-        if (b.status === "resolved") {
-          buzzBtn.disabled = false;
-        }
-      })
-      .subscribe();
+  answerStatus.textContent = "Jawaban terkirim. Menunggu verifikasi admin…";
+  await loadAnswerFeed();
+}
 
-    answerChannel = supabase
-      .channel(`cc-ans-${state.room_id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "quiz_answers", filter: `room_id=eq.${state.room_id}` }, async (payload) => {
-        const a = payload.new;
-        if (a.question_id !== state.current_question_id) return;
+function unsubscribe(){
+  if (roomCh) supabase.removeChannel(roomCh);
+  if (buzzCh) supabase.removeChannel(buzzCh);
+  if (ansCh) supabase.removeChannel(ansCh);
+  if (playersCh) supabase.removeChannel(playersCh);
+  roomCh = buzzCh = ansCh = playersCh = null;
+}
 
-        if (a.player_id === state.player_id) {
-          if (a.verdict === "correct") answerStatus.textContent = "✅ Benar! (+poin)";
-          if (a.verdict === "wrong") answerStatus.textContent = "❌ Salah. Buzz dibuka lagi.";
-        }
+function subscribeRealtime(){
+  unsubscribe();
 
+  roomCh = supabase.channel(`cc-room-${state.room_id}`)
+    .on("postgres_changes", { event:"*", schema:"public", table:"cc_rooms", filter:`id=eq.${state.room_id}` }, async (p)=>{
+      await syncRoomUI(p.new);
+    })
+    .subscribe();
+
+  ansCh = supabase.channel(`cc-ans-${state.room_id}`)
+    .on("postgres_changes", { event:"*", schema:"public", table:"cc_answers", filter:`room_id=eq.${state.room_id}` }, async (p)=>{
+      const a = p.new;
+      if (a.question_id === state.current_question_id){
         await loadAnswerFeed();
-      })
-      .subscribe();
-  }
-
-  function unsubscribeRealtime() {
-    if (roomChannel) supabase.removeChannel(roomChannel);
-    if (buzzChannel) supabase.removeChannel(buzzChannel);
-    if (answerChannel) supabase.removeChannel(answerChannel);
-    roomChannel = buzzChannel = answerChannel = null;
-  }
-
-  joinBtn.addEventListener("click", async () => {
-    joinStatus.textContent = "Joining…";
-    try {
-      const code = (roomCodeEl.value || "").trim().toUpperCase();
-      const nick = (nickEl.value || "").trim();
-      if (!code || !nick) {
-        joinStatus.textContent = "Kode room & nickname wajib.";
-        return;
+        if (a.player_id === state.player_id){
+          if (a.verdict === "correct") answerStatus.textContent = "✅ Benar! (+1)";
+          if (a.verdict === "wrong") answerStatus.textContent = "❌ Salah. Tunggu buzz dibuka lagi.";
+        }
       }
-      await joinRoom(code, nick);
-    } catch (e) {
-      joinStatus.textContent = e.message || "Gagal join.";
-    }
-  });
+    })
+    .subscribe();
 
-  buzzBtn.addEventListener("click", buzz);
-  sendAnswerBtn.addEventListener("click", sendAnswer);
+  playersCh = supabase.channel(`cc-players-${state.room_id}`)
+    .on("postgres_changes", { event:"*", schema:"public", table:"cc_players", filter:`room_id=eq.${state.room_id}` }, async ()=>{
+      await refreshLeaderboard();
+    })
+    .subscribe();
+}
 
-  leaveBtn.addEventListener("click", () => {
-    unsubscribeRealtime();
-    clearState();
-    showJoin("");
-  });
+async function showFinalOverlay(){
+  // ambil leaderboard top 20
+  const { data } = await supabase
+    .from("cc_players")
+    .select("nickname, points, kicked")
+    .eq("room_id", state.room_id)
+    .order("points", { ascending:false })
+    .order("created_at", { ascending:true })
+    .limit(20);
 
-  // ===== auto restore =====
+  const list = (data||[]).filter(x => !x.kicked);
+  const winner = list[0];
+
+  finalSub.textContent = winner
+    ? `Pemenang: ${winner.nickname} (${winner.points} poin)`
+    : "Belum ada data peserta.";
+
+  finalList.innerHTML = list.map((p, i)=>`
+    <div class="lb-item" style="margin-top:10px;">
+      <div><b>${i+1}. ${esc(p.nickname)}</b></div>
+      <div><b>${p.points}</b></div>
+    </div>
+  `).join("") || `<div class="lb-item"><div class="muted">Kosong.</div></div>`;
+
+  endOverlay.style.display = "flex";
+}
+
+closeOverlay.addEventListener("click", ()=>{
+  endOverlay.style.display = "none";
+});
+
+joinBtn.addEventListener("click", async ()=>{
+  joinStatus.textContent = "Joining…";
+  try{
+    const code = (roomCodeEl.value || "").trim().toUpperCase();
+    const nick = (nickEl.value || "").trim();
+    if (!code || !nick) { joinStatus.textContent = "Kode room & nickname wajib."; return; }
+    await joinRoom(code, nick);
+  }catch(e){
+    joinStatus.textContent = e.message || "Gagal join.";
+  }
+});
+
+buzzBtn.addEventListener("click", buzz);
+sendAnswerBtn.addEventListener("click", sendAnswer);
+
+leaveBtn.addEventListener("click", ()=>{
+  unsubscribe();
+  clearState();
+  showJoin("");
+});
+
+(async ()=>{
   loadState();
-  if (state.room_id && state.room_code && state.player_id) {
-    try {
+  if (state.room_code && state.room_id && state.player_id){
+    try{
       showGame();
       const room = await fetchRoomByCode(state.room_code);
-      if (!room) {
-        clearState();
-        showJoin("Room tidak ditemukan.");
-        return;
-      }
+      if (!room) { clearState(); showJoin("Room tidak ditemukan."); return; }
       await syncRoomUI(room);
       subscribeRealtime();
-    } catch {
+      await refreshLeaderboard();
+    }catch{
       clearState();
-      showJoin("Session join sudah invalid. Join ulang ya.");
+      showJoin("Session join invalid. Join ulang ya.");
     }
-  } else {
+  }else{
     showJoin("");
   }
 })();
