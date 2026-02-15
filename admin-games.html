@@ -2,90 +2,132 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin - Cerdas Cermat</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Games — New Resident Yogyakarta</title>
+  <style>
+    :root{
+      --bg:#0b0c16; --card:rgba(255,255,255,.07); --stroke:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.90); --muted:rgba(255,255,255,.65);
+      --pink:#f19bb7; --pink2:#e57aa0;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui;color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(241,155,183,.20), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(120,150,255,.18), transparent 60%),
+        var(--bg);
+      min-height:100vh;
+    }
+    .wrap{max-width:1200px;margin:20px auto;padding:0 18px;}
+    .card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35);}
+    .grid{display:grid;grid-template-columns: 1fr 1fr;gap:16px;align-items:start;}
+    @media (max-width:980px){.grid{grid-template-columns:1fr;}}
+    h2{margin:0 0 10px}
+    .muted{color:var(--muted)}
+    input, textarea{
+      width:100%;border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);color:var(--text);outline:none;
+    }
+    textarea{min-height:110px;resize:vertical}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      border:0;cursor:pointer;padding:11px 14px;border-radius:999px;font-weight:900;
+      color:#160712;background:linear-gradient(180deg, rgba(241,155,183,.95), rgba(229,122,160,.90));
+    }
+    .btn.ghost{background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.12)}
+    .btn.danger{background:rgba(255,80,120,.18);color:var(--text);border:1px solid rgba(255,80,120,.35)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:14px 0}
+    .item{
+      margin-top:10px;padding:12px;border-radius:14px;
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+    }
+    .item small{color:var(--muted)}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:560px){.two{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-
-<main class="container">
-
-  <!-- LOGIN -->
-  <section id="loginCard" class="card">
-    <h2>Admin Login</h2>
-    <div class="grid2">
-      <div>
-        <label>Email</label>
-        <input id="email" type="email" placeholder="admin@email.com" />
-      </div>
-      <div>
-        <label>Password</label>
-        <input id="password" type="password" placeholder="password" />
-      </div>
-    </div>
-    <button id="loginBtn" class="btn primary" type="button">Login</button>
-    <small id="loginStatus"></small>
-  </section>
-
-  <!-- PANEL -->
-  <section id="panel" style="display:none;">
-    <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-      <div>
-        <h2 style="margin:0;">Admin • Cerdas Cermat</h2>
-        <small id="roomInfo"></small>
-        <div><small id="liveStatus"></small></div>
-      </div>
-      <button id="logoutBtn" class="btn secondary" type="button">Logout</button>
-    </div>
-
-    <div class="grid2" style="margin-top:14px;">
-      <div class="card">
-        <h3>Room</h3>
-        <button id="createRoomBtn" class="btn primary" type="button">Create Room</button>
-
-        <div class="hr"></div>
-
-        <label>Load by code</label>
-        <input id="loadCode" placeholder="A1B2C3" />
-        <button id="loadRoomBtn" class="btn secondary" type="button">Load</button>
-        <small id="loadStatus"></small>
-
-        <div class="hr"></div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button id="startBtn" class="btn primary" type="button">Start Live</button>
-          <button id="nextBtn" class="btn secondary" type="button">Next Soal</button>
-          <button id="endBtn" class="btn secondary" type="button">End</button>
+  <div class="wrap">
+    <div class="card" id="loginCard">
+      <h2>Admin Games</h2>
+      <p class="muted">Login admin dulu.</p>
+      <div class="two" style="margin-top:10px;">
+        <div>
+          <div class="muted" style="margin:0 0 6px;">Email</div>
+          <input id="email" placeholder="email admin" />
+        </div>
+        <div>
+          <div class="muted" style="margin:0 0 6px;">Password</div>
+          <input id="password" type="password" placeholder="password" />
         </div>
       </div>
-
-      <div class="card">
-        <h3>Tambah Pertanyaan</h3>
-        <textarea id="qText" rows="4" placeholder="Tulis pertanyaan..."></textarea>
-        <button id="addQBtn" class="btn primary" type="button">Tambah</button>
-        <small id="qStatus"></small>
-        <div class="hr"></div>
-        <div id="qList"></div>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn" id="loginBtn">Login</button>
+        <span class="muted" id="loginStatus"></span>
       </div>
     </div>
 
-    <div class="grid2" style="margin-top:14px;">
-      <div class="card">
-        <h3>Buzz (Siapa tercepat)</h3>
-        <small id="buzzStatus"></small>
-        <div id="buzzList"></div>
+    <div id="panel" style="display:none;">
+      <div class="row" style="justify-content:space-between;margin-bottom:14px;">
+        <h2 style="margin:0;">Admin Panel — Cerdas Cermat</h2>
+        <button class="btn ghost" id="logoutBtn">Logout</button>
       </div>
 
-      <div class="card">
-        <h3>Jawaban Masuk</h3>
-        <small id="ansStatus"></small>
-        <div id="ansList"></div>
+      <div class="grid">
+        <!-- LEFT: Room + Questions + Controls -->
+        <div class="card">
+          <h2>Room</h2>
+          <div class="row">
+            <button class="btn" id="createRoomBtn">Buat Room</button>
+            <input id="loadCode" placeholder="Load kode room (contoh: V8BXA9)" style="flex:1;min-width:210px;" />
+            <button class="btn ghost" id="loadRoomBtn">Load</button>
+          </div>
+          <div class="muted" id="roomInfo" style="margin-top:10px;"></div>
+
+          <div class="hr"></div>
+
+          <div class="row">
+            <button class="btn" id="startBtn">Start Live</button>
+            <button class="btn ghost" id="nextBtn">Next Soal</button>
+            <button class="btn danger" id="endBtn">End</button>
+            <span class="muted" id="liveStatus"></span>
+          </div>
+
+          <div class="hr"></div>
+
+          <h2>Tambah Pertanyaan</h2>
+          <textarea id="qText" placeholder="Tulis pertanyaan..."></textarea>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn" id="addQBtn">Tambah</button>
+            <span class="muted" id="qStatus"></span>
+          </div>
+
+          <div class="hr"></div>
+
+          <h2>List Pertanyaan</h2>
+          <div id="qList"></div>
+        </div>
+
+        <!-- RIGHT: Leaderboard + Answers -->
+        <div class="card">
+          <div class="row" style="justify-content:space-between;align-items:center;">
+            <h2 style="margin:0;">Leaderboard</h2>
+            <button class="btn ghost" id="refreshBtn">Refresh</button>
+          </div>
+          <div class="muted" id="lbStatus" style="margin-top:8px;"></div>
+          <div id="lbList"></div>
+
+          <div class="hr"></div>
+
+          <h2>Jawaban Masuk (Soal Aktif)</h2>
+          <div class="muted" id="ansStatus"></div>
+          <div id="ansList"></div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
-</main>
-
-<script type="module" src="admin-games.js"></script>
+  <script type="module" src="./admin-games.js"></script>
 </body>
 </html>
