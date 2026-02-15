@@ -12,7 +12,6 @@ const createRoomBtn = document.getElementById("createRoomBtn");
 const roomInfo = document.getElementById("roomInfo");
 const loadCode = document.getElementById("loadCode");
 const loadRoomBtn = document.getElementById("loadRoomBtn");
-const loadStatus = document.getElementById("loadStatus");
 
 const startBtn = document.getElementById("startBtn");
 const nextBtn = document.getElementById("nextBtn");
@@ -24,8 +23,9 @@ const addQBtn = document.getElementById("addQBtn");
 const qStatus = document.getElementById("qStatus");
 const qList = document.getElementById("qList");
 
-const buzzStatus = document.getElementById("buzzStatus");
-const buzzList = document.getElementById("buzzList");
+const refreshBtn = document.getElementById("refreshBtn");
+const lbStatus = document.getElementById("lbStatus");
+const lbList = document.getElementById("lbList");
 
 const ansStatus = document.getElementById("ansStatus");
 const ansList = document.getElementById("ansList");
@@ -33,8 +33,6 @@ const ansList = document.getElementById("ansList");
 let room = null;
 let questions = [];
 let channels = [];
-
-const POINTS_CORRECT = 10;
 
 function esc(s=""){
   return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
@@ -45,6 +43,7 @@ function showLogin(msg=""){
   loginCard.style.display = "block";
   panel.style.display = "none";
 }
+
 function showPanel(){
   loginCard.style.display = "none";
   panel.style.display = "block";
@@ -56,7 +55,11 @@ async function verifyAdmin(){
   const email = sess.session.user.email;
 
   const { data: adminRow } = await supabase
-    .from("admins").select("email").eq("email", email).maybeSingle();
+    .from("admins")
+    .select("email")
+    .eq("email", email)
+    .maybeSingle();
+
   return !!adminRow;
 }
 
@@ -69,16 +72,12 @@ function genCode(){
 
 function setRoomInfo(){
   if (!room) { roomInfo.textContent = ""; return; }
-  roomInfo.textContent = `Kode: ${room.code} • status: ${room.status} • current: ${room.current_question_id || "-"} • round: ${room.buzz_round ?? 1}`;
-}
-function setLiveStatus(){
-  if (!room) { liveStatus.textContent = ""; return; }
-  liveStatus.textContent = `Status: ${room.status}`;
+  roomInfo.textContent = `Kode: ${room.code} • status: ${room.status} • qid: ${room.current_question_id || "-"}`;
 }
 
 async function fetchRoomByCode(code){
   const { data, error } = await supabase
-    .from("quiz_rooms")
+    .from("cc_rooms")
     .select("*")
     .eq("code", code)
     .maybeSingle();
@@ -89,7 +88,7 @@ async function fetchRoomByCode(code){
 async function fetchQuestions(){
   if (!room) return [];
   const { data, error } = await supabase
-    .from("quiz_questions")
+    .from("cc_questions")
     .select("id, order_no, question_text, created_at")
     .eq("room_id", room.id)
     .order("order_no", { ascending: true });
@@ -100,153 +99,99 @@ async function fetchQuestions(){
 async function refreshQuestions(){
   questions = await fetchQuestions();
   if (!questions.length){
-    qList.innerHTML = `<div class="card"><small>Belum ada pertanyaan.</small></div>`;
+    qList.innerHTML = `<div class="item"><small>Belum ada pertanyaan.</small></div>`;
     return;
   }
   qList.innerHTML = questions.map(q => `
-    <div class="card">
+    <div class="item">
       <b>#${q.order_no}</b>
-      <p style="white-space:pre-wrap;margin-top:8px;">${esc(q.question_text)}</p>
+      <div style="white-space:pre-wrap;margin-top:8px;">${esc(q.question_text)}</div>
     </div>
   `).join("");
 }
 
-async function startLive(){
-  if (!room) return;
-  questions = await fetchQuestions();
-  if (!questions.length) { liveStatus.textContent = "Tambah pertanyaan dulu."; return; }
-
-  const first = questions[0];
+async function refreshLeaderboard(){
+  if (!room){ lbList.innerHTML = ""; lbStatus.textContent=""; return; }
 
   const { data, error } = await supabase
-    .from("quiz_rooms")
-    .update({ status: "live", current_index: 0, current_question_id: first.id, buzz_round: 1 })
-    .eq("id", room.id)
-    .select("*")
-    .single();
-
-  if (error) { liveStatus.textContent = error.message; return; }
-  room = data;
-  setRoomInfo();
-  setLiveStatus();
-}
-
-async function nextQuestion(){
-  if (!room) return;
-  questions = await fetchQuestions();
-  if (!questions.length) return;
-
-  const nextIndex = Math.min(room.current_index + 1, questions.length - 1);
-  const nextQ = questions[nextIndex];
-
-  // resolve semua buzz soal lama (biar rapih)
-  if (room.current_question_id){
-    await supabase
-      .from("quiz_buzzes")
-      .update({ status: "resolved" })
-      .eq("question_id", room.current_question_id);
-  }
-
-  const { data, error } = await supabase
-    .from("quiz_rooms")
-    .update({ status: "live", current_index: nextIndex, current_question_id: nextQ.id, buzz_round: 1 })
-    .eq("id", room.id)
-    .select("*")
-    .single();
-
-  if (error) { liveStatus.textContent = error.message; return; }
-  room = data;
-  setRoomInfo();
-  setLiveStatus();
-}
-
-async function endLive(){
-  if (!room) return;
-  const { data, error } = await supabase
-    .from("quiz_rooms")
-    .update({ status: "ended" })
-    .eq("id", room.id)
-    .select("*")
-    .single();
-  if (error) { liveStatus.textContent = error.message; return; }
-  room = data;
-  setRoomInfo();
-  setLiveStatus();
-}
-
-async function renderBuzzes(){
-  if (!room?.current_question_id){
-    buzzStatus.textContent = "Mulai live dulu.";
-    buzzList.innerHTML = `<div class="card"><small>Belum ada soal aktif.</small></div>`;
-    return;
-  }
-
-  const round = room.buzz_round ?? 1;
-  buzzStatus.textContent = `Buzz list (round ${round})`;
-
-  const { data, error } = await supabase
-    .from("quiz_buzzes")
-    .select("id, player_id, buzzed_at, status, round_no, quiz_players(nickname)")
-    .eq("question_id", room.current_question_id)
-    .eq("round_no", round)
-    .order("buzzed_at", { ascending: true })
-    .limit(30);
+    .from("cc_players")
+    .select("id, nickname, points, kicked, created_at")
+    .eq("room_id", room.id)
+    .order("points", { ascending:false })
+    .order("created_at", { ascending:true })
+    .limit(50);
 
   if (error){
-    buzzList.innerHTML = `<div class="card"><small>${esc(error.message)}</small></div>`;
+    lbStatus.textContent = error.message;
+    lbList.innerHTML = "";
     return;
   }
 
-  if (!data?.length){
-    buzzList.innerHTML = `<div class="card"><small>Belum ada yang buzz.</small></div>`;
-    return;
-  }
+  const clean = (data||[]);
 
-  // yang pertama = tercepat
-  buzzList.innerHTML = data.map((b,i)=>`
-    <div class="card">
-      <b>${i+1}. ${esc(b.quiz_players?.nickname || "Player")}</b>
-      <div><small>${new Date(b.buzzed_at).toLocaleTimeString("id-ID")} • ${esc(b.status)} • round ${b.round_no}</small></div>
-      ${i===0 ? `<div><small>🏆 Tercepat</small></div>` : ""}
+  lbStatus.textContent = `${clean.length} peserta`;
+  lbList.innerHTML = clean.map((p, i)=>`
+    <div class="item" style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+      <div style="min-width:0;">
+        <b>${i+1}. ${esc(p.nickname)}</b>
+        <div><small>${p.kicked ? "KICKED" : "aktif"}</small></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+        <b style="font-size:18px">${p.points}</b>
+        <button class="btn danger" data-kick="${p.id}" type="button">${p.kicked ? "Unkick" : "Kick"}</button>
+      </div>
     </div>
-  `).join("");
+  `).join("") || `<div class="item"><small>Kosong.</small></div>`;
+
+  lbList.querySelectorAll("button[data-kick]").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const id = btn.getAttribute("data-kick");
+      const row = clean.find(x => x.id === id);
+      const next = !row?.kicked;
+
+      const { error: upErr } = await supabase
+        .from("cc_players")
+        .update({ kicked: next })
+        .eq("id", id);
+
+      if (upErr){ lbStatus.textContent = upErr.message; return; }
+      await refreshLeaderboard();
+    });
+  });
 }
 
 async function renderAnswers(){
   if (!room?.current_question_id){
-    ansList.innerHTML = `<div class="card"><small>Mulai live dulu.</small></div>`;
+    ansList.innerHTML = `<div class="item"><small>Belum ada soal aktif.</small></div>`;
     return;
   }
 
-  const round = room.buzz_round ?? 1;
-
   const { data, error } = await supabase
-    .from("quiz_answers")
-    .select("id, player_id, answer_text, verdict, submitted_at, round_no, quiz_players(nickname)")
+    .from("cc_answers")
+    .select("id, player_id, answer_text, verdict, created_at, cc_players(nickname)")
     .eq("question_id", room.current_question_id)
-    .eq("round_no", round)
-    .order("submitted_at", { ascending: false })
+    .order("created_at", { ascending:false })
     .limit(20);
 
   if (error){
-    ansList.innerHTML = `<div class="card"><small>${esc(error.message)}</small></div>`;
+    ansList.innerHTML = `<div class="item"><small>${esc(error.message)}</small></div>`;
     return;
   }
-
   if (!data?.length){
-    ansList.innerHTML = `<div class="card"><small>Belum ada jawaban masuk (round ${round}).</small></div>`;
+    ansList.innerHTML = `<div class="item"><small>Belum ada jawaban.</small></div>`;
     return;
   }
 
-  ansList.innerHTML = data.map(a => `
-    <div class="card">
-      <b>${esc(a.quiz_players?.nickname || "Player")}</b>
-      <div><small>${new Date(a.submitted_at).toLocaleTimeString("id-ID")} • ${esc(a.verdict)} • round ${a.round_no}</small></div>
-      <p style="white-space:pre-wrap;margin-top:10px;">${esc(a.answer_text)}</p>
-
+  ansList.innerHTML = data.map(a=>`
+    <div class="item">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+        <b>${esc(a.cc_players?.nickname || "Player")}</b>
+        <small>${esc(a.verdict)}</small>
+      </div>
+      <div style="white-space:pre-wrap;margin-top:8px;">${esc(a.answer_text)}</div>
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap;">
-        <button class="btn primary" data-v="correct" data-id="${a.id}" type="button">Benar</button>
-        <button class="btn secondary" data-v="wrong" data-id="${a.id}" type="button">Salah</button>
+        <button class="btn" data-v="correct" data-id="${a.id}" data-pid="${a.player_id}" type="button">Benar</button>
+        <button class="btn ghost" data-v="wrong" data-id="${a.id}" data-pid="${a.player_id}" type="button">Salah</button>
       </div>
     </div>
   `).join("");
@@ -254,100 +199,147 @@ async function renderAnswers(){
   ansList.querySelectorAll("button[data-id]").forEach(btn=>{
     btn.addEventListener("click", async ()=>{
       const id = btn.getAttribute("data-id");
-      const verdict = btn.getAttribute("data-v"); // correct / wrong
+      const pid = btn.getAttribute("data-pid");
+      const verdict = btn.getAttribute("data-v");
 
-      // ambil jawaban lengkap
-      const { data: ansRow, error: ansErr } = await supabase
-        .from("quiz_answers")
-        .select("id, player_id, question_id, round_no")
-        .eq("id", id)
-        .single();
-
-      if (ansErr){ ansStatus.textContent = ansErr.message; return; }
-
-      // update verdict
+      // set verdict
       const { error: upErr } = await supabase
-        .from("quiz_answers")
+        .from("cc_answers")
         .update({ verdict, verified_at: new Date().toISOString() })
         .eq("id", id);
 
       if (upErr){ ansStatus.textContent = upErr.message; return; }
 
-      // resolve buzz round ini
-      await supabase
-        .from("quiz_buzzes")
-        .update({ status: "resolved" })
-        .eq("question_id", ansRow.question_id)
-        .eq("round_no", ansRow.round_no);
-
+      // kalau BENAR -> +1 poin
       if (verdict === "correct"){
-        // tambah poin
-        const { data: pRow, error: pErr1 } = await supabase
-          .from("quiz_players")
+        const { data: pRow, error: pErr } = await supabase
+          .from("cc_players")
           .select("points")
-          .eq("id", ansRow.player_id)
-          .single();
-        if (pErr1){ ansStatus.textContent = pErr1.message; return; }
+          .eq("id", pid)
+          .maybeSingle();
 
-        const cur = pRow?.points ?? 0;
-        const { error: pErr2 } = await supabase
-          .from("quiz_players")
-          .update({ points: cur + POINTS_CORRECT })
-          .eq("id", ansRow.player_id);
-        if (pErr2){ ansStatus.textContent = pErr2.message; return; }
+        if (pErr){ ansStatus.textContent = pErr.message; return; }
 
-        // pause room supaya gak ada buzz baru sampai admin next
-        const { error: rErr } = await supabase
-          .from("quiz_rooms")
-          .update({ status: "paused" })
-          .eq("id", room.id);
-        if (rErr){ ansStatus.textContent = rErr.message; return; }
+        const nextPoints = (pRow?.points || 0) + 1;
+        const { error: pUpErr } = await supabase
+          .from("cc_players")
+          .update({ points: nextPoints })
+          .eq("id", pid);
 
-        ansStatus.textContent = `✅ BENAR (+${POINTS_CORRECT} poin) • room PAUSED`;
-      } else {
-        // salah → buka buzz round baru (tetap live)
-        const { error: rErr } = await supabase
-          .from("quiz_rooms")
-          .update({ buzz_round: (room.buzz_round ?? 1) + 1, status: "live" })
-          .eq("id", room.id);
-        if (rErr){ ansStatus.textContent = rErr.message; return; }
+        if (pUpErr){ ansStatus.textContent = pUpErr.message; return; }
 
-        ansStatus.textContent = "❌ SALAH — Buzz dibuka lagi (round + 1)";
+        ansStatus.textContent = "✅ Benar (+1)";
       }
 
+      // kalau SALAH -> buka buzz lagi untuk soal ini:
+      // reset winner: hapus semua buzz winner untuk question (biar yang lain bisa buzz lagi)
+      if (verdict === "wrong"){
+        const { error: delErr } = await supabase
+          .from("cc_buzzes")
+          .delete()
+          .eq("question_id", room.current_question_id);
+
+        if (delErr){ ansStatus.textContent = delErr.message; return; }
+        ansStatus.textContent = "❌ Salah. Buzz dibuka lagi.";
+      }
+
+      await refreshLeaderboard();
       await renderAnswers();
-      await renderBuzzes();
     });
   });
+}
+
+async function startLive(){
+  if (!room) return;
+  questions = await fetchQuestions();
+  if (!questions.length){ liveStatus.textContent = "Tambah pertanyaan dulu."; return; }
+
+  const first = questions[0];
+
+  const { data, error } = await supabase
+    .from("cc_rooms")
+    .update({ status: "live", question_index: 0, current_question_id: first.id, ended_at: null })
+    .eq("id", room.id)
+    .select("*")
+    .single();
+
+  if (error){ liveStatus.textContent = error.message; return; }
+  room = data;
+  setRoomInfo();
+  liveStatus.textContent = "LIVE ✅";
+  await renderAnswers();
+}
+
+async function nextQuestion(){
+  if (!room) return;
+
+  questions = await fetchQuestions();
+  if (!questions.length) return;
+
+  const nextIndex = Math.min((room.question_index || 0) + 1, questions.length - 1);
+  const nextQ = questions[nextIndex];
+
+  // bersihin buzz & jawaban pending (biar soal baru clean)
+  if (room.current_question_id){
+    await supabase.from("cc_buzzes").delete().eq("question_id", room.current_question_id);
+    // jawaban lama tetap disimpan (history) -> biarin
+  }
+
+  const { data, error } = await supabase
+    .from("cc_rooms")
+    .update({ question_index: nextIndex, current_question_id: nextQ.id })
+    .eq("id", room.id)
+    .select("*")
+    .single();
+
+  if (error){ liveStatus.textContent = error.message; return; }
+  room = data;
+  setRoomInfo();
+  liveStatus.textContent = `Soal #${nextIndex+1}`;
+  await renderAnswers();
+}
+
+async function endLive(){
+  if (!room) return;
+
+  const { data, error } = await supabase
+    .from("cc_rooms")
+    .update({ status: "ended", ended_at: new Date().toISOString() })
+    .eq("id", room.id)
+    .select("*")
+    .single();
+
+  if (error){ liveStatus.textContent = error.message; return; }
+  room = data;
+  setRoomInfo();
+  liveStatus.textContent = "ENDED ✅";
 }
 
 function subscribe(){
   unsubscribe();
   if (!room) return;
 
-  const ch1 = supabase.channel(`adm-room-${room.id}`)
-    .on("postgres_changes", { event:"*", schema:"public", table:"quiz_rooms", filter:`id=eq.${room.id}` }, async (p)=>{
+  const chRoom = supabase.channel(`adm-room-${room.id}`)
+    .on("postgres_changes", { event:"*", schema:"public", table:"cc_rooms", filter:`id=eq.${room.id}` }, async (p)=>{
       room = p.new;
       setRoomInfo();
-      setLiveStatus();
-      await renderBuzzes();
       await renderAnswers();
     })
     .subscribe();
 
-  const ch2 = supabase.channel(`adm-buzz-${room.id}`)
-    .on("postgres_changes", { event:"*", schema:"public", table:"quiz_buzzes", filter:`room_id=eq.${room.id}` }, async ()=>{
-      await renderBuzzes();
-    })
-    .subscribe();
-
-  const ch3 = supabase.channel(`adm-ans-${room.id}`)
-    .on("postgres_changes", { event:"*", schema:"public", table:"quiz_answers", filter:`room_id=eq.${room.id}` }, async ()=>{
+  const chAns = supabase.channel(`adm-ans-${room.id}`)
+    .on("postgres_changes", { event:"*", schema:"public", table:"cc_answers", filter:`room_id=eq.${room.id}` }, async ()=>{
       await renderAnswers();
     })
     .subscribe();
 
-  channels.push(ch1, ch2, ch3);
+  const chPlayers = supabase.channel(`adm-players-${room.id}`)
+    .on("postgres_changes", { event:"*", schema:"public", table:"cc_players", filter:`room_id=eq.${room.id}` }, async ()=>{
+      await refreshLeaderboard();
+    })
+    .subscribe();
+
+  channels.push(chRoom, chAns, chPlayers);
 }
 
 function unsubscribe(){
@@ -355,15 +347,14 @@ function unsubscribe(){
   channels = [];
 }
 
-/* UI handlers */
+/* ===== UI ===== */
 loginBtn.addEventListener("click", async ()=>{
   loginStatus.textContent = "Login…";
-  await supabase.auth.signOut();
 
   const email = (emailEl.value||"").trim();
   const password = passEl.value||"";
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data?.session){
     showLogin("Login gagal: " + (error?.message || "unknown"));
     return;
@@ -390,8 +381,8 @@ createRoomBtn.addEventListener("click", async ()=>{
   const code = genCode();
 
   const { data, error } = await supabase
-    .from("quiz_rooms")
-    .insert({ code, status: "setup", buzz_round: 1 })
+    .from("cc_rooms")
+    .insert({ code })
     .select("*")
     .single();
 
@@ -399,28 +390,26 @@ createRoomBtn.addEventListener("click", async ()=>{
   room = data;
   setRoomInfo();
   await refreshQuestions();
-  await renderBuzzes();
+  await refreshLeaderboard();
   await renderAnswers();
   subscribe();
 });
 
 loadRoomBtn.addEventListener("click", async ()=>{
-  loadStatus.textContent = "Loading…";
+  liveStatus.textContent = "";
   try{
     const code = (loadCode.value||"").trim().toUpperCase();
-    if (!code) { loadStatus.textContent = "Isi kode dulu."; return; }
+    if (!code){ liveStatus.textContent = "Isi kode dulu."; return; }
     const r = await fetchRoomByCode(code);
-    if (!r) { loadStatus.textContent = "Room tidak ditemukan."; return; }
+    if (!r){ liveStatus.textContent = "Room tidak ditemukan."; return; }
     room = r;
-    loadStatus.textContent = "OK.";
     setRoomInfo();
-    setLiveStatus();
     await refreshQuestions();
-    await renderBuzzes();
+    await refreshLeaderboard();
     await renderAnswers();
     subscribe();
   }catch(e){
-    loadStatus.textContent = e.message || "Error.";
+    liveStatus.textContent = e.message || "Error.";
   }
 });
 
@@ -434,7 +423,7 @@ addQBtn.addEventListener("click", async ()=>{
   questions = await fetchQuestions();
   const nextOrder = questions.length ? (questions[questions.length-1].order_no + 1) : 1;
 
-  const { error } = await supabase.from("quiz_questions").insert({
+  const { error } = await supabase.from("cc_questions").insert({
     room_id: room.id,
     order_no: nextOrder,
     question_text: text
@@ -449,6 +438,10 @@ addQBtn.addEventListener("click", async ()=>{
 startBtn.addEventListener("click", startLive);
 nextBtn.addEventListener("click", nextQuestion);
 endBtn.addEventListener("click", endLive);
+refreshBtn.addEventListener("click", async ()=>{
+  await refreshLeaderboard();
+  await renderAnswers();
+});
 
 (async ()=>{
   if (await verifyAdmin()){
