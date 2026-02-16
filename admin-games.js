@@ -256,12 +256,27 @@ async function startLive(){
 
   const first = questions[0];
 
-  const { data, error } = await supabase
-    .from("cc_rooms")
-    .update({ status: "live", question_index: 0, current_question_id: first.id, ended_at: null })
-    .eq("id", room.id)
-    .select("*")
-    .single();
+ const { data, error } = await supabase
+  .from("cc_answers")
+  .update({
+    verdict,
+    verified_at: new Date().toISOString(),
+    scored_at: new Date().toISOString()
+  })
+  .eq("id", id)
+  .is("scored_at", null)  // ✅ ANTI SPAM
+  .select()
+  .maybeSingle();
+
+if (error) {
+  ansStatus.textContent = error.message;
+  return;
+}
+
+if (!data) {
+  ansStatus.textContent = "Jawaban sudah dinilai sebelumnya.";
+  return;
+}
 
   if (error){ liveStatus.textContent = error.message; return; }
   room = data;
