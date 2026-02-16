@@ -270,7 +270,45 @@ async function startLive(){
 
 if (error) {
   ansStatus.textContent = error.message;
-  return;
+  reasync function startLive(){
+  liveStatus.textContent = "Starting…";
+
+  if (!room){
+    liveStatus.textContent = "Buat / load room dulu.";
+    return;
+  }
+
+  // pastikan ada pertanyaan
+  const qs = await fetchQuestions();
+  if (!qs.length){
+    liveStatus.textContent = "Tambah pertanyaan dulu.";
+    return;
+  }
+
+  const first = qs[0];
+
+  const { data, error } = await supabase
+    .from("cc_rooms")
+    .update({
+      status: "live",
+      current_index: 0,
+      current_question_id: first.id
+    })
+    .eq("id", room.id)
+    .select("*")
+    .single();
+
+  if (error){
+    liveStatus.textContent = error.message;
+    return;
+  }
+
+  room = data;
+  setRoomInfo();
+  setLiveStatus();
+  liveStatus.textContent = "LIVE ✅";
+}
+turn;
 }
 
 if (!data) {
