@@ -255,6 +255,17 @@ async function buzz(){
   answerBox.style.display = "block";
   sendAnswerBtn.disabled = false;
 }
+/* ===== SOUND SYSTEM ===== */
+const sBuzz = new Audio("./sound/buzz.mp3");
+const sCorrect = new Audio("./sound/correct.mp3");
+const sWrong = new Audio("./sound/wrong.mp3");
+const sTimer = new Audio("./sound/timer.mp3");
+const sWinner = new Audio("./sound/winner.mp3");
+
+function play(sound){
+  sound.currentTime = 0;
+  sound.play().catch(()=>{});
+}
 
 async function sendAnswer(){
   const text = (answerText.value || "").trim();
