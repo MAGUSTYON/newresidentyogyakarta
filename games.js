@@ -1,5 +1,17 @@
 import { supabase } from "./supabaseClient.js";
 
+/* ===== SOUND SYSTEM ===== */
+const sBuzz = new Audio("./sounds/buzz.mp3");
+const sCorrect = new Audio("./sounds/correct.mp3");
+const sWrong = new Audio("./sounds/wrong.mp3");
+const sTimer = new Audio("./sounds/timer.mp3");
+const sWinner = new Audio("./sounds/winner.mp3");
+
+function play(sound){
+  sound.currentTime = 0;
+  sound.play().catch(()=>{});
+}
+
 const joinCard = document.getElementById("joinCard");
 const gameCard = document.getElementById("gameCard");
 
@@ -144,6 +156,8 @@ async function syncRoomUI(room){
     await refreshLeaderboard();
     await loadAnswerFeed();
     return;
+    play(sTimer);
+
   }
 
   gameStatus.textContent = `LIVE • Soal #${(room.question_index || 0) + 1}`;
@@ -243,6 +257,7 @@ async function buzz(){
       question_id: state.current_question_id,
       player_id: state.player_id,
       is_winner: true
+      play(sBuzz);
     });
 
   if (error){
@@ -254,17 +269,7 @@ async function buzz(){
   buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
   answerBox.style.display = "block";
   sendAnswerBtn.disabled = false;
-}
-/* ===== SOUND SYSTEM ===== */
-const sBuzz = new Audio("./sound/buzz.mp3");
-const sCorrect = new Audio("./sound/correct.mp3");
-const sWrong = new Audio("./sound/wrong.mp3");
-const sTimer = new Audio("./sound/timer.mp3");
-const sWinner = new Audio("./sound/winner.mp3");
-
-function play(sound){
-  sound.currentTime = 0;
-  sound.play().catch(()=>{});
+  
 }
 
 async function sendAnswer(){
@@ -319,9 +324,16 @@ function subscribeRealtime(){
       if (a.question_id === state.current_question_id){
         await loadAnswerFeed();
         if (a.player_id === state.player_id){
-          if (a.verdict === "correct") answerStatus.textContent = "✅ Benar! (+1)";
-          if (a.verdict === "wrong") answerStatus.textContent = "❌ Salah. Tunggu buzz dibuka lagi.";
-        }
+  if (a.verdict === "correct"){
+    answerStatus.textContent = "✅ Benar!";
+    play(sCorrect);
+  }
+
+  if (a.verdict === "wrong"){
+    answerStatus.textContent = "❌ Salah!";
+    play(sWrong);
+  }
+}
       }
     })
     .subscribe();
