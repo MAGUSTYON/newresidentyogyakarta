@@ -1,11 +1,11 @@
 import { supabase } from "./supabaseClient.js";
 
 /* ===== SOUND SYSTEM ===== */
-const sBuzz = new Audio("./sounds/buzz.mp3");
-const sCorrect = new Audio("./sounds/correct.mp3");
-const sWrong = new Audio("./sounds/wrong.mp3");
-const sTimer = new Audio("./sounds/timer.mp3");
-const sWinner = new Audio("./sounds/winner.mp3");
+const sBuzz = new Audio("./buzz.mp3");
+const sCorrect = new Audio("./correct.mp3");
+const sWrong = new Audio("./wrong.mp3");
+const sTimer = new Audio("./timer.mp3");
+const sWinner = new Audio("./winner.mp3");
 
 function play(sound){
   sound.currentTime = 0;
