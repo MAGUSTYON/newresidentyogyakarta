@@ -117,6 +117,8 @@ async function submitConfession() {
   elImp.value = "";
   elSpotify.value = "";
   await loadFeed();
+  const elStatus = document.getElementById("status");
+
 }
 
 elSubmit.addEventListener("click", submitConfession);
@@ -130,6 +132,7 @@ const closeModal = document.getElementById("closeModal");
 fab.addEventListener("click", () => {
   modal.classList.remove("hidden");
 });
+
 
 closeModal.addEventListener("click", () => {
   modal.classList.add("hidden");
