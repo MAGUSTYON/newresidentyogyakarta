@@ -235,6 +235,124 @@
       cursor: pointer;
       font-weight: 900;
     }
+
+    /* ===== FULLSCREEN, NO PAGE SCROLL ===== */
+html, body{
+  height: 100%;
+}
+body{
+  margin: 0;
+  overflow: hidden;            /* ✅ halaman gak scroll */
+}
+
+/* wrapper utama halaman games */
+.ccWrap{
+  height: 100vh;               /* ✅ full layar */
+  display: flex;
+  flex-direction: column;
+}
+
+/* area konten di bawah header */
+.ccMain{
+  flex: 1;
+  min-height: 0;               /* ✅ penting biar child bisa scroll */
+  display: flex;
+  gap: 18px;
+  padding: 18px;
+}
+
+/* ===== LEFT: LEADERBOARD ===== */
+.ccLeft{
+  width: 320px;                /* responsif: nanti pakai clamp */
+  max-width: 36vw;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;               /* ✅ penting */
+}
+
+/* card leaderboard */
+.ccLbCard{
+  flex: 1;
+  min-height: 0;               /* ✅ penting */
+  display:flex;
+  flex-direction: column;
+}
+
+/* hanya list leaderboard yang scroll */
+#lbList{
+  overflow: auto;              /* ✅ leaderboard scroll */
+  min-height: 0;
+  padding-right: 6px;
+}
+
+/* ===== CENTER: QUESTION + TABS ===== */
+.ccCenter{
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+/* Question box harus ngisi ruang atas */
+.ccQuestion{
+  flex: 1;                     /* ✅ kotak pertanyaan membesar */
+  min-height: 0;
+  display:flex;
+  flex-direction: column;
+}
+
+/* text pertanyaan ikut mengisi */
+.ccQText{
+  flex: 1;
+  min-height: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 0 22px 18px;
+  text-align:center;
+  font-size: clamp(18px, 2.4vw, 30px);  /* ✅ adapt ukuran layar */
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+/* tabs bawah tetap kebaca */
+.ccTabsCard{
+  height: 260px;               /* ✅ fix tinggi biar konsisten */
+  max-height: 35vh;            /* ✅ tapi tetap adapt layar kecil */
+  min-height: 200px;
+  display:flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* feed jawaban boleh scroll di dalam card */
+#feedList{
+  overflow:auto;
+  min-height:0;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 900px){
+  body{ overflow:auto; }       /* ✅ di mobile lebih aman allow scroll */
+  .ccMain{
+    flex-direction: column;
+    overflow:auto;
+  }
+  .ccLeft{
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    order: 2;
+  }
+  .ccCenter{ order: 1; }
+  .ccTabsCard{
+    height: 240px;
+    max-height: 40vh;
+  }
+}
   </style>
 </head>
 
@@ -287,56 +405,60 @@
 
       <!-- GAME CARD -->
       <section class="ccCard" id="gameCard" style="display:none;">
-        <div class="ccTopBar">
-          <div class="ccMeta">
-            <div class="ccMetaRow">
-              <span class="muted">Room:</span> <b id="roomLabel">—</b>
-              <span class="tag" id="meTag">—</span>
-            </div>
-            <div id="gameStatus" class="muted">—</div>
+      <div class="ccWrap">
+  <!-- (header/navbar kamu tetap di atas) -->
+
+  <div class="ccMain" id="gameCard" style="display:none;">
+    <!-- LEFT -->
+    <div class="ccLeft">
+      <div class="card ccLbCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <div>
+            <b>Players</b>
+            <div class="muted" id="lbStatus">—</div>
           </div>
-          <button class="btn secondary" id="leaveBtn">Keluar</button>
+          <div class="muted" id="meTag">—</div>
+        </div>
+        <div style="margin-top:12px;" id="lbList"></div>
+      </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="ccCenter">
+      <div class="ccQuestion">
+        <div class="ccQHeader">PERTANYAAN</div>
+        <div class="ccQText" id="qText">—</div>
+
+        <div class="ccBuzzBar">
+          <button class="btn primary" id="buzzBtn" style="min-width:140px;">BUZZ</button>
         </div>
 
-<div class="ccQuestion">
-  <div class="ccQHeader">PERTANYAAN</div>
-  <div class="ccQText" id="qText">—</div>
+        <div class="muted" id="buzzInfo" style="text-align:center;margin-top:-10px;margin-bottom:8px;"></div>
 
-  <div class="ccBuzzBar">
-    <button class="btn primary" id="buzzBtn" style="min-width:140px;">BUZZ</button>
-  </div>
+        <div id="answerBox" class="ccAnswerBox" style="display:none;">
+          <div class="ccQTitle">Jawab Sekarang</div>
+          <textarea id="answerText" placeholder="Tulis jawaban..."></textarea>
+          <div style="margin-top:10px;">
+            <button class="btn primary" id="sendAnswerBtn">Kirim Jawaban</button>
+            <div class="muted" id="answerStatus"></div>
+          </div>
+        </div>
+      </div>
 
-  <div class="muted" id="buzzInfo" style="text-align:center;margin-top:-10px;margin-bottom:8px;"></div>
+      <div class="card ccTabsCard">
+        <div class="tabs">
+          <button class="tab active" type="button">JAWABAN</button>
+          <button class="tab" type="button">OBROLAN</button>
+        </div>
 
-  <div id="answerBox" class="ccAnswerBox" style="display:none;">
-    <div class="ccQTitle">Jawab Sekarang</div>
-    <textarea id="answerText" placeholder="Tulis jawaban..."></textarea>
-
-    <div style="margin-top:10px;">
-      <button class="btn primary" id="sendAnswerBtn">Kirim Jawaban</button>
-      <div class="muted" id="answerStatus"></div>
+        <div class="muted" id="feedStatus" style="margin-top:8px;">—</div>
+        <div id="feedList" style="margin-top:10px;"></div>
+      </div>
     </div>
   </div>
+
+  <!-- joinCard dll tetap ada -->
 </div>
-
-        <div class="ccBottom">
-          <div class="ccTabs">
-            <button class="ccTab active" data-tab="answers" type="button">ANSWERS</button>
-            <button class="ccTab" data-tab="chat" type="button">CHAT</button>
-          </div>
-
-          <div class="ccTabBody">
-            <div id="paneAnswers">
-              <div class="muted" id="feedStatus"></div>
-              <div class="ccFeed" id="feedList"></div>
-            </div>
-
-            <div id="paneChat" style="display:none;">
-              <div class="muted">Chat coming soon…</div>
-            </div>
-          </div>
-        </div>
-
       </section>
 
     </main>
