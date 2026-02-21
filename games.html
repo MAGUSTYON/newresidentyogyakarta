@@ -195,102 +195,82 @@
 
       <section class="card" id="gameCard" style="display:none;">
        <!-- DALAM #gameCard -->
-<div class="cc-layout">
+<div class="ccWrap ccWrap--kahoot">
 
-  <!-- LEFT: Leaderboard -->
-  <aside class="cc-left">
-    <div class="cc-left-head">
-      <div class="cc-left-title">Players</div>
-      <div class="cc-left-sub" id="lbStatus">—</div>
+  <!-- LEFT: Players = Leaderboard -->
+  <aside class="ccSide">
+    <div class="ccPanelHead">
+      <div>
+        <b>Players</b>
+        <div class="muted" id="lbStatus">—</div>
+      </div>
+      <div class="ccMe" id="meTag">—</div>
     </div>
 
-    <div class="cc-left-list" id="lbList">
-      <!-- isi dari JS -->
-    </div>
+    <div class="ccPlayers" id="lbList"></div>
   </aside>
 
-  <!-- CENTER: Main -->
-  <main class="cc-main">
-    <div class="cc-main-card">
-      <div class="cc-main-top">
-        <div class="cc-room">
-          <b>Room:</b> <span id="roomLabel">—</span>
-          <span class="cc-me" id="meTag">—</span>
+  <!-- CENTER: Main (lebih gede) -->
+  <main class="ccMain">
+    <!-- JOIN CARD -->
+    <section class="ccCard" id="joinCard">
+      <!-- … sama seperti sebelumnya … -->
+    </section>
+
+    <!-- GAME CARD -->
+    <section class="ccCard ccCard--big" id="gameCard" style="display:none;">
+      <div class="ccTopBar">
+        <div>
+          <div class="muted">Room: <b id="roomLabel">—</b></div>
+          <div id="gameStatus" class="muted">—</div>
+        </div>
+        <button class="btn secondary" id="leaveBtn" type="button">Keluar</button>
+      </div>
+
+      <!-- KARTU SOAL BESAR -->
+      <div class="ccQuestion ccQuestion--big">
+        <div class="ccQTitle">Pertanyaan</div>
+        <div class="ccQText ccQText--big" id="qText">—</div>
+
+        <div class="ccBuzzRow">
+          <button class="btn primary" id="buzzBtn" type="button">BUZZ</button>
+          <div class="muted" id="buzzInfo"></div>
         </div>
 
-        <button class="cc-x" id="leaveBtn" type="button">Keluar</button>
-      </div>
-
-      <div class="cc-state" id="gameStatus">Waiting…</div>
-
-      <!-- soal -->
-      <div class="cc-question">
-        <div class="cc-q-title">Pertanyaan</div>
-        <div class="cc-q-text" id="qText">—</div>
-      </div>
-
-      <div class="cc-actions">
-        <button class="cc-btn cc-buzz" id="buzzBtn" type="button">BUZZ</button>
-        <div class="cc-muted" id="buzzInfo"></div>
-      </div>
-
-      <!-- jawaban peserta -->
-      <div class="cc-answerbox" id="answerBox" style="display:none;">
-        <div class="cc-q-title">Jawab sekarang</div>
-        <textarea id="answerText" class="cc-input" rows="3" placeholder="Tulis jawaban..."></textarea>
-        <div class="cc-row">
-          <button class="cc-btn" id="sendAnswerBtn" type="button">Kirim Jawaban</button>
-          <div class="cc-muted" id="answerStatus"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTTOM: Tabs -->
-    <section class="cc-bottom">
-      <div class="cc-tabs">
-        <button class="cc-tab is-active" data-tab="answers" type="button">ANSWERS</button>
-        <button class="cc-tab" data-tab="chat" type="button">CHAT</button>
-      </div>
-
-      <div class="cc-panels">
-        <!-- Answers panel -->
-        <div class="cc-panel is-active" data-panel="answers">
-          <div class="cc-panel-head">
-            <span class="cc-muted" id="feedStatus">—</span>
-          </div>
-          <div class="cc-panel-body" id="feedList"></div>
-        </div>
-
-        <!-- Chat panel (placeholder dulu) -->
-        <div class="cc-panel" data-panel="chat">
-          <div class="cc-panel-head">
-            <span class="cc-muted">Chat coming soon…</span>
-          </div>
-          <div class="cc-panel-body">
-            <div class="cc-chat-empty">Belum ada chat.</div>
-          </div>
-          <div class="cc-panel-input">
-            <input class="cc-input" placeholder="Chat here..." disabled />
+        <div id="answerBox" class="ccAnswerBox" style="display:none;">
+          <div class="ccQTitle">Jawab sekarang</div>
+          <textarea id="answerText" placeholder="Tulis jawaban..." rows="4"></textarea>
+          <div class="ccActions" style="margin-top:10px;">
+            <button class="btn primary" id="sendAnswerBtn" type="button">Kirim Jawaban</button>
+            <small id="answerStatus" class="muted"></small>
           </div>
         </div>
       </div>
+
+      <!-- BOTTOM: Answers/Chat -->
+      <div class="ccBottom">
+        <div class="ccTabs">
+          <button class="ccTab active" type="button" data-tab="answers">ANSWERS</button>
+          <button class="ccTab" type="button" data-tab="chat">CHAT</button>
+        </div>
+
+        <div class="ccTabBody">
+          <div class="ccTabPane" id="paneAnswers">
+            <div class="muted" id="feedStatus"></div>
+            <div class="ccFeed" id="feedList"></div>
+          </div>
+
+          <div class="ccTabPane" id="paneChat" style="display:none;">
+            <div class="muted">Chat coming soon…</div>
+            <input class="ccChatInput" placeholder="Chat here..." disabled />
+          </div>
+        </div>
+      </div>
+
     </section>
   </main>
-
 </div>
       </section>
-
-      <!-- RIGHT -->
-      <aside class="card leaderboard-mini">
-        <div class="row" style="justify-content:space-between;align-items:center;">
-          <h2 style="margin:0;">Leaderboard</h2>
-          <span class="tag" id="meTag">—</span>
-        </div>
-        <div class="muted" id="lbStatus" style="margin-top:8px;"></div>
-        <div id="lbList"></div>
-      </aside>
-    </div>
-  </main>
 
   <div class="overlay" id="endOverlay">
     <div class="modal">
