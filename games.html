@@ -193,42 +193,90 @@
       </section>
 
       <section class="card" id="gameCard" style="display:none;">
-        <div class="row" style="justify-content:space-between; align-items:flex-start;">
-          <div>
-            <h2 style="margin-bottom:6px;">Room: <span id="roomLabel" style="color:var(--pink)"></span></h2>
-            <div class="muted" id="gameStatus"></div>
+       <!-- DALAM #gameCard -->
+<div class="cc-layout">
+
+  <!-- LEFT: Leaderboard -->
+  <aside class="cc-left">
+    <div class="cc-left-head">
+      <div class="cc-left-title">Players</div>
+      <div class="cc-left-sub" id="lbStatus">—</div>
+    </div>
+
+    <div class="cc-left-list" id="lbList">
+      <!-- isi dari JS -->
+    </div>
+  </aside>
+
+  <!-- CENTER: Main -->
+  <main class="cc-main">
+    <div class="cc-main-card">
+      <div class="cc-main-top">
+        <div class="cc-room">
+          <b>Room:</b> <span id="roomLabel">—</span>
+          <span class="cc-me" id="meTag">—</span>
+        </div>
+
+        <button class="cc-x" id="leaveBtn" type="button">Keluar</button>
+      </div>
+
+      <div class="cc-state" id="gameStatus">Waiting…</div>
+
+      <!-- soal -->
+      <div class="cc-question">
+        <div class="cc-q-title">Pertanyaan</div>
+        <div class="cc-q-text" id="qText">—</div>
+      </div>
+
+      <div class="cc-actions">
+        <button class="cc-btn cc-buzz" id="buzzBtn" type="button">BUZZ</button>
+        <div class="cc-muted" id="buzzInfo"></div>
+      </div>
+
+      <!-- jawaban peserta -->
+      <div class="cc-answerbox" id="answerBox" style="display:none;">
+        <div class="cc-q-title">Jawab sekarang</div>
+        <textarea id="answerText" class="cc-input" rows="3" placeholder="Tulis jawaban..."></textarea>
+        <div class="cc-row">
+          <button class="cc-btn" id="sendAnswerBtn" type="button">Kirim Jawaban</button>
+          <div class="cc-muted" id="answerStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM: Tabs -->
+    <section class="cc-bottom">
+      <div class="cc-tabs">
+        <button class="cc-tab is-active" data-tab="answers" type="button">ANSWERS</button>
+        <button class="cc-tab" data-tab="chat" type="button">CHAT</button>
+      </div>
+
+      <div class="cc-panels">
+        <!-- Answers panel -->
+        <div class="cc-panel is-active" data-panel="answers">
+          <div class="cc-panel-head">
+            <span class="cc-muted" id="feedStatus">—</span>
           </div>
-          <button class="btn ghost" id="leaveBtn">Keluar</button>
+          <div class="cc-panel-body" id="feedList"></div>
         </div>
 
-        <div class="hr"></div>
-
-        <h2 style="margin-bottom:6px;">Pertanyaan</h2>
-        <div class="muted" id="qText" style="white-space:pre-wrap;">—</div>
-
-        <div class="hr"></div>
-
-        <div class="row" style="justify-content:space-between;">
-          <button class="btn" id="buzzBtn">BUZZ</button>
-          <span class="muted" id="buzzInfo"></span>
-        </div>
-
-        <!-- ANSWER RIGHT (di card kanan nanti) tapi di mobile tetap kebaca -->
-        <div id="answerBox" style="display:none; margin-top:14px;">
-          <h2 style="margin-bottom:8px;">Jawab Sekarang</h2>
-          <textarea id="answerText" placeholder="Tulis jawabanmu..."></textarea>
-          <div class="row" style="margin-top:10px;">
-            <button class="btn" id="sendAnswerBtn">Kirim Jawaban</button>
-            <span class="muted" id="answerStatus"></span>
+        <!-- Chat panel (placeholder dulu) -->
+        <div class="cc-panel" data-panel="chat">
+          <div class="cc-panel-head">
+            <span class="cc-muted">Chat coming soon…</span>
           </div>
-          <div class="muted" style="margin-top:6px;">* Setelah kirim, kamu tidak bisa jawab lagi untuk soal ini.</div>
+          <div class="cc-panel-body">
+            <div class="cc-chat-empty">Belum ada chat.</div>
+          </div>
+          <div class="cc-panel-input">
+            <input class="cc-input" placeholder="Chat here..." disabled />
+          </div>
         </div>
+      </div>
+    </section>
+  </main>
 
-        <div class="hr"></div>
-
-        <h2 style="margin-bottom:6px;">Jawaban yang Masuk</h2>
-        <div class="muted" id="feedStatus"></div>
-        <div class="answers" id="feedList"></div>
+</div>
       </section>
 
       <!-- RIGHT -->
