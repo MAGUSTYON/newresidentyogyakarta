@@ -5,14 +5,16 @@ const elSpotify = document.getElementById("spotify_url");
 const elMsg = document.getElementById("message");
 const elImp = document.getElementById("impression");
 const elSubmit = document.getElementById("submitBtn");
-const elStatus = document.getElementById("status"); // ✅ FIX
 
 const elList = document.getElementById("list");
 const elRefresh = document.getElementById("refreshBtn");
 
-function setStatus(text = "") {
+// ✅ FIX: ini yang bikin kamu crash sebelumnya
+const elStatus = document.getElementById("status");
+
+function setStatus(text, kind = "info") {
   if (!elStatus) return;
-  elStatus.style.display = text ? "inline-block" : "none";
+  elStatus.style.display = "inline-block";
   elStatus.textContent = text;
 }
 
@@ -38,6 +40,7 @@ function spotifyEmbedFromUrl(url) {
   } catch (_) {}
 
   if (!id) return null;
+
   const src = `https://open.spotify.com/embed/track/${id}`;
   return `
     <div class="embed">
@@ -55,18 +58,22 @@ function spotifyEmbedFromUrl(url) {
 
 function renderItem(item) {
   const name = item.name?.trim() ? escapeHtml(item.name.trim()) : "Anonim";
-  const created = item.created_at ? new Date(item.created_at).toLocaleString("id-ID") : "";
+  const created = new Date(item.created_at).toLocaleString("id-ID");
   const msg = escapeHtml(item.message || "");
   const imp = escapeHtml(item.impression || "");
   const embed = spotifyEmbedFromUrl(item.spotify_url);
 
   return `
     <div class="card">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+      <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
         <div><b>${name}</b> <span class="badge">${created}</span></div>
       </div>
-      <p style="white-space:pre-wrap;margin:10px 0 0;">${msg}</p>
-      ${imp ? `<p style="white-space:pre-wrap;color:#b8b8c7;margin:10px 0 0;"><b>Impression:</b>\n${imp}</p>` : ""}
+      <p style="white-space:pre-wrap; margin:10px 0 0;">${msg}</p>
+      ${
+        imp
+          ? `<p style="white-space:pre-wrap; color:#b8b8c7; margin:10px 0 0;"><b>Impression:</b>\n${imp}</p>`
+          : ""
+      }
       ${embed ? `<div style="margin-top:12px;">${embed}</div>` : ""}
     </div>
   `;
@@ -88,9 +95,8 @@ async function loadFeed() {
     return;
   }
 
-  elList.innerHTML = (data && data.length)
-    ? data.map(renderItem).join("")
-    : `<small>Belum ada confession.</small>`;
+  elList.innerHTML =
+    (data || []).map(renderItem).join("") || `<small>Belum ada confession.</small>`;
 }
 
 async function submitConfession() {
@@ -119,7 +125,6 @@ async function submitConfession() {
   }
 
   setStatus("Terkirim ✅");
-
   if (elMsg) elMsg.value = "";
   if (elImp) elImp.value = "";
   if (elSpotify) elSpotify.value = "";
@@ -127,8 +132,9 @@ async function submitConfession() {
   await loadFeed();
 }
 
-elSubmit?.addEventListener("click", submitConfession);
-elRefresh?.addEventListener("click", loadFeed);
+// events
+if (elSubmit) elSubmit.addEventListener("click", submitConfession);
+if (elRefresh) elRefresh.addEventListener("click", loadFeed);
 
-// auto load
+// ✅ ini penting: jalanin load pertama
 loadFeed();
