@@ -276,25 +276,26 @@
           <button class="btn secondary" id="leaveBtn">Keluar</button>
         </div>
 
-        <div class="ccQuestion">
-          <div class="ccQTitle">Pertanyaan</div>
-          <div class="ccQText" id="qText">—</div>
+<div class="ccQuestion">
+  <div class="ccQHeader">PERTANYAAN</div>
+  <div class="ccQText" id="qText">—</div>
 
-          <div class="ccBuzzRow">
-            <button class="btn primary" id="buzzBtn">BUZZ</button>
-            <div class="muted" id="buzzInfo"></div>
-          </div>
+  <div class="ccBuzzBar">
+    <button class="btn primary" id="buzzBtn" style="min-width:140px;">BUZZ</button>
+  </div>
 
-          <div id="answerBox" class="ccAnswerBox" style="display:none;">
-            <div class="ccQTitle">Jawab Sekarang</div>
-            <textarea id="answerText" placeholder="Tulis jawaban..."></textarea>
+  <div class="muted" id="buzzInfo" style="text-align:center;margin-top:-10px;margin-bottom:8px;"></div>
 
-            <div style="margin-top:10px;">
-              <button class="btn primary" id="sendAnswerBtn">Kirim Jawaban</button>
-              <div class="muted" id="answerStatus"></div>
-            </div>
-          </div>
-        </div>
+  <div id="answerBox" class="ccAnswerBox" style="display:none;">
+    <div class="ccQTitle">Jawab Sekarang</div>
+    <textarea id="answerText" placeholder="Tulis jawaban..."></textarea>
+
+    <div style="margin-top:10px;">
+      <button class="btn primary" id="sendAnswerBtn">Kirim Jawaban</button>
+      <div class="muted" id="answerStatus"></div>
+    </div>
+  </div>
+</div>
 
         <div class="ccBottom">
           <div class="ccTabs">
