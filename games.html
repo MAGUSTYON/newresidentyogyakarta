@@ -84,33 +84,55 @@
       font-weight: 700;
     }
 
-    .ccQuestion{
-      padding: 22px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      min-height: 260px;
-    }
+   /* === QUESTION BOX (like photo) === */
+.ccQuestion{
+  padding: 0;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  overflow: hidden;
+}
 
+/* Header kecil "PERTANYAAN" */
+.ccQHeader{
+  padding: 14px 18px 8px;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.70);
+  font-size: 12px;
+}
     .ccQTitle{
       font-weight: 800;
       color: var(--pink);
       margin-bottom: 10px;
     }
-    .ccQText{
-      font-size: 22px;
-      line-height: 1.4;
-      white-space: pre-wrap;
-      margin-bottom: 16px;
-    }
+    /* Isi pertanyaan gede */
+.ccQText{
+  padding: 0 22px 18px;
+  text-align: center;
+  font-size: 26px;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  min-height: 220px; /* bikin kotaknya "gede" */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+    /* BUZZ di tengah bawah */
+.ccBuzzBar{
+  padding: 14px 18px 18px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap: 12px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
 
-    .ccBuzzRow{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-
+.ccBuzzBar .muted{
+  text-align:center;
+}
     .ccAnswerBox{
       margin-top: 16px;
       padding-top: 16px;
