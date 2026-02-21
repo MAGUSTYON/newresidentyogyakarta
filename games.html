@@ -1,430 +1,313 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Games • New Resident Yogyakarta</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Games • New Resident Yogyakarta</title>
 
-  <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="styles.css" />
 
-  <style>
-    /* ===== Layout khusus Games ===== */
-    .ccWrap{
-      max-width: 1200px;
-      margin: 24px auto;
-      padding: 0 18px 30px;
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 18px;
-    }
-    @media (max-width: 980px){
-      .ccWrap{ grid-template-columns: 1fr; }
-    }
+<style>
 
-    /* LEFT - Players */
-    .ccSide{
-      position: sticky;
-      top: 90px;
-      align-self: start;
-    }
-    .ccPlayers{
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(12,10,24,.55);
-      overflow: hidden;
-      max-height: calc(100vh - 160px);
-      overflow-y: auto;
-    }
-    .ccPlayers .lb-item{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding: 14px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-    .ccPlayers .lb-item:last-child{ border-bottom:none; }
+/* =========================
+   FULLSCREEN LAYOUT
+========================= */
 
-    /* MAIN */
-    .ccCard{
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(12,10,24,.55);
-      padding: 18px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.5);
-    }
-
-    .ccTopBar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom: 14px;
-      gap:12px;
-    }
-
-    .ccMeta{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .ccMetaRow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      font-size: 12px;
-      color: #fff;
-      font-weight: 700;
-    }
-
-   /* === QUESTION BOX (like photo) === */
-.ccQuestion{
-  padding: 0;
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  overflow: hidden;
-}
-
-/* Header kecil "PERTANYAAN" */
-.ccQHeader{
-  padding: 14px 18px 8px;
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.70);
-  font-size: 12px;
-}
-    .ccQTitle{
-      font-weight: 800;
-      color: var(--pink);
-      margin-bottom: 10px;
-    }
-    /* Isi pertanyaan gede */
-.ccQText{
-  padding: 0 22px 18px;
-  text-align: center;
-  font-size: 26px;
-  line-height: 1.35;
-  white-space: pre-wrap;
-  min-height: 220px; /* bikin kotaknya "gede" */
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-    /* BUZZ di tengah bawah */
-.ccBuzzBar{
-  padding: 14px 18px 18px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap: 12px;
-  border-top: 1px solid rgba(255,255,255,.10);
-}
-
-.ccBuzzBar .muted{
-  text-align:center;
-}
-    .ccAnswerBox{
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255,255,255,.10);
-    }
-    .ccAnswerBox textarea{
-      width:100%;
-      min-height: 120px;
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color:#fff;
-      resize: vertical;
-    }
-
-    .ccBottom{
-      margin-top: 16px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      overflow: hidden;
-    }
-
-    .ccTabs{
-      display:flex;
-      gap:10px;
-      padding: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-    .ccTab{
-      flex:1;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:#fff;
-      cursor:pointer;
-      font-weight:900;
-    }
-    .ccTab.active{
-      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
-      color:#0b0a12;
-    }
-
-    .ccTabBody{
-      padding: 14px;
-      max-height: 260px;
-      overflow-y:auto;
-    }
-
-    .ccFeed .a{
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      margin-top: 10px;
-    }
-
-    .muted{
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    /* ===== Final Overlay (dibutuhkan games.js) ===== */
-    .overlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(10px);
-      display: none; /* games.js akan set ke flex */
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 4000;
-    }
-    .overlayBox{
-      width: 100%;
-      max-width: 720px;
-      border-radius: 26px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(12,10,24,.92);
-      box-shadow: 0 28px 90px rgba(0,0,0,.7);
-      padding: 18px;
-    }
-    .overlayHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 10px;
-    }
-    .iconBtn{
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      cursor: pointer;
-      font-weight: 900;
-    }
-
-    /* ===== FULLSCREEN, NO PAGE SCROLL ===== */
 html, body{
-  height: 100%;
+  height:100%;
 }
+
 body{
-  margin: 0;
-  overflow: hidden;            /* ✅ halaman gak scroll */
+  margin:0;
+  overflow:hidden; /* ❗ halaman tidak scroll */
 }
 
-/* wrapper utama halaman games */
+/* wrapper utama */
 .ccWrap{
-  height: 100vh;               /* ✅ full layar */
-  display: flex;
-  flex-direction: column;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
 }
 
-/* area konten di bawah header */
+/* area di bawah header */
 .ccMain{
-  flex: 1;
-  min-height: 0;               /* ✅ penting biar child bisa scroll */
-  display: flex;
-  gap: 18px;
-  padding: 18px;
+  flex:1;
+  display:flex;
+  gap:18px;
+  padding:18px;
+  min-height:0;
 }
 
-/* ===== LEFT: LEADERBOARD ===== */
+/* =========================
+   LEFT: LEADERBOARD
+========================= */
+
 .ccLeft{
-  width: 320px;                /* responsif: nanti pakai clamp */
-  max-width: 36vw;
-  min-width: 240px;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;               /* ✅ penting */
+  width:320px;
+  max-width:35vw;
+  min-width:240px;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
 
-/* card leaderboard */
 .ccLbCard{
-  flex: 1;
-  min-height: 0;               /* ✅ penting */
+  flex:1;
   display:flex;
-  flex-direction: column;
+  flex-direction:column;
+  min-height:0;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(12,10,24,.55);
+  padding:16px;
 }
 
-/* hanya list leaderboard yang scroll */
 #lbList{
-  overflow: auto;              /* ✅ leaderboard scroll */
-  min-height: 0;
-  padding-right: 6px;
+  margin-top:12px;
+  overflow:auto; /* ❗ hanya leaderboard yang scroll */
+  min-height:0;
 }
 
-/* ===== CENTER: QUESTION + TABS ===== */
-.ccCenter{
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-height: 0;
-}
-
-/* Question box harus ngisi ruang atas */
-.ccQuestion{
-  flex: 1;                     /* ✅ kotak pertanyaan membesar */
-  min-height: 0;
+.lb-item{
   display:flex;
-  flex-direction: column;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.05);
+  margin-bottom:8px;
 }
 
-/* text pertanyaan ikut mengisi */
+/* =========================
+   CENTER
+========================= */
+
+.ccCenter{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  min-height:0;
+}
+
+/* =========================
+   QUESTION BOX
+========================= */
+
+.ccQuestion{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  overflow:hidden;
+}
+
+.ccQHeader{
+  padding:14px 18px 8px;
+  text-align:center;
+  font-weight:900;
+  letter-spacing:.15em;
+  font-size:12px;
+  color:rgba(255,255,255,.65);
+  text-transform:uppercase;
+}
+
 .ccQText{
-  flex: 1;
-  min-height: 0;
+  flex:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 0 22px 18px;
+  padding:0 22px 18px;
   text-align:center;
-  font-size: clamp(18px, 2.4vw, 30px);  /* ✅ adapt ukuran layar */
-  line-height: 1.35;
-  white-space: pre-wrap;
+  font-size:clamp(18px, 2.5vw, 32px); /* responsive */
+  line-height:1.35;
+  white-space:pre-wrap;
 }
 
-/* tabs bawah tetap kebaca */
-.ccTabsCard{
-  height: 260px;               /* ✅ fix tinggi biar konsisten */
-  max-height: 35vh;            /* ✅ tapi tetap adapt layar kecil */
-  min-height: 200px;
+.ccBuzzBar{
+  padding:16px;
   display:flex;
-  flex-direction: column;
-  min-height: 0;
+  justify-content:center;
+  border-top:1px solid rgba(255,255,255,.10);
 }
 
-/* feed jawaban boleh scroll di dalam card */
+.ccAnswerBox{
+  padding:16px;
+  border-top:1px solid rgba(255,255,255,.10);
+}
+
+.ccAnswerBox textarea{
+  width:100%;
+  min-height:110px;
+  border-radius:16px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  resize:vertical;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.ccTabsCard{
+  height:260px;
+  max-height:35vh;
+  min-height:200px;
+  display:flex;
+  flex-direction:column;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(12,10,24,.55);
+  padding:14px;
+  min-height:0;
+}
+
+.ccTabs{
+  display:flex;
+  gap:10px;
+}
+
+.ccTab{
+  flex:1;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.ccTab.active{
+  background:linear-gradient(180deg,#f2a3c7,#d98ab7);
+  color:#0b0a12;
+}
+
+.ccTabBody{
+  flex:1;
+  overflow:hidden;
+  margin-top:12px;
+  min-height:0;
+}
+
 #feedList{
   overflow:auto;
   min-height:0;
 }
 
-/* ===== MOBILE ===== */
-@media (max-width: 900px){
-  body{ overflow:auto; }       /* ✅ di mobile lebih aman allow scroll */
+.muted{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* =========================
+   OVERLAY WINNER
+========================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(10px);
+  z-index:9999;
+}
+
+.overlayBox{
+  width:100%;
+  max-width:700px;
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(12,10,24,.95);
+  padding:18px;
+}
+
+.iconBtn{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  cursor:pointer;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width:900px){
+  body{ overflow:auto; }
   .ccMain{
-    flex-direction: column;
+    flex-direction:column;
     overflow:auto;
   }
   .ccLeft{
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-    order: 2;
-  }
-  .ccCenter{ order: 1; }
-  .ccTabsCard{
-    height: 240px;
-    max-height: 40vh;
+    width:100%;
+    max-width:none;
   }
 }
-  </style>
+
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER (ikut styles.css kamu) -->
-  <header class="header">
-    <div class="headerInner">
-      <div class="brand">
-        <b>New Resident</b>
-        <small>Yogyakarta</small>
-      </div>
-
-      <nav class="nav">
-        <a href="index.html">Beranda</a>
-        <a href="confession.html">Confession</a>
-        <a href="event.html">Event</a>
-        <a class="active" href="games.html">Games</a>
-      </nav>
+<header class="header">
+  <div class="headerInner">
+    <div class="brand">
+      <b>New Resident</b>
+      <small>Yogyakarta</small>
     </div>
-  </header>
+    <nav class="nav">
+      <a href="index.html">Beranda</a>
+      <a href="confession.html">Confession</a>
+      <a href="event.html">Event</a>
+      <a class="active" href="games.html">Games</a>
+    </nav>
+  </div>
+</header>
 
-  <div class="ccWrap">
+<div class="ccWrap">
 
-    <!-- LEFT: Players / Leaderboard -->
-    <aside class="ccSide">
-      <div style="margin-bottom:10px;">
-        <b>Players</b>
-        <div class="muted" id="lbStatus">—</div>
-      </div>
-      <div class="ccPlayers" id="lbList"></div>
-    </aside>
+  <!-- JOIN CARD -->
+  <section class="ccMain" id="joinCard">
+    <div style="margin:auto;">
+      <input id="roomCode" placeholder="Kode Room" />
+      <input id="nickname" placeholder="Nickname" />
+      <button class="btn primary" id="joinBtn">Join</button>
+      <div class="muted" id="joinStatus"></div>
+    </div>
+  </section>
 
-    <!-- MAIN -->
-    <main>
-
-      <!-- JOIN CARD -->
-      <section class="ccCard" id="joinCard">
-        <h2 style="margin:0 0 8px;">Cerdas Cermat (Live)</h2>
-        <p class="muted" style="margin-bottom:14px;">Masukkan kode room dari admin dan nickname kamu.</p>
-
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <input id="roomCode" placeholder="Kode Room" />
-          <input id="nickname" placeholder="Nickname" />
-          <button class="btn primary" id="joinBtn">Join</button>
-        </div>
-
-        <div class="muted" id="joinStatus" style="margin-top:8px;"></div>
-      </section>
-
-      <!-- GAME CARD -->
-      <section class="ccCard" id="gameCard" style="display:none;">
-      <div class="ccWrap">
-  <!-- (header/navbar kamu tetap di atas) -->
-
+  <!-- GAME CARD -->
   <div class="ccMain" id="gameCard" style="display:none;">
+
     <!-- LEFT -->
     <div class="ccLeft">
-      <div class="card ccLbCard">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <div class="ccLbCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <b>Players</b>
             <div class="muted" id="lbStatus">—</div>
           </div>
           <div class="muted" id="meTag">—</div>
         </div>
-        <div style="margin-top:12px;" id="lbList"></div>
+        <div id="lbList"></div>
       </div>
     </div>
 
     <!-- CENTER -->
     <div class="ccCenter">
+
       <div class="ccQuestion">
         <div class="ccQHeader">PERTANYAAN</div>
         <div class="ccQText" id="qText">—</div>
@@ -433,10 +316,9 @@ body{
           <button class="btn primary" id="buzzBtn" style="min-width:140px;">BUZZ</button>
         </div>
 
-        <div class="muted" id="buzzInfo" style="text-align:center;margin-top:-10px;margin-bottom:8px;"></div>
+        <div class="muted" id="buzzInfo" style="text-align:center;"></div>
 
         <div id="answerBox" class="ccAnswerBox" style="display:none;">
-          <div class="ccQTitle">Jawab Sekarang</div>
           <textarea id="answerText" placeholder="Tulis jawaban..."></textarea>
           <div style="margin-top:10px;">
             <button class="btn primary" id="sendAnswerBtn">Kirim Jawaban</button>
@@ -445,66 +327,61 @@ body{
         </div>
       </div>
 
-      <div class="card ccTabsCard">
-        <div class="tabs">
-          <button class="tab active" type="button">JAWABAN</button>
-          <button class="tab" type="button">OBROLAN</button>
+      <div class="ccTabsCard">
+        <div class="ccTabs">
+          <button class="ccTab active" data-tab="answers">JAWABAN</button>
+          <button class="ccTab" data-tab="chat">OBROLAN</button>
         </div>
 
-        <div class="muted" id="feedStatus" style="margin-top:8px;">—</div>
-        <div id="feedList" style="margin-top:10px;"></div>
+        <div class="ccTabBody">
+          <div id="paneAnswers">
+            <div class="muted" id="feedStatus"></div>
+            <div id="feedList"></div>
+          </div>
+
+          <div id="paneChat" style="display:none;">
+            <div class="muted">Chat coming soon…</div>
+          </div>
+        </div>
       </div>
+
     </div>
+
   </div>
 
-  <!-- joinCard dll tetap ada -->
 </div>
-      </section>
 
-    </main>
-
-  </div>
-
-  <!-- Final Leaderboard Overlay (dibutuhkan games.js) -->
-  <div class="overlay" id="endOverlay">
-    <div class="overlayBox">
-      <div class="overlayHead">
-        <div>
-          <h2 style="margin:0;color:var(--pink);">🏆 Leaderboard Akhir</h2>
-          <div class="muted" id="finalSub">—</div>
-        </div>
-        <button class="iconBtn" id="closeOverlay" aria-label="Tutup">✕</button>
+<!-- FINAL OVERLAY -->
+<div class="overlay" id="endOverlay">
+  <div class="overlayBox">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <h2 style="margin:0;color:var(--pink);">🏆 Leaderboard Akhir</h2>
+        <div class="muted" id="finalSub"></div>
       </div>
-      <div id="finalList"></div>
+      <button class="iconBtn" id="closeOverlay">✕</button>
     </div>
+    <div id="finalList" style="margin-top:14px;"></div>
   </div>
+</div>
 
-  <!-- Games Logic -->
-  <script type="module" src="games.js"></script>
+<script type="module" src="games.js"></script>
 
-  <!-- Tabs -->
-  <script>
-    const tabs = document.querySelectorAll(".ccTab");
-    const paneAnswers = document.getElementById("paneAnswers");
-    const paneChat = document.getElementById("paneChat");
+<script>
+const tabs=document.querySelectorAll(".ccTab");
+const paneAnswers=document.getElementById("paneAnswers");
+const paneChat=document.getElementById("paneChat");
 
-    tabs.forEach(t=>{
-      t.addEventListener("click", ()=>{
-        tabs.forEach(x=>x.classList.remove("active"));
-        t.classList.add("active");
-
-        const tab = t.getAttribute("data-tab");
-        paneAnswers.style.display = (tab==="answers") ? "block" : "none";
-        paneChat.style.display = (tab==="chat") ? "block" : "none";
-      });
-    });
-
-    // klik background overlay untuk tutup juga
-    const endOverlay = document.getElementById("endOverlay");
-    endOverlay?.addEventListener("click", (e)=>{
-      if (e.target === endOverlay) endOverlay.style.display = "none";
-    });
-  </script>
+tabs.forEach(t=>{
+  t.addEventListener("click",()=>{
+    tabs.forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    const tab=t.getAttribute("data-tab");
+    paneAnswers.style.display=(tab==="answers")?"block":"none";
+    paneChat.style.display=(tab==="chat")?"block":"none";
+  });
+});
+</script>
 
 </body>
 </html>
