@@ -434,6 +434,26 @@
 #answerBox[data-disabled="1"] button{
   cursor: not-allowed;
 }
+
+/* Biar layout nggak kepanjangan */
+.panel .feedBox{
+  max-height: 40vh;       /* atur: 35-45vh enak */
+  overflow: hidden;       /* jangan scroll seluruh box */
+}
+
+/* Yang boleh scroll hanya list feed */
+#feedList{
+  max-height: 18vh;       /* khusus area list */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Biar textarea nggak makan tempat kebanyakan */
+#answerText{
+  height: 110px;
+  max-height: 110px;
+  resize: none;
+}
   </style>
 </head>
 
