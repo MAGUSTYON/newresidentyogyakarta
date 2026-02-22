@@ -4,161 +4,173 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Games • Cerdas Cermat</title>
+
+  <!-- CSS lama kamu (biar warna/tema tetap sama) -->
   <link rel="stylesheet" href="styles.css" />
-  <!-- CSS layout khusus games -->
+  <!-- CSS layout baru -->
   <link rel="stylesheet" href="games.css" />
 </head>
 
 <body>
-  <!-- Header kamu (biar konsisten sama halaman lain) -->
-  <header class="header">
-    <div class="headerInner">
-      <div class="brand">
-        <b>New Resident</b>
-        <small>Yogyakarta</small>
-      </div>
 
-      <nav class="nav">
-        <a href="index.html">Beranda</a>
-        <a href="confession.html">Confession</a>
-        <a href="event.html">Event</a>
-        <a class="active" href="games.html">Games</a>
-      </nav>
+  <!-- HEADER (biar sama kayak halaman lain) -->
+  <header class="cc-header">
+    <div class="cc-brand">
+      <b>New Resident</b>
+      <small>Yogyakarta</small>
     </div>
+
+    <nav class="cc-nav">
+      <a href="index.html">Beranda</a>
+      <a href="confession.html">Confession</a>
+      <a href="event.html">Event</a>
+      <a class="active" href="games.html">Games</a>
+    </nav>
   </header>
 
-  <main class="cc-wrap">
-    <!-- =============== JOIN CARD =============== -->
-    <section id="joinCard" class="cc-join card">
-      <h1 class="cc-title">Cerdas Cermat (Live)</h1>
+  <!-- JOIN CARD -->
+  <section id="joinCard" class="cc-joinWrap">
+    <div class="cc-card cc-joinCard">
+      <h2 class="cc-title">Cerdas Cermat (Live)</h2>
       <p class="cc-sub">Masukkan kode room dari admin dan nickname kamu.</p>
 
-      <div class="cc-join-grid">
-        <div>
+      <div class="cc-joinGrid">
+        <div class="cc-field">
           <label>Kode Room</label>
-          <input id="roomCode" placeholder="XXXXXX" autocomplete="off" />
+          <input id="roomCode" placeholder="ABCDE1" autocomplete="off" />
         </div>
-        <div>
+
+        <div class="cc-field">
           <label>Nickname</label>
           <input id="nickname" placeholder="nama kamu" autocomplete="off" />
         </div>
+
+        <button id="joinBtn" class="cc-btn cc-btnPrimary" type="button">Join</button>
       </div>
 
-      <button id="joinBtn" class="btn cc-btn">Join</button>
-      <div id="joinStatus" class="cc-muted" style="margin-top:10px;"></div>
-    </section>
+      <div id="joinStatus" class="cc-status"></div>
+    </div>
+  </section>
 
-    <!-- =============== GAME CARD =============== -->
-    <section id="gameCard" class="cc-game" style="display:none;">
-      <!-- KIRI: LEADERBOARD (SCROLL DI SINI AJA) -->
-      <aside class="cc-left card">
-        <div class="cc-left-head">
-          <div>
-            <div class="cc-left-title">Players</div>
-            <div id="lbStatus" class="cc-muted">—</div>
+  <!-- GAME CARD -->
+  <section id="gameCard" class="cc-gameWrap" style="display:none;">
+    <div class="cc-shell">
+
+      <!-- LEFT: LEADERBOARD -->
+      <aside class="cc-side">
+        <div class="cc-card cc-sideCard">
+          <div class="cc-sideHeader">
+            <div>
+              <h3 class="cc-sideTitle">Leaderboard</h3>
+              <div id="lbStatus" class="cc-muted">—</div>
+            </div>
+            <div class="cc-meTag" id="meTag">—</div>
           </div>
-          <div id="meTag" class="cc-me">—</div>
-        </div>
 
-        <div id="lbList" class="cc-left-list">
-          <!-- diisi games.js -->
+          <!-- SCROLL AREA: cuma ini yang scroll -->
+          <div class="cc-sideList" id="lbList">
+            <div class="cc-muted">Belum ada peserta.</div>
+          </div>
         </div>
       </aside>
 
-      <!-- TENGAH: PERTANYAAN + BUZZ -->
-      <section class="cc-center">
-        <div class="cc-question card">
-          <div class="cc-q-top">
-            <div>
-              <div class="cc-roomline">
-                <span class="cc-muted">Room:</span>
-                <b id="roomLabel">—</b>
+      <!-- CENTER -->
+      <main class="cc-main">
+
+        <!-- TOP: QUESTION + BUZZ -->
+        <div class="cc-card cc-questionCard">
+          <div class="cc-roomRow">
+            <div class="cc-roomInfo">
+              <div class="cc-roomCode">
+                Room: <span id="roomLabel">-</span>
               </div>
-              <div id="gameStatus" class="cc-muted" style="margin-top:6px;">—</div>
+              <div id="gameStatus" class="cc-muted">—</div>
             </div>
 
-            <button id="leaveBtn" class="btn secondary cc-leave" type="button">Keluar</button>
+            <button id="leaveBtn" class="cc-btn cc-btnGhost" type="button">Keluar</button>
           </div>
 
-          <div class="cc-q-body">
-            <div class="cc-q-label">PERTANYAAN</div>
-            <div id="qText" class="cc-q-text">—</div>
-          </div>
+          <div class="cc-questionCenter">
+            <div class="cc-qLabel">PERTANYAAN</div>
+            <div id="qText" class="cc-qText">—</div>
 
-          <div class="cc-q-divider"></div>
-
-          <div class="cc-q-actions">
-            <button id="buzzBtn" class="btn cc-buzz" type="button" disabled>BUZZ</button>
-            <div id="buzzInfo" class="cc-muted" style="margin-top:10px;"></div>
+            <button id="buzzBtn" class="cc-btn cc-btnBuzz" type="button">BUZZ</button>
+            <div id="buzzInfo" class="cc-status cc-statusCenter"></div>
           </div>
         </div>
 
-        <!-- BAWAH: TAB JAWABAN / OBROLAN (OBROLAN placeholder) -->
-        <div class="cc-bottom card">
+        <!-- BOTTOM: ANSWERS + CHAT -->
+        <div class="cc-card cc-bottomCard">
           <div class="cc-tabs">
             <button class="cc-tab active" type="button" data-tab="answers">JAWABAN</button>
             <button class="cc-tab" type="button" data-tab="chat">OBROLAN</button>
           </div>
 
           <div class="cc-panels">
-            <!-- ANSWERS -->
-            <div class="cc-panel" data-panel="answers">
-              <div class="cc-panel-top">
-                <div id="feedStatus" class="cc-muted"></div>
-              </div>
 
-              <div id="feedList" class="cc-feed">
-                <!-- diisi games.js -->
-              </div>
-
-              <!-- box jawab hanya muncul kalau menang buzz -->
-              <div id="answerBox" class="cc-answerbox" style="display:none;">
-                <textarea id="answerText" class="cc-input" placeholder="Jawab di sini..."></textarea>
-                <div class="cc-answer-actions">
-                  <button id="sendAnswerBtn" class="btn cc-btn" type="button">Kirim Jawaban</button>
-                  <div id="answerStatus" class="cc-muted"></div>
+            <!-- ANSWERS PANEL -->
+            <section class="cc-panel active" data-panel="answers">
+              <!-- answerBox (muncul setelah menang buzz) -->
+              <div id="answerBox" class="cc-answerBox" style="display:none;">
+                <label class="cc-answerLabel">Jawab sekarang</label>
+                <textarea id="answerText" class="cc-answerInput" placeholder="Tulis jawaban..."></textarea>
+                <div class="cc-answerRow">
+                  <button id="sendAnswerBtn" class="cc-btn cc-btnPrimary" type="button">Kirim Jawaban</button>
+                  <div id="answerStatus" class="cc-status"></div>
                 </div>
               </div>
-            </div>
 
-            <!-- CHAT (placeholder) -->
-            <div class="cc-panel" data-panel="chat" style="display:none;">
-              <div class="cc-muted">Chat coming soon…</div>
-            </div>
+              <div class="cc-feedHead">
+                <div id="feedStatus" class="cc-muted">—</div>
+              </div>
+
+              <div id="feedList" class="cc-feedList">
+                <div class="cc-muted">Belum ada jawaban.</div>
+              </div>
+            </section>
+
+            <!-- CHAT PANEL (placeholder dulu, sesuai request kamu) -->
+            <section class="cc-panel" data-panel="chat">
+              <div class="cc-chatBox">
+                <div class="cc-muted">Chat coming soon…</div>
+              </div>
+            </section>
+
           </div>
         </div>
-      </section>
-    </section>
 
-    <!-- =============== FINAL OVERLAY (ENDED) =============== -->
+      </main>
+    </div>
+
+    <!-- FINAL OVERLAY (winner muncul saat admin end game) -->
     <div id="endOverlay" class="cc-overlay" style="display:none;">
-      <div class="cc-overlay-box card">
-        <div class="cc-overlay-head">
-          <h2 style="margin:0;">Leaderboard Akhir</h2>
-          <button id="closeOverlay" class="btn secondary" type="button">Tutup</button>
+      <div class="cc-overlayBox">
+        <div class="cc-overlayHead">
+          <h2 class="cc-overlayTitle">🏆 Final Leaderboard</h2>
+          <button id="closeOverlay" class="cc-btn cc-btnGhost" type="button">Tutup</button>
         </div>
-        <div id="finalSub" class="cc-muted" style="margin-top:6px;"></div>
-        <div id="finalList" style="margin-top:12px;"></div>
+        <div id="finalSub" class="cc-muted"></div>
+        <div id="finalList" class="cc-finalList"></div>
       </div>
     </div>
-  </main>
 
+  </section>
+
+  <!-- Tabs switch (pure UI, gak ganggu games.js kamu) -->
   <script>
-    // tab switcher (pure UI)
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".cc-tab");
       if (!btn) return;
+
       const tab = btn.getAttribute("data-tab");
-
-      document.querySelectorAll(".cc-tab").forEach(x => x.classList.remove("active"));
-      btn.classList.add("active");
-
+      document.querySelectorAll(".cc-tab").forEach(x => x.classList.toggle("active", x === btn));
       document.querySelectorAll(".cc-panel").forEach(p => {
-        p.style.display = (p.getAttribute("data-panel") === tab) ? "block" : "none";
+        p.classList.toggle("active", p.getAttribute("data-panel") === tab);
       });
     });
   </script>
 
+  <!-- IMPORTANT: pastikan ini bener file JS kamu (bukan ke-load HTML 404) -->
   <script type="module" src="games.js"></script>
 </body>
 </html>
