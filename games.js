@@ -269,11 +269,18 @@ async function syncRoomUI(room) {
 
   const q = await fetchQuestion(room.current_question_id);
   qText.textContent = q?.question_text || "—";
-
-  // reset answer area every new question
-  answerStatus.textContent = "";
-  answerText.value = "";
-  setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
+  
+// reset answer area every new question
+answerBox.style.display = "block";   // boleh tetap tampil
+answerStatus.textContent = "Tekan BUZZ dulu untuk menjawab.";
+answerText.value = "";
+answerText.disabled = true;          // wajib
+sendAnswerBtn.disabled = true;       // wajib
+  
+  if (prevQ !== room.current_question_id) {
+    setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
+    answerText.value = "";
+  }
   
   await refreshLeaderboard();
   await loadAnswerFeed();
@@ -376,17 +383,17 @@ async function buzz() {
     return;
   }
 
-  play(sBuzz);
-  buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
-  answerBox.style.display = "block";
-  sendAnswerBtn.disabled = false;
+ // setelah buzz sukses
+play(sBuzz);
+buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
+answerBox.style.display = "block";
 
-  // UNLOCK obrolan saat menang buzz
-  lockObrolan(false);
-  // optional: otomatis pindah tab obrolan
-  // setActiveTab("obrolan");
-}
-
+// TAMBAH INI
+answerText.disabled = false;
+sendAnswerBtn.disabled = false;
+answerStatus.textContent = ""; // optional, biar bersih
+answerText.focus();            // optional, auto fokus
+  
 async function sendAnswer() {
   if (!canAnswer) {
     answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
