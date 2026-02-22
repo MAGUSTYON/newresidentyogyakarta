@@ -723,6 +723,120 @@
   .stageBottom{ grid-template-columns: 1fr; }
   .stageLeftBody{ max-height: 260px; }
 }
+    /* =========================
+   MOBILE / HP RESPONSIVE
+   ========================= */
+@media (max-width: 720px) {
+  /* biar tidak maksa 100vh (di hp sering bikin kepotong) */
+  .gameWrap {
+    height: auto;
+    min-height: 100vh;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* header jadi rapih di hp */
+  .gameTop {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand b { font-size: 16px; }
+  .brand small { font-size: 10px; }
+
+  .nav {
+    gap: 6px;
+  }
+  .nav a {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  /* dua kolom jadi 1 kolom (stack) */
+  .gameMain {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* leaderboard jangan kegedean, kasih scroll sendiri */
+  .lbCard {
+    max-height: 280px;
+  }
+  .lbBody {
+    max-height: 220px;
+    overflow: auto;
+  }
+
+  /* center column: jangan pakai 1fr yang bikin panel terlalu tinggi */
+  .centerCol {
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+
+  /* question card: rapetin */
+  .qCard {
+    padding: 14px;
+  }
+  #qText {
+    font-size: 40px; /* biar tidak kebesaran */
+    line-height: 1.05;
+  }
+
+  /* tombol buzz full di hp */
+  #buzzBtn {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* bottom panel */
+  .bottomCard {
+    padding: 12px;
+  }
+
+  /* tabs lebih kecil */
+  .tab {
+    padding: 10px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+  }
+
+  /* PANEL JAWABAN: tinggi lebih kecil di hp biar gak perlu scroll halaman */
+  #panelJawaban {
+    height: 360px;
+    max-height: 52vh;
+  }
+
+  /* feed lebih dominan, input lebih ringkas */
+  #feedList {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  /* textarea jangan kegedean di hp */
+  #answerText {
+    height: 64px;
+    max-height: 64px;
+    resize: none;
+    padding-right: 120px; /* ruang tombol */
+  }
+
+  /* tombol kirim jangan “keluar layar” */
+  #sendAnswerBtn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    transform: none;
+    padding: 10px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+
+  /* join grid jadi 1 kolom */
+  .joinGrid {
+    grid-template-columns: 1fr;
+  }
+}
   </style>
 </head>
 
