@@ -382,7 +382,7 @@ async function buzz() {
     buzzInfo.textContent = "Kamu telat 😭 (" + error.message + ")";
     return;
   }
-
+}
  // setelah buzz sukses
 play(sBuzz);
 buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
