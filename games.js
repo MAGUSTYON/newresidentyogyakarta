@@ -1,3 +1,4 @@
+// games.js
 import { supabase } from "./supabaseClient.js";
 
 /* ===== SOUND SYSTEM (ALL IN ROOT) ===== */
@@ -34,11 +35,13 @@ const buzzInfo = document.getElementById("buzzInfo");
 const answerBox = document.getElementById("answerBox");
 const answerText = document.getElementById("answerText");
 const sendAnswerBtn = document.getElementById("sendAnswerBtn");
-const answerStatus = document.getElementById("answerStatus");
+// NOTE: di HTML stage4 kamu TIDAK punya #answerStatus, jadi kita guard:
+const answerStatus = document.getElementById("answerStatus") || null;
 
 const leaveBtn = document.getElementById("leaveBtn");
 
-const feedStatus = document.getElementById("feedStatus");
+// NOTE: di HTML stage4 kamu TIDAK punya #feedStatus, jadi kita guard:
+const feedStatus = document.getElementById("feedStatus") || null;
 const feedList = document.getElementById("feedList");
 
 const lbStatus = document.getElementById("lbStatus");
@@ -50,7 +53,9 @@ const closeOverlay = document.getElementById("closeOverlay");
 const finalSub = document.getElementById("finalSub");
 const finalList = document.getElementById("finalList");
 
-/* ===== TAB DOM (Jawaban / Obrolan) ===== */
+/* ===== TAB DOM (Jawaban / Obrolan) =====
+   (Kalau kamu sudah pindah ke layout 4 kotak tanpa tabs, ini aman karena pakai optional chaining)
+*/
 let tabJawaban = document.getElementById("tabJawaban");
 let tabObrolan = document.getElementById("tabObrolan");
 let panelJawaban = document.getElementById("panelJawaban");
@@ -74,7 +79,6 @@ function lockObrolan(locked) {
 
   tabObrolan?.classList.toggle("is-locked", locked);
   tabObrolan?.setAttribute("aria-disabled", locked ? "true" : "false");
-  // optional: biar cursor beda kalau locked
   tabObrolan && (tabObrolan.style.pointerEvents = locked ? "none" : "auto");
   tabObrolan && (tabObrolan.style.opacity = locked ? "0.55" : "1");
 }
@@ -123,18 +127,15 @@ let canAnswer = false;
 function setAnswerEnabled(enabled, note = "") {
   canAnswer = !!enabled;
 
-  answerText.disabled = !canAnswer;
-  sendAnswerBtn.disabled = !canAnswer;
+  if (answerText) answerText.disabled = !canAnswer;
+  if (sendAnswerBtn) sendAnswerBtn.disabled = !canAnswer;
 
   // kasih style biar keliatan disabled
-  answerBox.dataset.disabled = canAnswer ? "0" : "1";
+  if (answerBox) answerBox.dataset.disabled = canAnswer ? "0" : "1";
 
-  if (!canAnswer) {
-    // jangan hapus teks user kalau lagi ngetik, tapi kamu bisa kalau mau:
-    // answerText.value = "";
+  if (answerStatus) {
     if (note) answerStatus.textContent = note;
-  } else {
-    if (note) answerStatus.textContent = note;
+    else answerStatus.textContent = "";
   }
 }
 
@@ -158,6 +159,7 @@ function clearState() {
   };
 }
 
+/* ===== show/hide ===== */
 function showJoin(msg = "") {
   joinCard.style.display = "block";
   gameCard.style.display = "none";
@@ -166,7 +168,9 @@ function showJoin(msg = "") {
 
 function showGame() {
   joinCard.style.display = "none";
+  // penting: harus grid biar 4 kotak jalan
   gameCard.style.display = "grid";
+
   roomLabel.textContent = state.room_code || "-";
   meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
 }
@@ -235,7 +239,7 @@ async function syncRoomUI(room) {
   if (room.status === "ended") {
     gameStatus.textContent = "Sesi sudah berakhir.";
     buzzBtn.disabled = true;
-    setAnswerEnabled(false, "Sesi sudah berakhir.")
+    setAnswerEnabled(false, "Sesi sudah berakhir.");
     await refreshLeaderboard();
     await loadAnswerFeed();
     await showFinalOverlay();
@@ -257,8 +261,12 @@ async function syncRoomUI(room) {
   if (prevQ !== room.current_question_id) {
     setActiveTab("jawaban");
     lockObrolan(true);
+
+    // reset jawab untuk soal baru
+    if (answerText) answerText.value = "";
+    setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
   } else {
-    // tetap pastikan default tab jawaban (biar konsisten)
+    // tetap pastikan default tab jawaban
     setActiveTab("jawaban");
   }
 
@@ -269,22 +277,7 @@ async function syncRoomUI(room) {
 
   const q = await fetchQuestion(room.current_question_id);
   qText.textContent = q?.question_text || "—";
-  
-if (prevQ !== room.current_question_id) {
-  // reset tab + lock obrolan
-  setActiveTab("jawaban");
-  lockObrolan(true);
 
-  // reset jawab untuk soal baru
-  answerBox.style.display = "block";
-  answerText.value = "";
-  setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
-} else {
-  // jangan ganggu state jawab kalau soal sama
-  // cukup pastikan box tampil
-  answerBox.style.display = "block";
-}
-  
   await refreshLeaderboard();
   await loadAnswerFeed();
 }
@@ -324,9 +317,17 @@ async function refreshLeaderboard() {
 }
 
 /* ===== Feed Answers ===== */
+function scrollFeedToBottom() {
+  if (!feedList) return;
+  // tunggu DOM selesai render
+  queueMicrotask(() => {
+    feedList.scrollTop = feedList.scrollHeight;
+  });
+}
+
 async function loadAnswerFeed() {
   if (!state.current_question_id) {
-    feedStatus.textContent = "";
+    if (feedStatus) feedStatus.textContent = "";
     feedList.innerHTML = "";
     return;
   }
@@ -339,40 +340,80 @@ async function loadAnswerFeed() {
     .limit(50);
 
   if (error) {
-    feedStatus.textContent = "Feed error: " + error.message;
+    if (feedStatus) feedStatus.textContent = "Feed error: " + error.message;
     feedList.innerHTML = "";
     return;
   }
 
   if (!data?.length) {
-    feedStatus.textContent = "Belum ada jawaban.";
-    feedList.innerHTML = `<div class="a"><span class="muted">Belum ada jawaban.</span></div>`;
+    if (feedStatus) feedStatus.textContent = "";
+    feedList.innerHTML = `
+      <div class="ansItem">
+        <span style="opacity:.75">Belum ada jawaban.</span>
+      </div>`;
     return;
   }
 
-  feedStatus.textContent = `${data.length} jawaban`;
+  if (feedStatus) feedStatus.textContent = `${data.length} jawaban`;
+
   feedList.innerHTML = data
-    .map(
-      (a) => `
-    <div class="a">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
-        <b>${esc(a.cc_players?.nickname || "Player")}</b>
-        <span class="verdict">${esc(a.verdict)}</span>
-      </div>
-      <div style="white-space:pre-wrap;margin-top:8px;">${esc(a.answer_text)}</div>
-    </div>
-  `
-    )
+    .map((a) => {
+      const verdict = a.verdict || "pending";
+      const name = a.cc_players?.nickname || "Player";
+      return `
+        <div class="ansItem">
+          <div class="meta">
+            <span><b>${esc(name)}</b></span>
+            <span class="verdict">${esc(verdict)}</span>
+          </div>
+          <div style="white-space:pre-wrap;">${esc(a.answer_text)}</div>
+        </div>
+      `;
+    })
     .join("");
+
+  scrollFeedToBottom();
 }
 
 /* ===== GAME ACTIONS ===== */
+
+/**
+ * BUZZ FIX (MINIMUM):
+ * - cek dulu apakah sudah ada winner untuk question ini
+ * - kalau belum ada, insert is_winner:true
+ *
+ * Catatan: ini masih bisa race condition kalau 2 orang klik bareng persis.
+ * Yang paling aman itu pakai trigger/RPC di Supabase. Tapi ini sudah jauh lebih bener
+ * daripada sebelumnya (semua orang jadi winner).
+ */
 async function buzz() {
   if (!state.room_id || !state.player_id || !state.current_question_id) return;
 
   buzzBtn.disabled = true;
   buzzInfo.textContent = "Mengirim buzz…";
 
+  // 1) cek apakah sudah ada pemenang buzz
+  const { data: existing, error: checkErr } = await supabase
+    .from("cc_buzzes")
+    .select("id")
+    .eq("room_id", state.room_id)
+    .eq("question_id", state.current_question_id)
+    .eq("is_winner", true)
+    .limit(1);
+
+  if (checkErr) {
+    buzzBtn.disabled = false;
+    buzzInfo.textContent = "Gagal cek buzz: " + checkErr.message;
+    return;
+  }
+
+  if (existing?.length) {
+    buzzBtn.disabled = false;
+    buzzInfo.textContent = "Kamu telat 😭";
+    return;
+  }
+
+  // 2) insert sebagai winner
   const { error } = await supabase.from("cc_buzzes").insert({
     room_id: state.room_id,
     question_id: state.current_question_id,
@@ -386,32 +427,31 @@ async function buzz() {
     return;
   }
 
- // setelah buzz sukses
-// setelah buzz sukses
-play(sBuzz);
-buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
-answerBox.style.display = "block";
+  // setelah buzz sukses
+  play(sBuzz);
+  buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
 
-setAnswerEnabled(true, "");     // ✅ ini yang bikin canAnswer = true
-answerStatus.textContent = "";
-answerText.focus();
+  setAnswerEnabled(true, "");
+  if (answerText) answerText.focus();
 
-// kalau mau obrolan kebuka setelah menang buzz (sesuai requestmu)
-lockObrolan(false);
-}  
+  // kalau mau obrolan kebuka setelah menang buzz
+  lockObrolan(false);
+}
+
 async function sendAnswer() {
   if (!canAnswer) {
-    answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
+    if (answerStatus) answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
     return;
   }
-  const text = (answerText.value || "").trim();
+
+  const text = (answerText?.value || "").trim();
   if (!text) {
-    answerStatus.textContent = "Jawaban tidak boleh kosong.";
+    if (answerStatus) answerStatus.textContent = "Jawaban tidak boleh kosong.";
     return;
   }
 
   sendAnswerBtn.disabled = true;
-  answerStatus.textContent = "Mengirim jawaban…";
+  if (answerStatus) answerStatus.textContent = "Mengirim jawaban…";
 
   const { error } = await supabase.from("cc_answers").insert({
     room_id: state.room_id,
@@ -422,11 +462,14 @@ async function sendAnswer() {
 
   if (error) {
     sendAnswerBtn.disabled = false;
-    answerStatus.textContent = "Gagal kirim: " + error.message;
+    if (answerStatus) answerStatus.textContent = "Gagal kirim: " + error.message;
     return;
   }
 
-  answerStatus.textContent = "Jawaban terkirim. Menunggu verifikasi admin…";
+  // setelah kirim: kunci lagi (biar 1x jawab per buzz)
+  if (answerText) answerText.value = "";
+  setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+
   await loadAnswerFeed();
 }
 
@@ -459,23 +502,21 @@ function subscribeRealtime() {
       { event: "*", schema: "public", table: "cc_answers", filter: `room_id=eq.${state.room_id}` },
       async (p) => {
         const a = p.new;
+        if (!a) return;
         if (a.question_id !== state.current_question_id) return;
 
         // update status pribadi + sound verdict
         if (a.player_id === state.player_id) {
           if (a.verdict === "correct") {
-            answerStatus.textContent = "✅ Benar!";
+            if (answerStatus) answerStatus.textContent = "✅ Benar!";
             play(sCorrect);
           } else if (a.verdict === "wrong") {
-            answerStatus.textContent = "❌ Salah!";
+            if (answerStatus) answerStatus.textContent = "❌ Salah!";
             play(sWrong);
 
-            // kalau salah, admin biasanya delete buzzes -> berarti buzz dibuka lagi
+            // kalau salah: buka buzz lagi & lock jawab
             buzzBtn.disabled = false;
             setAnswerEnabled(false, "Salah. Tekan BUZZ lagi untuk menjawab.");
-            buzzBtn.disabled = false;
-            lockObrolan(true);
-            setActiveTab("jawaban");
 
             // LOCK obrolan lagi kalau salah + balik jawaban
             lockObrolan(true);
@@ -551,12 +592,20 @@ joinBtn?.addEventListener("click", async () => {
     }
     await joinRoom(code, nick);
   } catch (e) {
-    joinStatus.textContent = e.message || "Gagal join.";
+    joinStatus.textContent = e?.message || "Gagal join.";
   }
 });
 
 buzzBtn?.addEventListener("click", buzz);
 sendAnswerBtn?.addEventListener("click", sendAnswer);
+
+// Enter untuk kirim (enak buat pill input)
+answerText?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendAnswer();
+  }
+});
 
 leaveBtn?.addEventListener("click", () => {
   unsubscribe();
