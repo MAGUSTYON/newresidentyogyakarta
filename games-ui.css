@@ -1,0 +1,252 @@
+/* Layout khusus Games: warna ikut styles.css lama, ini cuma struktur/posisi */
+
+.g-wrap{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+/* Join card */
+.g-card{
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(12,10,24,.72);
+  box-shadow: 0 28px 90px rgba(0,0,0,.55);
+}
+
+.g-join{ padding: 16px; max-width: 820px; }
+.g-title{ margin:0 0 6px; }
+.g-muted{ color: rgba(255,255,255,.72); font-size: 13px; }
+.g-label{ display:block; font-size: 13px; color: rgba(255,255,255,.8); margin-bottom: 6px; }
+
+.g-joinRow{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.g-input{
+  width:100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  padding: 12px 12px;
+  outline: none;
+}
+
+/* GAME GRID: kiri leaderboard, tengah game */
+.g-grid{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap: 14px;
+
+  /* tinggi pas layar, biar gak scroll halaman */
+  min-height: calc(100vh - 110px);
+  align-items: stretch;
+}
+
+.g-left{
+  padding: 14px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden; /* penting */
+}
+
+.g-leftHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.g-leftTitle{ font-weight: 800; }
+
+.g-meTag{
+  font-size: 12px;
+  color: rgba(255,255,255,.8);
+}
+
+.g-leftList{
+  margin-top: 12px;
+  overflow:auto;         /* ✅ cuma ini yang scroll */
+  padding-right: 6px;
+}
+
+/* item leaderboard (pakai markup dari games.js kamu) */
+.lb-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  margin-bottom: 10px;
+}
+
+.g-center{
+  display:flex;
+  flex-direction:column;
+  gap: 14px;
+  overflow:hidden;
+}
+
+/* Question card */
+.g-qCard{
+  padding: 14px;
+  flex: 0 0 auto;
+}
+
+.g-qTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap: 12px;
+}
+
+.g-qTitle{
+  text-align:center;
+  margin-top: 14px;
+  letter-spacing:.2em;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255,255,255,.75);
+}
+
+.g-qText{
+  text-align:center;
+  font-size: clamp(28px, 4vw, 58px);
+  font-weight: 900;
+  margin: 10px 0 8px;
+}
+
+.g-buzz{
+  display:block;
+  margin: 0 auto;
+  min-width: 140px;
+  border-radius: 999px;
+}
+
+/* Bottom section: tabs nempel */
+.g-bottom{
+  padding: 12px;
+  flex: 1 1 auto;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.g-tabs{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  /* ✅ nempel */
+  margin: 0;
+  padding: 0;
+}
+
+.g-tab{
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color:#fff;
+  padding: 10px 12px;
+  font-weight: 900;
+  letter-spacing:.08em;
+  cursor:pointer;
+}
+
+.g-tab.is-active{
+  background: rgba(242,163,199,.85);
+  color:#0b0a12;
+  border-color: rgba(255,255,255,.18);
+}
+
+.g-tab.is-locked{
+  opacity: .45;
+  cursor: not-allowed;
+  pointer-events: none; /* ✅ gak bisa dipencet */
+}
+
+.g-panels{
+  margin-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding-top: 12px;
+
+  overflow:hidden;
+  flex: 1 1 auto;
+  display:flex;
+}
+
+.g-panel{
+  display:none;
+  flex: 1;
+  overflow:auto;
+  padding-right: 6px;
+}
+
+.g-panel.is-active{ display:block; }
+
+.g-panelTitle{
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.g-textarea{
+  width:100%;
+  min-height: 110px;
+  resize: vertical;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color:#fff;
+  padding: 12px;
+  outline:none;
+}
+
+/* feed */
+.g-feed .a{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  border-radius: 16px;
+  padding: 12px;
+  margin-top: 10px;
+}
+.verdict{ color: rgba(255,255,255,.75); font-size: 12px; }
+
+/* Overlay */
+.g-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+  z-index: 9999;
+}
+.g-overlayBox{
+  width: min(720px, 94vw);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(12,10,24,.92);
+  padding: 14px;
+}
+
+/* Responsive */
+@media (max-width: 980px){
+  .g-grid{
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .g-left{
+    max-height: 260px; /* leaderboard jadi panel atas tapi tetep scroll */
+  }
+}
