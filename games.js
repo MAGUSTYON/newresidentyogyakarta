@@ -235,7 +235,7 @@ async function syncRoomUI(room) {
   if (room.status === "ended") {
     gameStatus.textContent = "Sesi sudah berakhir.";
     buzzBtn.disabled = true;
-    answerBox.style.display = "none";
+    setAnswerEnabled(false, "Sesi sudah berakhir.")
     await refreshLeaderboard();
     await loadAnswerFeed();
     await showFinalOverlay();
@@ -247,7 +247,7 @@ async function syncRoomUI(room) {
     qText.textContent = "—";
     buzzBtn.disabled = true;
     buzzInfo.textContent = "Buzz akan aktif saat live.";
-    answerBox.style.display = "none";
+    setAnswerEnabled(false, "Jawaban aktif saat LIVE dan kamu menang BUZZ.");
     await refreshLeaderboard();
     await loadAnswerFeed();
     return;
@@ -271,11 +271,10 @@ async function syncRoomUI(room) {
   qText.textContent = q?.question_text || "—";
 
   // reset answer area every new question
-  answerBox.style.display = "none";
   answerStatus.textContent = "";
   answerText.value = "";
-  sendAnswerBtn.disabled = false;
-
+  setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
+  
   await refreshLeaderboard();
   await loadAnswerFeed();
 }
@@ -389,6 +388,10 @@ async function buzz() {
 }
 
 async function sendAnswer() {
+  if (!canAnswer) {
+    answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
+    return;
+  }
   const text = (answerText.value || "").trim();
   if (!text) {
     answerStatus.textContent = "Jawaban tidak boleh kosong.";
