@@ -391,3 +391,25 @@
     grid-template-columns: 1fr;
   }
 }
+/* === Biar answerBox "nempel" ke box bawah === */
+.cc-answerBox{
+  margin-bottom: 0;                 /* sebelumnya 12px */
+  border-bottom-left-radius: 0;     /* biar nyatu */
+  border-bottom-right-radius: 0;
+  border-bottom: 0;                /* hilang garis bawah, nyambung ke feed */
+  padding-bottom: 14px;
+}
+
+/* Feed list nyambung ke answerBox */
+.cc-feedList{
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: 0;                   /* sebelumnya ada border-top */
+  margin-top: 0;
+  padding-top: 12px;
+}
+
+/* Biar panel jawaban keliatan satu kotak rapi */
+.cc-panel.active{
+  gap: 0;                          /* jangan ada jarak antar bagian */
+}
