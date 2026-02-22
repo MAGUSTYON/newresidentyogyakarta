@@ -454,6 +454,71 @@
   max-height: 110px;
   resize: none;
 }
+    /* ===== JAWABAN PANEL LAYOUT FIX ===== */
+
+/* Panel jawaban jadi flex column */
+#panelJawaban {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0; /* penting biar scroll internal bisa jalan */
+}
+
+/* 1) HILANGKAN teks status dobel "Belum ada jawaban." */
+#feedStatus {
+  display: none !important;
+}
+
+/* Kadang kamu juga punya container status lain, kalau masih dobel, aktifkan ini:
+#panelJawaban .muted { display:none !important; }
+*/
+
+/* 2) NAIKKAN box input (answerBox) ke ATAS dan bikin nempel */
+#answerBox {
+  order: 1;               /* <-- ini bikin dia di atas feed */
+  margin: 0 !important;
+  padding: 14px;
+  border-radius: 16px;
+}
+
+/* Optional: kalau answerBox masih punya tinggi besar */
+#answerBox textarea,
+#answerText {
+  min-height: 90px;
+  max-height: 140px;
+  resize: vertical;
+}
+
+/* 3) Feed list (daftar jawaban) di bawah, dan jadi scroll area */
+#feedList {
+  order: 2;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 6px; /* biar scroll gak nabrak */
+}
+
+/* Scrollbar halus (opsional) */
+#feedList::-webkit-scrollbar {
+  width: 8px;
+}
+#feedList::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* 4) Kalau "Belum ada jawaban" muncul sebagai item feed (dari innerHTML kamu),
+      tetap tampil sebagai placeholder tapi jangan jadi box besar jelek */
+#feedList .a .muted,
+#feedList .muted {
+  opacity: 0.75;
+}
+
+/* 5) Pastikan seluruh panel (kotak bawah) tidak bikin halaman scroll panjang */
+#panelJawaban,
+#panelObrolan {
+  min-height: 0;
+}
   </style>
 </head>
 
