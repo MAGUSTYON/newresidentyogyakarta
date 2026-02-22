@@ -112,6 +112,41 @@ function showGame() {
   roomLabel.textContent = state.room_code || "-";
   meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
 }
+
+// ===== Tabs (Jawaban/Obrolan) =====
+const tabJawaban = document.getElementById("tabJawaban");
+const tabObrolan = document.getElementById("tabObrolan");
+const panelJawaban = document.getElementById("panelJawaban");
+const panelObrolan = document.getElementById("panelObrolan");
+
+let chatUnlocked = false;
+
+function setActiveTab(name){
+  const jawaban = name === "jawaban";
+  tabJawaban?.classList.toggle("is-active", jawaban);
+  tabObrolan?.classList.toggle("is-active", !jawaban);
+
+  panelJawaban?.classList.toggle("is-active", jawaban);
+  panelObrolan?.classList.toggle("is-active", !jawaban);
+}
+
+function setChatLocked(locked){
+  // locked = true -> obrolan gak bisa dipencet
+  tabObrolan?.classList.toggle("is-locked", locked);
+  tabObrolan?.setAttribute("aria-disabled", locked ? "true" : "false");
+  chatUnlocked = !locked;
+}
+
+tabJawaban?.addEventListener("click", ()=> setActiveTab("jawaban"));
+tabObrolan?.addEventListener("click", ()=>{
+  if (!chatUnlocked) return;
+  setActiveTab("obrolan");
+});
+
+// default: obrolan terkunci
+setActiveTab("jawaban");
+setChatLocked(true);
+
 function activateJawabanTab() {
   tabJawaban.classList.add("active");
   tabObrolan.classList.remove("active");
