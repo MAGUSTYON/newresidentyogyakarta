@@ -426,6 +426,14 @@
       color: #fff;
       cursor:pointer;
     }
+    #answerBox[data-disabled="1"]{
+  opacity: .65;
+  filter: grayscale(.15);
+}
+#answerBox[data-disabled="1"] textarea,
+#answerBox[data-disabled="1"] button{
+  cursor: not-allowed;
+}
   </style>
 </head>
 
