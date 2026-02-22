@@ -272,71 +272,66 @@
     }
     .panel.is-active{ display:block; }
 
-    /* feed box */
-    .feedBox{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 12px;
-      min-height: 140px;
-      max-height: 260px;
-      overflow:auto;
-    }
+  /* PANEL JAWABAN: atas history (scroll), bawah input */
+#panelJawaban{
+  display:flex;
+  flex-direction:column;
+  height: 420px;       /* bisa kamu naikin/turunin */
+  max-height: 55vh;
+  overflow:hidden;
+  gap:12px;
+}
 
-    #feedStatus{
-      color: rgba(255,255,255,.7);
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-    .a{
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      border-radius: 14px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-    }
-    .verdict{
-      font-size: 12px;
-      opacity: .85;
-    }
+/* HISTORY = AREA BIRU (SCROLL DI SINI AJA) */
+#feedList{
+  flex: 1;
+  overflow-y:auto;
+  padding-right:8px;
+  padding-bottom:8px;
+}
 
-    /* answer form (hidden sampai menang buzz — dihandle JS) */
-    #answerBox{
-      margin-top: 12px;
-      border-top: 1px solid rgba(255,255,255,.10);
-      padding-top: 12px;
-      height: 90px !important;
-    }
-    #answerText{
-      width:100%;
-      min-height: 90px;
-      resize: vertical;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color:#fff;
-      padding: 10px 12px;
-      outline:none;
-      box-sizing:border-box;
-      height: 90px !important;
-    }
-    #sendAnswerBtn{
-      margin-top: 10px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(180deg, var(--pink), var(--pink2));
-      color:#0b0a12;
-      font-weight: 900;
-      cursor:pointer;
-    }
-    #sendAnswerBtn:disabled{ opacity:.6; cursor:not-allowed; }
-    #answerStatus{
-      margin-top: 8px;
-      font-size: 12px;
-      color: rgba(255,255,255,.78);
-      min-height: 16px;
-    }
+/* scrollbar */
+#feedList::-webkit-scrollbar{ width:8px; }
+#feedList::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.18);
+  border-radius: 99px;
+}
+
+/* AREA INPUT = MERAH (NEMPEL BAWAH) */
+#answerBox{
+  flex-shrink:0;
+  position: relative;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* textarea jangan kegedean */
+#answerText{
+  width:100%;
+  height:72px;
+  resize:none;
+}
+
+/* tombol kirim nempel kanan bawah */
+#sendAnswerBtn{
+  position:absolute;
+  right: 0;
+  bottom: 0;
+  transform: translateY(6px); /* biar agak turun dikit kayak gambar */
+}
+
+/* biar textarea gak ketutup tombol */
+#answerText{
+  padding-right: 140px; /* ruang buat tombol */
+}
+
+/* optional: ilangin status dobel "Belum ada jawaban" yang atas */
+#feedStatus{
+  display:none !important;
+}
 
     /* ===== join card ===== */
     .joinCard{
