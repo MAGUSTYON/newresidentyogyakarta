@@ -1017,6 +1017,87 @@
   bottom:0;
 }
   #gameCard.stage4{ display:grid; }
+  /* ===== HISTORY JAWABAN (muncul di kotak jawaban) ===== */
+.stage-ans{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+.stage-ans #feedList{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding-right:8px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* bubble item history */
+.ansItem{
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  color: rgba(255,255,255,.92);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.ansItem .meta{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size: 11px;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 6px;
+}
+
+/* ===== INPUT LONJONG (pill) ===== */
+.stage-ans #answerBox{
+  flex-shrink:0;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+/* bikin wrapper pill */
+.pillWrap{
+  position: relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  border-radius: 999px;            /* lonjong */
+  padding: 8px 10px;
+}
+
+/* input lonjong (lebih enak pakai input, bukan textarea besar) */
+#answerText{
+  flex:1;
+  height: 36px !important;
+  max-height: 36px !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color:#fff;
+  padding: 0 6px;
+  resize:none;
+}
+
+/* tombol kirim kecil */
+#sendAnswerBtn{
+  position: static !important;      /* matiin absolute lama */
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  font-weight: 800;
+  cursor:pointer;
+}
+#sendAnswerBtn:disabled{ opacity:.55; cursor:not-allowed; }
   </style>
 </head>
 
