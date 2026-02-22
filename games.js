@@ -382,7 +382,7 @@ async function buzz() {
     buzzInfo.textContent = "Kamu telat 😭 (" + error.message + ")";
     return;
   }
-}
+
  // setelah buzz sukses
 play(sBuzz);
 buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
@@ -393,7 +393,7 @@ answerText.disabled = false;
 sendAnswerBtn.disabled = false;
 answerStatus.textContent = ""; // optional, biar bersih
 answerText.focus();            // optional, auto fokus
-  
+}  
 async function sendAnswer() {
   if (!canAnswer) {
     answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
