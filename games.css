@@ -1,312 +1,393 @@
-/* ==== Games layout (warna ngikutin theme lama) ==== */
-
-.cc-wrap{
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 18px;
-}
-
-/* card base: ikut gaya gelap sebelumnya */
-.cc-wrap .card{
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(12,10,24,.72);
-  box-shadow: 0 28px 90px rgba(0,0,0,.55);
+/* ====== Header (match vibe lama) ====== */
+.cc-header{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
+  background: rgba(7,6,17,.55);
   backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+.cc-brand{ display:flex; flex-direction:column; gap:2px; }
+.cc-brand b{ font-size: 18px; color: #f2a3c7; }
+.cc-brand small{ font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+
+.cc-nav{ display:flex; gap: 8px; flex-wrap: wrap; }
+.cc-nav a{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.75);
+  text-decoration:none;
+  font-size: 13px;
+  background: rgba(255,255,255,.04);
+}
+.cc-nav a.active{
+  color: #0b0a12;
+  background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+  border-color: rgba(255,255,255,.18);
+  font-weight: 700;
 }
 
-.cc-title{ margin:0; font-size: 28px; }
-.cc-sub{ margin:10px 0 0; color: rgba(255,255,255,.7); }
-
+/* ====== Base ====== */
+.cc-card{
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(12,10,24,.55);
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+}
 .cc-muted{ color: rgba(255,255,255,.65); font-size: 13px; }
-.cc-me{ color:#fff; font-size: 12px; opacity:.9; }
+.cc-status{ color: rgba(255,255,255,.8); font-size: 13px; margin-top: 8px; }
+.cc-statusCenter{ text-align:center; }
 
 .cc-btn{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.cc-btn:disabled{
+  opacity: .55;
+  cursor: not-allowed;
+}
+.cc-btnPrimary{
+  color: #0b0a12;
+  border-color: rgba(255,255,255,.18);
+  background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+  font-weight: 800;
+}
+.cc-btnGhost{
+  background: rgba(255,255,255,.06);
+}
+.cc-btnBuzz{
+  width: min(260px, 70%);
+  height: 46px;
+  border: 0;
   background: linear-gradient(180deg, #f2a3c7, #d98ab7);
   color: #0b0a12;
-  font-weight: 800;
-  border: 0;
+  font-weight: 900;
+  letter-spacing: .06em;
+  box-shadow: 0 16px 40px rgba(0,0,0,.5);
 }
-.cc-btn:hover{ filter: brightness(1.03); }
 
-.cc-join{
+/* ====== Join ====== */
+.cc-joinWrap{
+  max-width: 980px;
+  margin: 26px auto;
+  padding: 0 18px;
+}
+.cc-joinCard{
   padding: 18px;
-  max-width: 760px;
-  margin: 24px auto 0;
 }
-.cc-join-grid{
-  margin-top: 14px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-.cc-join label{ display:block; margin-bottom:6px; color: rgba(255,255,255,.75); font-size: 13px; }
-.cc-join input{
-  width:100%;
-  border-radius: 14px;
-  border:1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  color:#fff;
-  padding: 12px 12px;
-  outline:none;
-}
-.cc-join .cc-btn{ margin-top: 14px; width: 140px; }
+.cc-title{ margin:0; font-size: 22px; color: #fff; }
+.cc-sub{ margin:6px 0 14px; color: rgba(255,255,255,.75); }
 
-/* ============ MAIN GRID (kiri + tengah) ============ */
-/* tinggi layar: sisain ruang header */
-.cc-game{
-  margin-top: 18px;
+.cc-joinGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items:end;
+}
+.cc-field label{ display:block; font-size: 12px; color: rgba(255,255,255,.7); margin-bottom: 6px; }
+.cc-field input{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  outline: none;
+}
+
+/* ====== Game Layout ====== */
+.cc-gameWrap{
+  height: calc(100dvh - 62px);
+  padding: 18px;
+}
+.cc-shell{
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 16px;
-  align-items: start;
-  min-height: calc(100vh - 140px);
+  align-items: stretch;
 }
 
-/* KIRI */
-.cc-left{
+/* Left sidebar scroll only */
+.cc-side{ min-height: 0; }
+.cc-sideCard{
+  height: 100%;
   padding: 14px;
-  height: calc(100vh - 160px);
   display:flex;
-  flex-direction: column;
+  flex-direction:column;
+  min-height: 0;
 }
-.cc-left-head{
+.cc-sideHeader{
   display:flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
+  justify-content:space-between;
+  gap: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255,255,255,.10);
 }
-.cc-left-title{
-  font-weight: 900;
-  color:#fff;
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-.cc-left-list{
+.cc-sideTitle{ margin:0; color:#fff; font-size: 16px; }
+.cc-meTag{ color: rgba(255,255,255,.85); font-size: 13px; padding-top: 2px; }
+.cc-sideList{
   margin-top: 12px;
-  overflow: auto;           /* ✅ yang scroll cuma leaderboard */
+  overflow: auto;            /* << ONLY SCROLL HERE */
   padding-right: 6px;
+  min-height: 0;
 }
-.cc-left-list::-webkit-scrollbar{ width: 8px; }
-.cc-left-list::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,.14);
+.cc-sideList::-webkit-scrollbar{ width: 10px; }
+.cc-sideList::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.12);
   border-radius: 999px;
 }
 
-/* item leaderboard (match games.js output .lb-item) */
+/* leaderboard row match games.js .lb-item */
 .lb-item{
   display:flex;
-  justify-content: space-between;
-  align-items:center;
+  justify-content:space-between;
   gap: 10px;
+  align-items:center;
   padding: 12px 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
   margin-bottom: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
 }
-.lb-item b{ color:#fff; }
 
-/* TENGAH */
-.cc-center{
+/* Center column */
+.cc-main{
+  min-height: 0;
   display:flex;
-  flex-direction: column;
+  flex-direction:column;
   gap: 16px;
-  min-height: calc(100vh - 160px);
 }
 
-/* Pertanyaan besar */
-.cc-question{
+/* Question card */
+.cc-questionCard{
   padding: 16px;
-  flex: 1; /* biar panel pertanyaan dominan */
-}
-.cc-q-top{
+  flex: 1;                 /* biar gede kayak foto */
+  min-height: 0;
   display:flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction:column;
+}
+.cc-roomRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
   gap: 12px;
 }
-.cc-roomline{
+.cc-roomCode{
+  font-weight: 800;
+  color: rgba(255,255,255,.9);
+}
+.cc-questionCenter{
+  flex: 1;
+  min-height: 0;
   display:flex;
-  gap:8px;
-  align-items: baseline;
-}
-.cc-leave{
-  border-radius: 999px;
-}
-
-.cc-q-body{
-  margin-top: 26px;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
   text-align:center;
+  gap: 12px;
+  padding: 10px 0;
 }
-.cc-q-label{
+.cc-qLabel{
   letter-spacing: .18em;
+  font-weight: 800;
   font-size: 12px;
   color: rgba(255,255,255,.7);
-  font-weight: 800;
 }
-.cc-q-text{
-  margin-top: 12px;
-  font-size: clamp(28px, 4vw, 54px);  /* ✅ otomatis menyesuaikan layar */
+.cc-qText{
+  font-size: clamp(28px, 4vw, 52px);
   font-weight: 900;
   color: #fff;
-  line-height: 1.1;
-  min-height: 72px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  line-height: 1.05;
+  white-space: pre-wrap;
+  max-width: 92%;
 }
 
-.cc-q-divider{
-  margin: 18px 0;
-  height: 1px;
-  background: rgba(255,255,255,.10);
-}
-
-.cc-q-actions{
+/* Bottom card */
+.cc-bottomCard{
+  padding: 14px;
+  height: 34%;
+  min-height: 220px;
   display:flex;
-  flex-direction: column;
-  align-items:center;
-  justify-content:center;
-}
-.cc-buzz{
-  width: 180px;
-  border-radius: 999px;
-  font-weight: 900;
-  letter-spacing: .06em;
-  background: linear-gradient(180deg, #f2a3c7, #d98ab7);
-  color: #0b0a12;
-  border: 0;
-}
-.cc-buzz:disabled{
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-/* BAWAH: tabs + panel */
-.cc-bottom{
-  padding: 12px;
-  height: 320px; /* mirip foto: bagian bawah fixed */
-  display:flex;
-  flex-direction: column;
+  flex-direction:column;
 }
 .cc-tabs{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+  margin-bottom: 12px;
 }
 .cc-tab{
   border-radius: 16px;
+  padding: 12px;
   border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  color: #fff;
-  padding: 10px 12px;
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.85);
   font-weight: 900;
+  letter-spacing: .06em;
   cursor:pointer;
 }
 .cc-tab.active{
+  color: #0b0a12;
   background: linear-gradient(180deg, #f2a3c7, #d98ab7);
-  color:#0b0a12;
-  border-color: rgba(255,255,255,.16);
+  border-color: rgba(255,255,255,.18);
 }
 
 .cc-panels{
-  margin-top: 10px;
-  flex:1;
-  overflow: hidden;
-}
-
-.cc-panel{
-  height: 100%;
-  display:flex;
-  flex-direction: column;
-}
-
-.cc-feed{
-  margin-top: 10px;
   flex: 1;
-  overflow: auto;
-  padding-right: 6px;
+  min-height: 0;
+  position: relative;
 }
-.cc-feed::-webkit-scrollbar{ width: 8px; }
-.cc-feed::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,.14);
+.cc-panel{
+  display:none;
+  height: 100%;
+  min-height: 0;
+}
+.cc-panel.active{
+  display:flex;
+  flex-direction:column;
+  min-height: 0;
+}
+
+/* answers feed */
+.cc-feedHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.cc-feedList{
+  flex: 1;
+  min-height: 0;
+  overflow: auto; /* boleh scroll jawaban kalau kepanjangan, tapi page gak scroll */
+  padding-right: 6px;
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding-top: 10px;
+}
+.cc-feedList::-webkit-scrollbar{ width: 10px; }
+.cc-feedList::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.12);
   border-radius: 999px;
 }
 
+/* jawaban item dari games.js (.a) */
 .a{
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
+  padding: 12px 12px;
   margin-bottom: 10px;
-  color:#fff;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
 }
-.verdict{ color: rgba(255,255,255,.75); font-size: 12px; }
+.verdict{
+  font-size: 12px;
+  opacity: .85;
+}
 
-/* area jawaban */
-.cc-answerbox{
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,.10);
+/* answerBox */
+.cc-answerBox{
+  margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  border-radius: 18px;
+  padding: 12px;
 }
-.cc-input{
+.cc-answerLabel{
+  display:block;
+  font-size: 12px;
+  letter-spacing: .14em;
+  font-weight: 900;
+  color: rgba(255,255,255,.75);
+  margin-bottom: 8px;
+}
+.cc-answerInput{
   width: 100%;
   min-height: 80px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  color:#fff;
-  padding: 10px 12px;
-  outline:none;
   resize: vertical;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  outline:none;
 }
-.cc-answer-actions{
+.cc-answerRow{
   margin-top: 10px;
   display:flex;
   gap: 12px;
   align-items:center;
-  justify-content: space-between;
   flex-wrap: wrap;
 }
 
-/* overlay end */
+/* Chat placeholder */
+.cc-chatBox{
+  height: 100%;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  border-radius: 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Overlay */
 .cc-overlay{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.70);
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(10px);
   display:flex;
   align-items:center;
   justify-content:center;
   padding: 18px;
   z-index: 9999;
 }
-.cc-overlay-box{
+.cc-overlayBox{
   width: min(720px, 96vw);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(12,10,24,.92);
+  box-shadow: 0 28px 90px rgba(0,0,0,.7);
   padding: 16px;
 }
-.cc-overlay-head{
+.cc-overlayHead{
   display:flex;
-  align-items:center;
-  justify-content: space-between;
+  justify-content:space-between;
   gap: 12px;
+  align-items:center;
+  margin-bottom: 8px;
 }
+.cc-overlayTitle{ margin:0; color:#fff; }
+.cc-finalList{ margin-top: 12px; }
 
-/* responsive: kalau HP, leaderboard pindah atas */
-@media (max-width: 900px){
-  .cc-game{
+/* ===== Responsive ===== */
+@media (max-width: 920px){
+  .cc-shell{
     grid-template-columns: 1fr;
-    min-height: auto;
   }
-  .cc-left{
-    height: 260px;
+  .cc-gameWrap{
+    height: auto;
+    min-height: calc(100dvh - 62px);
   }
-  .cc-center{
-    min-height: auto;
+  .cc-sideCard{
+    height: 320px;
   }
-  .cc-bottom{
+  .cc-bottomCard{
     height: 360px;
+  }
+  .cc-joinGrid{
+    grid-template-columns: 1fr;
   }
 }
