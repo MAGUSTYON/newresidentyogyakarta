@@ -531,18 +531,31 @@
             </div>
 
             <div class="panels">
-              <!-- Panel Jawaban -->
-              <div id="panelJawaban" class="panel is-active">
-                <div id="feedStatus"></div>
-                <div class="feedBox" id="feedList"></div>
+             <div id="panelJawaban" class="panel is-active">
 
-                <!-- answer box (muncul saat menang buzz) -->
-               <div id="answerBox">
-                <div style="font-weight:800; margin-bottom:8px;">Jawab sekarang</div>
-                <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
-                <button id="sendAnswerBtn" disabled>Kirim Jawaban</button>
-                 <div id="answerStatus"></div>
-                </div>
+  <!-- KOTAK UTAMA -->
+  <div class="feedBox">
+
+    <!-- FEED -->
+    <div id="feedWrap">
+      <div id="feedStatus"></div>
+      <div id="feedList"></div>
+    </div>
+
+    <!-- FORM JAWAB -->
+    <div id="answerBox">
+      <div style="font-weight:800; margin-bottom:8px;">Jawab sekarang</div>
+
+      <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
+
+      <button id="sendAnswerBtn" disabled>Kirim Jawaban</button>
+
+      <div id="answerStatus"></div>
+    </div>
+
+  </div>
+
+</div>
 
               <!-- Panel Obrolan (sementara placeholder, JS kamu nanti bisa diisi) -->
               <div id="panelObrolan" class="panel">
