@@ -526,6 +526,203 @@
 #panelObrolan {
   min-height: 0;
 }
+
+    /* ===== STAGE LAYOUT (SAMAIN KAYAK SCREENSHOT) ===== */
+.gameStage{
+  display:grid;
+  grid-template-columns: 290px 1fr;  /* kiri fixed */
+  gap: 16px;
+  height: calc(100vh - 90px);        /* kalau header kamu tinggi beda, adjust */
+  min-height: 0;
+}
+
+/* LEFT */
+.stageLeft{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  overflow:hidden;
+}
+
+.stageLeftHead{
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.stageTitle{ font-weight:900; }
+.stageSub{ color: rgba(255,255,255,.7); font-size:12px; margin-top:4px; }
+.stageMe{ color: rgba(255,255,255,.7); font-size:12px; margin-top:2px; }
+
+.stageLeftBody{
+  padding: 12px;
+  overflow:auto;     /* scroll leaderboard */
+  min-height:0;
+}
+
+/* RIGHT (top big + bottom 2 boxes) */
+.stageRight{
+  display:grid;
+  grid-template-rows: 1fr 260px; /* bawah fix tinggi */
+  gap: 14px;
+  min-height:0;
+}
+
+/* TOP QUESTION BOX (besar) */
+.stageTop{
+  padding: 16px;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.stageTopBar{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom: 10px;
+}
+
+.qBig{
+  font-size: clamp(34px, 5vw, 70px);
+  font-weight: 900;
+  line-height: 1.05;
+  margin: 10px 0 12px;
+}
+
+.buzzBig{
+  width: min(360px, 70%);
+  border: none;
+  border-radius: 999px;
+  padding: 14px 18px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  cursor:pointer;
+  background: linear-gradient(180deg, rgba(242,163,199,.65), rgba(217,138,183,.55));
+  color:#0b0a12;
+  box-shadow: 0 18px 55px rgba(0,0,0,.55);
+}
+.buzzBig:disabled{ opacity:.55; cursor:not-allowed; }
+
+.buzzInfo{
+  margin-top: 10px;
+  color: rgba(255,255,255,.78);
+  font-size: 13px;
+  min-height: 18px;
+}
+
+/* BOTTOM 2 BOX */
+.stageBottom{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  min-height:0;
+}
+
+/* Pane base */
+.pane{
+  padding: 12px;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* tab header (kayak screenshot: tombol di atas box) */
+.paneTab{
+  width: 160px;
+  margin: -20px auto 10px;  /* naik sedikit biar kayak “menempel” */
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  font-weight: 900;
+  letter-spacing:.08em;
+  cursor: default;
+}
+.paneTab.is-active{
+  background: linear-gradient(180deg, var(--pink), var(--pink2));
+  color:#0b0a12;
+}
+
+.paneBody{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+
+/* scroll area (history/chat list) */
+.paneScroll{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding-right:6px;
+}
+
+/* input area nempel bawah */
+.paneInput{
+  flex-shrink:0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 10px;
+  position:relative;
+}
+
+/* input kecil (biar gak kegedean) */
+#answerText{
+  width:100%;
+  height: 54px;          /* ini bikin pas kayak screenshot */
+  resize:none;
+  padding-right: 90px;   /* ruang tombol kirim */
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color:#fff;
+  outline:none;
+  box-sizing:border-box;
+}
+
+/* tombol kirim nempel kanan bawah */
+#sendAnswerBtn{
+  position:absolute;
+  right: 0;
+  bottom: 0;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  cursor:pointer;
+  font-weight:800;
+}
+#sendAnswerBtn:disabled{ opacity:.55; cursor:not-allowed; }
+
+.answerTitle{ font-weight:800; margin-bottom:8px; color: rgba(255,255,255,.9); }
+.paneHint{ margin-top:8px; color: rgba(255,255,255,.7); font-size:12px; }
+
+/* hilangin status dobel kalau kamu mau */
+#feedStatus{ display:none; }
+
+/* responsive */
+@media (max-width: 980px){
+  .gameStage{
+    grid-template-columns: 1fr;
+    height:auto;
+    min-height:100vh;
+  }
+  .stageRight{ grid-template-rows: auto auto; }
+  .stageBottom{ grid-template-columns: 1fr; }
+  .stageLeftBody{ max-height: 260px; }
+}
   </style>
 </head>
 
@@ -593,82 +790,93 @@
         </div>
 
         <!-- GAME CARD -->
-        <div id="gameCard" class="centerCol" style="display:none; min-height:0;">
+      <!-- GAME CARD -->
+<div id="gameCard" class="gameStage" style="display:none;">
 
-          <!-- QUESTION + BUZZ -->
-          <div class="card qCard">
-            <div class="qTopRow">
-              <div class="roomMeta">
-                <div><b>Room:</b> <span id="roomLabel">-</span></div>
-                <div class="kecil" id="gameStatus">—</div>
-              </div>
+  <!-- LEFT: PLAYERS (LEADERBOARD) -->
+  <aside class="stageLeft card">
+    <div class="stageLeftHead">
+      <div>
+        <div class="stageTitle">Players</div>
+        <div class="stageSub" id="lbStatus">—</div>
+      </div>
+      <div class="stageMe" id="meTag">—</div>
+    </div>
 
-              <button id="leaveBtn" class="btnMini">Keluar</button>
-            </div>
+    <div class="stageLeftBody" id="lbList">
+      <div class="lb-item"><div class="muted">Belum ada peserta.</div></div>
+    </div>
+  </aside>
 
-            <div class="qLabel">PERTANYAAN</div>
-            <div id="qText">—</div>
+  <!-- RIGHT -->
+  <section class="stageRight">
 
-            <div class="qDivider"></div>
+    <!-- TOP: QUESTION BOX (besar) -->
+    <div class="stageTop card">
+      <div class="stageTopBar">
+        <div class="roomMeta">
+          <div><b>Room:</b> <span id="roomLabel">-</span></div>
+          <div class="kecil" id="gameStatus">—</div>
+        </div>
 
-            <button id="buzzBtn" disabled>BUZZ</button>
-            <div id="buzzInfo"></div>
+        <button id="leaveBtn" class="btnMini">Keluar</button>
+      </div>
+
+      <div class="qLabel">PERTANYAAN</div>
+      <div id="qText" class="qBig">—</div>
+
+      <div class="qDivider"></div>
+
+      <button id="buzzBtn" class="buzzBig" disabled>BUZZ</button>
+      <div id="buzzInfo" class="buzzInfo"></div>
+    </div>
+
+    <!-- BOTTOM: 2 BOX (JAWABAN kiri, OBROLAN kanan) -->
+    <div class="stageBottom">
+
+      <!-- JAWABAN -->
+      <div id="panelJawaban" class="card pane">
+        <button id="tabJawaban" class="paneTab is-active" type="button">JAWABAN</button>
+
+        <div class="paneBody">
+          <!-- HISTORY (scroll di sini) -->
+          <div class="paneScroll">
+            <div id="feedStatus" class="paneStatus"></div>
+            <div id="feedList"></div>
           </div>
 
-          <!-- BOTTOM: Tabs + Panels -->
-          <div class="card bottomCard">
-            <div class="tabs">
-              <button id="tabJawaban" class="tab is-active" type="button">JAWABAN</button>
-              <button id="tabObrolan" class="tab is-locked" type="button" aria-disabled="true">OBROLAN</button>
-            </div>
+          <!-- INPUT (nempel bawah) -->
+          <div id="answerBox" class="paneInput" data-disabled="1">
+            <div class="answerTitle">Jawab disini…</div>
+            <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
 
-            <div class="panels">
-             <div id="panelJawaban" class="panel is-active">
+            <button id="sendAnswerBtn" disabled>Kirim</button>
+            <div id="answerStatus" class="paneHint"></div>
+          </div>
+        </div>
+      </div>
 
-  <!-- KOTAK UTAMA -->
-  <div class="feedBox">
+      <!-- OBROLAN -->
+      <div id="panelObrolan" class="card pane">
+        <button id="tabObrolan" class="paneTab is-locked" type="button" aria-disabled="true">OBROLAN</button>
 
-    <!-- FEED -->
-    <div id="feedWrap">
-      <div id="feedStatus"></div>
-      <div id="feedList"></div>
+        <div class="paneBody">
+          <div class="paneScroll">
+            <div class="paneStatus">Chat coming soon…</div>
+            <div class="a"><span class="muted">Belum ada chat.</span></div>
+          </div>
+
+          <div class="paneInput" data-disabled="1">
+            <div class="answerTitle">Kamu harus masuk untuk chat</div>
+            <input disabled placeholder="Chat..." style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:#fff;outline:none;" />
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <!-- FORM JAWAB -->
-    <div id="answerBox">
-      <div style="font-weight:800; margin-bottom:8px;">Jawab sekarang</div>
-
-      <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
-
-      <button id="sendAnswerBtn" disabled>Kirim Jawaban</button>
-
-      <div id="answerStatus"></div>
-    </div>
-
-  </div>
-
+  </section>
 </div>
-
-              <!-- Panel Obrolan (sementara placeholder, JS kamu nanti bisa diisi) -->
-              <div id="panelObrolan" class="panel">
-                <div style="color:rgba(255,255,255,.7);font-size:13px;">
-                  Obrolan coming soon...
-                </div>
-                <div class="feedBox" style="margin-top:10px;">
-                  <div class="a"><span class="muted">Belum ada chat.</span></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div><!-- /gameCard -->
-
-      </section>
-
-    </div>
-  </div>
-
+        
   <!-- END OVERLAY -->
   <div id="endOverlay">
     <div class="overlayBox">
