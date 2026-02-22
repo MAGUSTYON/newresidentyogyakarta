@@ -5,15 +5,436 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Games • New Resident Yogyakarta</title>
 
+  <!-- Pake CSS lama kamu kalau ada -->
   <link rel="stylesheet" href="styles.css" />
-  <!-- tambahan layout khusus games -->
-  <link rel="stylesheet" href="games-ui.css" />
+
+  <!-- Tambahan CSS khusus layout game (warna tetap ngikut tema lama) -->
+  <style>
+    :root{
+      --pink: #f2a3c7;
+      --pink2:#d98ab7;
+      --bg1:#05050d;
+      --panel: rgba(15, 14, 28, .65);
+      --panel2: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.12);
+      --muted: rgba(255,255,255,.7);
+      --text: #fff;
+    }
+
+    /* ===== page base ===== */
+    body{
+      min-height: 100vh;
+    }
+
+    /* Biar layout game jadi satu layar */
+    .gameWrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* ===== header area (brand + nav) ===== */
+    .gameTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand b{
+      font-size:18px;
+      color: var(--pink);
+      letter-spacing:.02em;
+    }
+    .brand small{
+      color: rgba(255,255,255,.65);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      text-decoration:none;
+      background: rgba(255,255,255,.04);
+      transition: all .15s ease;
+    }
+    .nav a:hover{ background: rgba(255,255,255,.08); }
+    .nav a.active{
+      color:#0b0a12;
+      background: linear-gradient(180deg, var(--pink), var(--pink2));
+      border-color: rgba(255,255,255,.18);
+      font-weight: 700;
+    }
+
+    /* ===== main grid (left leaderboard + center game) ===== */
+    .gameMain{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      min-height: 0; /* penting supaya child bisa scroll */
+    }
+
+    /* ===== card base ===== */
+    .card{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      box-shadow: 0 28px 90px rgba(0,0,0,.55);
+    }
+
+    /* ===== left: leaderboard ===== */
+    .lbCard{
+      display:flex;
+      flex-direction:column;
+      min-height: 0;
+      overflow:hidden;
+    }
+    .lbHead{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .lbHead b{ font-size:14px; }
+    .lbHead small{ color: var(--muted); }
+    #meTag{ color: rgba(255,255,255,.75); font-size:12px; }
+
+    .lbBody{
+      padding: 12px;
+      overflow:auto;   /* <<< scroll cuma leaderboard */
+      min-height: 0;
+    }
+
+    /* biar list item rapi */
+    .lb-item{
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+
+    /* ===== right: question + bottom panels ===== */
+    .centerCol{
+      display:grid;
+      grid-template-rows: 1fr auto;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    /* question card */
+    .qCard{
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      min-height: 0;
+    }
+
+    .qTopRow{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .roomMeta{
+      text-align:left;
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+    }
+    .roomMeta b{ color:#fff; }
+    .roomMeta .kecil{ opacity:.85; margin-top:6px; }
+
+    .btnMini{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      cursor:pointer;
+    }
+    .btnMini:hover{ background: rgba(255,255,255,.08); }
+
+    .qLabel{
+      letter-spacing:.22em;
+      font-size: 12px;
+      color: rgba(255,255,255,.65);
+      font-weight:700;
+      margin-top: 6px;
+    }
+    #qText{
+      font-size: clamp(28px, 5vw, 64px);
+      font-weight: 900;
+      line-height: 1.05;
+      margin: 12px 0 12px;
+    }
+    .qDivider{
+      width:100%;
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 10px 0 14px;
+    }
+
+    #buzzBtn{
+      width: min(320px, 70%);
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      cursor:pointer;
+      background: linear-gradient(180deg, rgba(242,163,199,.65), rgba(217,138,183,.55));
+      color:#0b0a12;
+      box-shadow: 0 18px 55px rgba(0,0,0,.55);
+    }
+    #buzzBtn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    #buzzInfo{
+      margin-top: 10px;
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    /* ===== bottom panel (tabs + content) ===== */
+    .bottomCard{
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .tabs{
+      display:flex;
+      gap:10px;
+      margin-bottom: 12px;
+    }
+    .tab{
+      flex:1;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color:#fff;
+      font-weight: 800;
+      letter-spacing: .08em;
+      cursor:pointer;
+    }
+    .tab.is-active{
+      background: linear-gradient(180deg, var(--pink), var(--pink2));
+      color:#0b0a12;
+      border-color: rgba(255,255,255,.18);
+    }
+    .tab.is-locked{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .panels{
+      display:block;
+      min-height: 0;
+    }
+
+    .panel{
+      display:none;
+      min-height: 0;
+    }
+    .panel.is-active{ display:block; }
+
+    /* feed box */
+    .feedBox{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 12px;
+      min-height: 140px;
+      max-height: 260px;
+      overflow:auto;
+    }
+
+    #feedStatus{
+      color: rgba(255,255,255,.7);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .a{
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    .verdict{
+      font-size: 12px;
+      opacity: .85;
+    }
+
+    /* answer form (hidden sampai menang buzz — dihandle JS) */
+    #answerBox{
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      padding-top: 12px;
+    }
+    #answerText{
+      width:100%;
+      min-height: 90px;
+      resize: vertical;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:#fff;
+      padding: 10px 12px;
+      outline:none;
+      box-sizing:border-box;
+    }
+    #sendAnswerBtn{
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(180deg, var(--pink), var(--pink2));
+      color:#0b0a12;
+      font-weight: 900;
+      cursor:pointer;
+    }
+    #sendAnswerBtn:disabled{ opacity:.6; cursor:not-allowed; }
+    #answerStatus{
+      margin-top: 8px;
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      min-height: 16px;
+    }
+
+    /* ===== join card ===== */
+    .joinCard{
+      padding: 18px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .joinGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .joinGrid input{
+      width:100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:#fff;
+      padding: 10px 12px;
+      outline:none;
+      box-sizing:border-box;
+    }
+    .joinActions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      margin-top: 12px;
+    }
+    #joinBtn{
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color:#fff;
+      cursor:pointer;
+      font-weight: 800;
+    }
+    #joinBtn:hover{ background: rgba(255,255,255,.08); }
+    #joinStatus{
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+    }
+
+    /* ===== responsive ===== */
+    @media (max-width: 980px){
+      .gameWrap{ height: auto; min-height: 100vh; }
+      .gameMain{
+        grid-template-columns: 1fr;
+      }
+      .lbBody{ max-height: 260px; }
+      .centerCol{ grid-template-rows: auto auto; }
+      .feedBox{ max-height: 220px; }
+    }
+
+    /* ===== overlay end ===== */
+    #endOverlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 9999;
+    }
+    .overlayBox{
+      width: 100%;
+      max-width: 560px;
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(12,10,24,.92);
+      box-shadow: 0 28px 90px rgba(0,0,0,.7);
+    }
+    .overlayHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 8px;
+    }
+    #closeOverlay{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      cursor:pointer;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Header kamu (biarin pakai styles.css lama) -->
-  <header class="header">
-    <div class="headerInner">
+
+  <div class="gameWrap">
+
+    <!-- TOP -->
+    <div class="gameTop">
       <div class="brand">
         <b>New Resident</b>
         <small>Yogyakarta</small>
@@ -26,107 +447,127 @@
         <a class="active" href="games.html">Games</a>
       </nav>
     </div>
-  </header>
 
-  <main class="g-wrap">
-    <!-- JOIN CARD -->
-    <section id="joinCard" class="g-card g-join">
-      <h2 class="g-title">Cerdas Cermat (Live)</h2>
-      <p class="g-muted">Masukkan kode room dari admin dan nickname kamu.</p>
+    <!-- MAIN -->
+    <div class="gameMain">
 
-      <div class="g-joinRow">
-        <div>
-          <label class="g-label">Kode Room</label>
-          <input id="roomCode" class="g-input" placeholder="ABC123" />
-        </div>
-        <div>
-          <label class="g-label">Nickname</label>
-          <input id="nickname" class="g-input" placeholder="yon" />
-        </div>
-      </div>
-
-      <button id="joinBtn" class="btn" type="button" style="margin-top:12px;">Join</button>
-      <div id="joinStatus" class="g-muted" style="margin-top:10px;"></div>
-    </section>
-
-    <!-- GAME CARD -->
-    <section id="gameCard" class="g-grid" style="display:none;">
-      <!-- LEFT: Leaderboard -->
-      <aside class="g-left g-card">
-        <div class="g-leftHead">
+      <!-- LEFT: LEADERBOARD -->
+      <aside class="card lbCard">
+        <div class="lbHead">
           <div>
-            <div class="g-leftTitle">Players</div>
-            <div id="lbStatus" class="g-muted">—</div>
+            <b>Players</b><br />
+            <small id="lbStatus">—</small>
           </div>
-          <div id="meTag" class="g-meTag">—</div>
+          <div id="meTag">—</div>
         </div>
-
-        <!-- ini yang boleh scroll -->
-        <div id="lbList" class="g-leftList"></div>
+        <div class="lbBody" id="lbList">
+          <div class="lb-item"><div class="muted">Belum ada peserta.</div></div>
+        </div>
       </aside>
 
-      <!-- CENTER -->
-      <section class="g-center">
-        <!-- Question panel -->
-        <div class="g-card g-qCard">
-          <div class="g-qTop">
-            <div>
-              <div class="g-muted">Room: <b id="roomLabel">-</b></div>
-              <div id="gameStatus" class="g-muted">—</div>
-            </div>
-            <button id="leaveBtn" class="btn secondary" type="button">Keluar</button>
+      <!-- RIGHT -->
+      <section class="centerCol">
+
+        <!-- JOIN CARD -->
+        <div id="joinCard" class="card joinCard" style="display:block;">
+          <h2 style="margin:0 0 8px;color:var(--pink);">Cerdas Cermat (Live)</h2>
+          <div style="color:rgba(255,255,255,.78);font-size:13px;">
+            Masukkan kode room dari admin dan nickname kamu.
           </div>
 
-          <div class="g-qTitle">PERTANYAAN</div>
-          <div id="qText" class="g-qText">—</div>
+          <div class="joinGrid">
+            <div>
+              <label style="display:block;font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px;">Kode Room</label>
+              <input id="roomCode" placeholder="ABCDE1" />
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px;">Nickname</label>
+              <input id="nickname" placeholder="nama kamu" />
+            </div>
+          </div>
 
-          <button id="buzzBtn" class="btn g-buzz" type="button" disabled>BUZZ</button>
-          <div id="buzzInfo" class="g-muted" style="margin-top:10px;"></div>
+          <div class="joinActions">
+            <button id="joinBtn">Join</button>
+            <div id="joinStatus"></div>
+          </div>
         </div>
 
-        <!-- Bottom: Tabs + content -->
-        <div class="g-card g-bottom">
-          <!-- TAB BAR (nempel ke box bawah) -->
-          <div class="g-tabs">
-            <button id="tabJawaban" class="g-tab is-active" type="button">JAWABAN</button>
-            <button id="tabObrolan" class="g-tab" type="button" aria-disabled="true">OBROLAN</button>
-          </div>
+        <!-- GAME CARD -->
+        <div id="gameCard" class="centerCol" style="display:none; min-height:0;">
 
-          <div class="g-panels">
-            <!-- Panel Jawaban -->
-            <div id="panelJawaban" class="g-panel is-active">
-              <div id="answerBox" style="display:none;">
-                <div class="g-panelTitle">Jawab sekarang</div>
-                <textarea id="answerText" class="g-textarea" placeholder="Tulis jawaban..."></textarea>
-                <button id="sendAnswerBtn" class="btn" type="button" style="margin-top:10px;">Kirim Jawaban</button>
-                <div id="answerStatus" class="g-muted" style="margin-top:8px;"></div>
+          <!-- QUESTION + BUZZ -->
+          <div class="card qCard">
+            <div class="qTopRow">
+              <div class="roomMeta">
+                <div><b>Room:</b> <span id="roomLabel">-</span></div>
+                <div class="kecil" id="gameStatus">—</div>
               </div>
 
-              <div class="g-panelTitle" style="margin-top:12px;">Feed Jawaban</div>
-              <div id="feedStatus" class="g-muted" style="margin-top:6px;"></div>
-              <div id="feedList" class="g-feed"></div>
+              <button id="leaveBtn" class="btnMini">Keluar</button>
             </div>
 
-            <!-- Panel Obrolan (placeholder, disabled sampai menang buzz) -->
-            <div id="panelObrolan" class="g-panel">
-              <div class="g-muted">Chat coming soon...</div>
-              <div class="g-muted" style="margin-top:8px;">(Tab ini baru bisa dibuka kalau kamu menang buzz)</div>
-            </div>
+            <div class="qLabel">PERTANYAAN</div>
+            <div id="qText">—</div>
+
+            <div class="qDivider"></div>
+
+            <button id="buzzBtn" disabled>BUZZ</button>
+            <div id="buzzInfo"></div>
           </div>
-        </div>
-      </section>
-    </section>
-  </main>
 
-  <!-- Overlay akhir game (tetap sesuai games.js kamu) -->
-  <div id="endOverlay" class="g-overlay" style="display:none;">
-    <div class="g-overlayBox">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-        <h2 style="margin:0;">Leaderboard Akhir</h2>
-        <button id="closeOverlay" class="btn secondary" type="button">Tutup</button>
+          <!-- BOTTOM: Tabs + Panels -->
+          <div class="card bottomCard">
+            <div class="tabs">
+              <button id="tabJawaban" class="tab is-active" type="button">JAWABAN</button>
+              <button id="tabObrolan" class="tab is-locked" type="button" aria-disabled="true">OBROLAN</button>
+            </div>
+
+            <div class="panels">
+              <!-- Panel Jawaban -->
+              <div id="panelJawaban" class="panel is-active">
+                <div id="feedStatus"></div>
+                <div class="feedBox" id="feedList"></div>
+
+                <!-- answer box (muncul saat menang buzz) -->
+                <div id="answerBox" style="display:none;">
+                  <div style="font-weight:800; margin-bottom:8px;">Jawab sekarang</div>
+                  <textarea id="answerText" placeholder="Tulis jawaban..."></textarea>
+                  <button id="sendAnswerBtn">Kirim Jawaban</button>
+                  <div id="answerStatus"></div>
+                </div>
+              </div>
+
+              <!-- Panel Obrolan (sementara placeholder, JS kamu nanti bisa diisi) -->
+              <div id="panelObrolan" class="panel">
+                <div style="color:rgba(255,255,255,.7);font-size:13px;">
+                  Obrolan coming soon...
+                </div>
+                <div class="feedBox" style="margin-top:10px;">
+                  <div class="a"><span class="muted">Belum ada chat.</span></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div><!-- /gameCard -->
+
+      </section>
+
+    </div>
+  </div>
+
+  <!-- END OVERLAY -->
+  <div id="endOverlay">
+    <div class="overlayBox">
+      <div class="overlayHead">
+        <div>
+          <div style="font-weight:900;font-size:18px;">Sesi Berakhir</div>
+          <div id="finalSub" style="color:rgba(255,255,255,.78);margin-top:4px;">—</div>
+        </div>
+        <button id="closeOverlay" title="Tutup">✕</button>
       </div>
-      <div id="finalSub" class="g-muted" style="margin-top:8px;"></div>
-      <div id="finalList" style="margin-top:10px;"></div>
+      <div id="finalList"></div>
     </div>
   </div>
 
