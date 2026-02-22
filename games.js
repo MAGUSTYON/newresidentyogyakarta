@@ -166,7 +166,7 @@ function showJoin(msg = "") {
 
 function showGame() {
   joinCard.style.display = "none";
-  gameCard.style.display = "block";
+  gameCard.style.display = "grid";
   roomLabel.textContent = state.room_code || "-";
   meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
 }
