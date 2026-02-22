@@ -272,67 +272,77 @@
     }
     .panel.is-active{ display:block; }
 
-  /* PANEL JAWABAN: atas history (scroll), bawah input */
+/* =========================
+   PANEL JAWABAN FINAL FIX
+   ========================= */
+
 #panelJawaban{
-  display:flex;
-  flex-direction:column;
-  height: 420px;       /* bisa kamu naikin/turunin */
-  max-height: 55vh;
-  overflow:hidden;
-  gap:12px;
+  display: flex;
+  flex-direction: column;
+  height: 360px;       /* tinggi fix stabil */
+  max-height: 50vh;
+  gap: 12px;
+  overflow: hidden;
 }
 
-/* HISTORY = AREA BIRU (SCROLL DI SINI AJA) */
+/* container utama */
+.feedBox{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ===== HISTORY AREA (SCROLL DI SINI) ===== */
+#feedWrap{
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#feedStatus{
+  display: none; /* hilangkan teks dobel */
+}
+
 #feedList{
   flex: 1;
-  overflow-y:auto;
-  padding-right:8px;
-  padding-bottom:8px;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
-/* scrollbar */
-#feedList::-webkit-scrollbar{ width:8px; }
+/* Scrollbar */
+#feedList::-webkit-scrollbar{
+  width: 6px;
+}
 #feedList::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,.18);
-  border-radius: 99px;
+  background: rgba(255,255,255,.15);
+  border-radius: 999px;
 }
 
-/* AREA INPUT = MERAH (NEMPEL BAWAH) */
+/* ===== ANSWER BOX (DI BAWAH) ===== */
 #answerBox{
-  flex-shrink:0;
-  position: relative;
-  padding-top: 12px;
   border-top: 1px solid rgba(255,255,255,.08);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+  padding-top: 12px;
+  margin-top: 10px;
+  position: relative;
 }
 
-/* textarea jangan kegedean */
+/* textarea kecil dan rapi */
 #answerText{
-  width:100%;
-  height:72px;
-  resize:none;
+  width: 100%;
+  height: 70px;
+  resize: none;
+  padding-right: 130px; /* ruang tombol */
+  box-sizing: border-box;
 }
 
 /* tombol kirim nempel kanan bawah */
 #sendAnswerBtn{
-  position:absolute;
+  position: absolute;
   right: 0;
   bottom: 0;
-  transform: translateY(6px); /* biar agak turun dikit kayak gambar */
 }
-
-/* biar textarea gak ketutup tombol */
-#answerText{
-  padding-right: 140px; /* ruang buat tombol */
-}
-
-/* optional: ilangin status dobel "Belum ada jawaban" yang atas */
-#feedStatus{
-  display:none !important;
-}
-
     /* ===== join card ===== */
     .joinCard{
       padding: 18px;
