@@ -413,3 +413,25 @@
 .cc-panel.active{
   gap: 0;                          /* jangan ada jarak antar bagian */
 }
+
+/* Tab disabled */
+.cc-tab.disabled{
+  opacity: .4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Pastikan panel bawah nempel */
+.cc-bottomCard{
+  padding-top: 0;
+}
+
+.cc-tabs{
+  margin-bottom: 0;
+}
+
+.cc-panel{
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
