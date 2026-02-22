@@ -50,6 +50,49 @@ const closeOverlay = document.getElementById("closeOverlay");
 const finalSub = document.getElementById("finalSub");
 const finalList = document.getElementById("finalList");
 
+/* ===== TAB DOM (Jawaban / Obrolan) ===== */
+let tabJawaban = document.getElementById("tabJawaban");
+let tabObrolan = document.getElementById("tabObrolan");
+let panelJawaban = document.getElementById("panelJawaban");
+let panelObrolan = document.getElementById("panelObrolan");
+
+/* ===== TAB STATE ===== */
+let obrolanUnlocked = false;
+
+function setActiveTab(which) {
+  const isJawaban = which === "jawaban";
+
+  tabJawaban?.classList.toggle("is-active", isJawaban);
+  tabObrolan?.classList.toggle("is-active", !isJawaban);
+
+  panelJawaban?.classList.toggle("is-active", isJawaban);
+  panelObrolan?.classList.toggle("is-active", !isJawaban);
+}
+
+function lockObrolan(locked) {
+  obrolanUnlocked = !locked;
+
+  tabObrolan?.classList.toggle("is-locked", locked);
+  tabObrolan?.setAttribute("aria-disabled", locked ? "true" : "false");
+  // optional: biar cursor beda kalau locked
+  tabObrolan && (tabObrolan.style.pointerEvents = locked ? "none" : "auto");
+  tabObrolan && (tabObrolan.style.opacity = locked ? "0.55" : "1");
+}
+
+function initTabsOnce() {
+  // pasang listener sekali aja
+  tabJawaban?.addEventListener("click", () => setActiveTab("jawaban"));
+  tabObrolan?.addEventListener("click", () => {
+    if (!obrolanUnlocked) return;
+    setActiveTab("obrolan");
+  });
+
+  // default state
+  setActiveTab("jawaban");
+  lockObrolan(true);
+}
+initTabsOnce();
+
 /* ===== STATE ===== */
 const LS_KEY = "cc_state_final_v1";
 
@@ -66,7 +109,6 @@ let roomCh = null,
   playersCh = null;
 
 let lastRoomStatus = null;
-let hasPlayedTimerForThisLive = false;
 
 /* ===== helpers ===== */
 function esc(s = "") {
@@ -108,40 +150,6 @@ function showGame() {
   roomLabel.textContent = state.room_code || "-";
   meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
 }
-
-// ===== Tabs (Jawaban/Obrolan) =====
-const tabJawaban = document.getElementById("tabJawaban");
-const tabObrolan = document.getElementById("tabObrolan");
-const panelJawaban = document.getElementById("panelJawaban");
-const panelObrolan = document.getElementById("panelObrolan");
-
-let chatUnlocked = false;
-
-function setActiveTab(name){
-  const jawaban = name === "jawaban";
-  tabJawaban?.classList.toggle("is-active", jawaban);
-  tabObrolan?.classList.toggle("is-active", !jawaban);
-
-  panelJawaban?.classList.toggle("is-active", jawaban);
-  panelObrolan?.classList.toggle("is-active", !jawaban);
-}
-
-function setChatLocked(locked){
-  // locked = true -> obrolan gak bisa dipencet
-  tabObrolan?.classList.toggle("is-locked", locked);
-  tabObrolan?.setAttribute("aria-disabled", locked ? "true" : "false");
-  chatUnlocked = !locked;
-}
-
-tabJawaban?.addEventListener("click", ()=> setActiveTab("jawaban"));
-tabObrolan?.addEventListener("click", ()=>{
-  if (!chatUnlocked) return;
-  setActiveTab("obrolan");
-});
-
-// default: obrolan terkunci
-setActiveTab("jawaban");
-setChatLocked(true);
 
 /* ===== Supabase fetch ===== */
 async function fetchRoomByCode(code) {
@@ -193,14 +201,13 @@ async function joinRoom(code, nickname) {
 
 /* ===== UI Sync ===== */
 async function syncRoomUI(room) {
+  const prevQ = state.current_question_id;
+
   state.current_question_id = room.current_question_id;
   saveState();
-  setActiveTab("jawaban");
-setChatLocked(true);
-  
-  // play timer only when status becomes live (once)
+
+  // play timer only when status becomes live (once per transition)
   if (room.status === "live" && lastRoomStatus !== "live") {
-    hasPlayedTimerForThisLive = true;
     play(sTimer);
   }
   lastRoomStatus = room.status;
@@ -224,6 +231,15 @@ setChatLocked(true);
     await refreshLeaderboard();
     await loadAnswerFeed();
     return;
+  }
+
+  // kalau soal berubah / masuk live baru: reset tab + lock obrolan
+  if (prevQ !== room.current_question_id) {
+    setActiveTab("jawaban");
+    lockObrolan(true);
+  } else {
+    // tetap pastikan default tab jawaban (biar konsisten)
+    setActiveTab("jawaban");
   }
 
   // LIVE
@@ -342,10 +358,14 @@ async function buzz() {
   }
 
   play(sBuzz);
-  setChatLocked(false);     // ✅ baru bisa klik OBROLAN kalau menang buzz
   buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
   answerBox.style.display = "block";
   sendAnswerBtn.disabled = false;
+
+  // UNLOCK obrolan saat menang buzz
+  lockObrolan(false);
+  // optional: otomatis pindah tab obrolan
+  // setActiveTab("obrolan");
 }
 
 async function sendAnswer() {
@@ -414,9 +434,14 @@ function subscribeRealtime() {
           } else if (a.verdict === "wrong") {
             answerStatus.textContent = "❌ Salah!";
             play(sWrong);
+
             // kalau salah, admin biasanya delete buzzes -> berarti buzz dibuka lagi
             buzzBtn.disabled = false;
             answerBox.style.display = "none";
+
+            // LOCK obrolan lagi kalau salah + balik jawaban
+            lockObrolan(true);
+            setActiveTab("jawaban");
           }
         }
 
@@ -523,6 +548,5 @@ leaveBtn?.addEventListener("click", () => {
     }
   } else {
     showJoin("");
-
   }
 })();
