@@ -376,7 +376,6 @@
       color: #fff;
       cursor:pointer;
     }
-
     /* responsive */
     @media (max-width: 980px){
       .gameWrap{ height:auto; min-height: 100vh; }
@@ -390,6 +389,69 @@
       .stage-ans{ grid-column:1; grid-row:3; min-height: 320px; }
       .stage-chat{ grid-column:1; grid-row:4; min-height: 240px; }
     }
+    /* ===== FIX: JAWABAN (history keliatan, input pill kecil) ===== */
+
+/* kotak jawaban jadi column */
+.stage-ans{
+  display:flex !important;
+  flex-direction:column !important;
+  min-height:0 !important;
+}
+
+/* history harus ngisi ruang & bisa scroll */
+.stage-ans #feedList{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding-right: 8px !important;
+  margin-bottom: 10px !important;
+}
+
+/* input area jangan gede */
+.stage-ans #answerBox{
+  flex: 0 0 auto !important;
+  margin-top: 0 !important;
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(255,255,255,.10) !important;
+}
+
+/* pill wrapper kecil */
+.stage-ans .pillWrap{
+  display:flex !important;
+  align-items:center !important;
+  gap: 10px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  background: rgba(255,255,255,.04) !important;
+  border-radius: 999px !important;
+  padding: 8px 10px !important;
+}
+
+/* PAKSA textarea jadi kecil (override height lama 70/110) */
+.stage-ans #answerText{
+  flex: 1 1 auto !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 0 8px !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  resize: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* tombol kirim kecil */
+.stage-ans #sendAnswerBtn{
+  position: static !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+}
+
+/* kalau ada rule lama yang bikin feedList kecil, matiin */
+#feedList{
+  max-height: none !important;
+}
   </style>
 </head>
 
