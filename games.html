@@ -724,128 +724,75 @@
   .stageLeftBody{ max-height: 260px; }
 }
 /* =========================
-   HP layout ala Gartic
+   HP layout: stage atas, bawah split kiri/kanan
    ========================= */
 @media (max-width: 720px){
 
-  /* jangan pakai 100vh di hp */
-  .gameWrap{
-    height:auto;
-    min-height:100vh;
-    padding:10px;
-    gap:10px;
-  }
+  .gameWrap{ height:auto; min-height:100vh; padding:10px; gap:10px; }
+  .gameMain{ grid-template-columns:1fr !important; gap:10px; }
 
-  /* TOP tetap */
-  .gameTop{
-    align-items:center;
-  }
+  /* stage atas */
+  .qCard{ min-height: 42vh; padding: 12px; }
+  #qText{ font-size: 44px; }
+  #buzzBtn{ width:100%; }
 
-  /* MAIN jadi 1 kolom: stage di atas, panel di bawah */
-  .gameMain{
-    grid-template-columns: 1fr !important;
-    gap:10px;
-  }
-
-  /* ====== PENTING: gameCard (yang isinya qCard + bottomCard) ====== */
-  #gameCard.centerCol{
-    display:flex !important;
-    flex-direction:column;
-    gap:10px;
-    min-height:0;
-  }
-
-  /* Stage/pertanyaan full lebar, lebih tinggi */
-  .qCard{
-    min-height: 42vh;
-    padding: 12px;
-  }
-
-  #qText{
-    font-size: 44px;
-    line-height: 1.05;
-  }
-
-  #buzzBtn{
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* ===== Bottom panel ala Gartic ===== */
+  /* bottomCard jadi area bawah fixed-height */
   .bottomCard{
-    padding: 10px;
-    min-height: 45vh;
-    max-height: 45vh;
-    overflow:hidden; /* scrollnya internal */
+    min-height: 46vh;
+    max-height: 46vh;
+    overflow:hidden;
     display:flex;
     flex-direction:column;
+    padding:10px;
   }
 
-  /* Tabs kecil di atas panel */
-  .tabs{
-    margin: 0 0 8px 0;
-  }
-  .tab{
-    padding: 10px 12px;
-    font-size: 12px;
-    border-radius: 14px;
-  }
-
-  /* ===== Panel aktif jadi layout 2 kolom: LB kiri + Feed kanan ===== */
-  .panels{
-    flex:1;
-    min-height:0;
-  }
-
-  /* panel jawaban */
-  #panelJawaban.panel.is-active{
-    display:grid !important;
+  /* leader + panel jadi 2 kolom */
+  .bottomCard{
+    display:grid;
     grid-template-columns: 40% 60%;
+    grid-template-rows: auto 1fr;
     gap:10px;
-    height:100%;
-    min-height:0;
   }
 
-  /* panel obrolan (kalau kamu pake) */
-  #panelObrolan.panel.is-active{
-    display:grid !important;
-    grid-template-columns: 40% 60%;
-    gap:10px;
-    height:100%;
-    min-height:0;
-  }
-
-  /* ====== Leaderboard pindah ke KIRI BAWAH ======
-     Kita “ambil” aside leaderboard dan bikin fixed di panel kiri dengan CSS:
-     Caranya: di hp, lbCard kita kecilkan dan posisikan supaya cocok.
-  */
-  aside.lbCard{
-    max-height: none;
+  /* leaderboard di kiri, full tinggi */
+  .bottomCard .lbCard{
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    margin:0 !important;
     height:100%;
     overflow:hidden;
   }
-  .lbBody{
+  .bottomCard .lbBody{
     height: calc(100% - 60px);
     overflow:auto;
   }
 
-  /* ====== Feed + Input di kanan ====== */
-  /* bungkus feedWrap + answerBox jadi kolom kanan dengan flex */
-  #panelJawaban .feedBox{
-    display:flex;
-    flex-direction:column;
+  /* tabs di kanan atas */
+  .bottomCard .tabs{
+    grid-column: 2;
+    grid-row: 1;
+    margin:0;
+  }
+  .tab{ padding:10px 12px; font-size:12px; border-radius:14px; }
+
+  /* panels di kanan bawah */
+  .bottomCard .panels{
+    grid-column: 2;
+    grid-row: 2;
     min-height:0;
-    height:100%;
     overflow:hidden;
-    padding:0;
-    border:none;
-    background:transparent;
   }
 
-  /* ilangin status dobel */
+  /* panel jawaban: feed scroll + input nempel bawah */
+  #panelJawaban.is-active{
+    display:flex !important;
+    flex-direction:column;
+    height:100%;
+    min-height:0;
+  }
+
   #feedStatus{ display:none !important; }
 
-  /* FEED (scroll) */
   #feedWrap{
     flex:1;
     min-height:0;
@@ -860,7 +807,6 @@
     padding-right:6px;
   }
 
-  /* INPUT sticky bawah kanan */
   #answerBox{
     flex-shrink:0;
     position:relative;
@@ -869,44 +815,20 @@
     border-top:1px solid rgba(255,255,255,.10);
   }
 
-  /* textarea pendek kayak gartic */
   #answerText{
-    height: 52px !important;
-    max-height: 52px !important;
+    height:52px !important;
+    max-height:52px !important;
     resize:none;
     padding-right:110px;
   }
 
-  /* tombol kirim nempel kanan bawah */
   #sendAnswerBtn{
     position:absolute;
     right:0;
     bottom:0;
-    transform:none;
     padding:10px 12px;
     border-radius: 12px;
     font-weight:800;
-  }
-
-  /* ====== IMPORTANT: supaya leaderboard asli tidak makan tempat di atas ======
-     Kita geser leaderboard utama ke dalam panel: 
-     Karena HTML leaderboard kamu ada di luar gameCard,
-     di HP kita bikin dia jadi “bagian” dari panel kiri:
-     -> Cara paling aman: sembunyikan leaderboard atas,
-        lalu clone isinya via JS (kalau mau).
-     Tapi tanpa JS, kita cukup: buat leaderboard tetap tampil,
-     tapi posisinya tepat di bawah top dan sebelum stage (kurang gartic).
-     Jadi: kalau mau bener-bener 100% sama, perlu 1 perubahan HTML kecil.
-  */
-
-  /* SOLUSI TANPA UBAH HTML: leaderboard tetap tampil tapi diperkecil */
-  aside.lbCard{
-    order: 2;
-  }
-
-  /* game card jadi order 3 */
-  #gameCard{
-    order: 3;
   }
 }
   </style>
@@ -933,20 +855,6 @@
 
     <!-- MAIN -->
     <div class="gameMain">
-
-      <!-- LEFT: LEADERBOARD -->
-      <aside class="card lbCard">
-        <div class="lbHead">
-          <div>
-            <b>Players</b><br />
-            <small id="lbStatus">—</small>
-          </div>
-          <div id="meTag">—</div>
-        </div>
-        <div class="lbBody" id="lbList">
-          <div class="lb-item"><div class="muted">Belum ada peserta.</div></div>
-        </div>
-      </aside>
 
       <!-- RIGHT -->
       <section class="centerCol">
@@ -976,7 +884,7 @@
         </div>
 
       <!-- GAME CARD -->
-<div id="gameCard" class="gameStage" style="display:none;">
+ <div id="gameCard" class="centerCol" style="display:none; min-height:0;">
   <!-- RIGHT -->
   <section class="stageRight">
 
@@ -1002,6 +910,20 @@
 
     <!-- BOTTOM: 2 BOX (JAWABAN kiri, OBROLAN kanan) -->
     <div class="stageBottom">
+      
+   <!-- LEFT: LEADERBOARD -->
+      <aside class="card lbCard">
+        <div class="lbHead">
+          <div>
+            <b>Players</b><br />
+            <small id="lbStatus">—</small>
+          </div>
+          <div id="meTag">—</div>
+        </div>
+        <div class="lbBody" id="lbList">
+          <div class="lb-item"><div class="muted">Belum ada peserta.</div></div>
+        </div>
+      </aside>
 
       <!-- JAWABAN -->
       <div id="panelJawaban" class="card pane">
