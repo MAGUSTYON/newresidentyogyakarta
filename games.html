@@ -87,12 +87,12 @@
     }
 
     /* ===== main grid (left leaderboard + center game) ===== */
-    .gameMain{
-      display:grid;
-      grid-template-columns: 320px 1fr;
-      gap: 16px;
-      min-height: 0; /* penting supaya child bisa scroll */
-    }
+   .gameMain{
+  display:grid;
+  grid-template-columns: 1fr;  /* ✅ karena sidebar kiri sudah tidak ada */
+  gap: 16px;
+  min-height: 0;
+}
 
     /* ===== card base ===== */
     .card{
