@@ -118,6 +118,26 @@ function esc(s = "") {
     .replaceAll(">", "&gt;");
 }
 
+let canAnswer = false;
+
+function setAnswerEnabled(enabled, note = "") {
+  canAnswer = !!enabled;
+
+  answerText.disabled = !canAnswer;
+  sendAnswerBtn.disabled = !canAnswer;
+
+  // kasih style biar keliatan disabled
+  answerBox.dataset.disabled = canAnswer ? "0" : "1";
+
+  if (!canAnswer) {
+    // jangan hapus teks user kalau lagi ngetik, tapi kamu bisa kalau mau:
+    // answerText.value = "";
+    if (note) answerStatus.textContent = note;
+  } else {
+    if (note) answerStatus.textContent = note;
+  }
+}
+
 function saveState() {
   localStorage.setItem(LS_KEY, JSON.stringify(state));
 }
