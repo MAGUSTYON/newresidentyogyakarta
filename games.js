@@ -220,7 +220,9 @@ async function joinRoom(code, nickname) {
 async function syncRoomUI(room) {
   state.current_question_id = room.current_question_id;
   saveState();
-
+  setActiveTab("jawaban");
+setChatLocked(true);
+  
   // play timer only when status becomes live (once)
   if (room.status === "live" && lastRoomStatus !== "live") {
     hasPlayedTimerForThisLive = true;
@@ -365,6 +367,7 @@ async function buzz() {
   }
 
   play(sBuzz);
+  setChatLocked(false);     // ✅ baru bisa klik OBROLAN kalau menang buzz
   buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
   answerBox.style.display = "block";
   sendAnswerBtn.disabled = false;
