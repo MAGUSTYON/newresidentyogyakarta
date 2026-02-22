@@ -15,10 +15,6 @@ function play(sound) {
 }
 
 /* ===== DOM ===== */
-const tabJawaban = document.getElementById("tabJawaban");
-const tabObrolan = document.getElementById("tabObrolan");
-const panelJawaban = document.getElementById("panelJawaban");
-const panelObrolan = document.getElementById("panelObrolan");
 const joinCard = document.getElementById("joinCard");
 const gameCard = document.getElementById("gameCard");
 
@@ -147,27 +143,6 @@ tabObrolan?.addEventListener("click", ()=>{
 setActiveTab("jawaban");
 setChatLocked(true);
 
-function activateJawabanTab() {
-  tabJawaban.classList.add("active");
-  tabObrolan.classList.remove("active");
-  panelJawaban.style.display = "block";
-  panelObrolan.style.display = "none";
-}
-
-function activateObrolanTab() {
-  tabObrolan.classList.add("active");
-  tabJawaban.classList.remove("active");
-  panelObrolan.style.display = "block";
-  panelJawaban.style.display = "none";
-}
-
-function lockObrolan() {
-  tabObrolan.classList.add("disabled");
-}
-
-function unlockObrolan() {
-  tabObrolan.classList.remove("disabled");
-}
 /* ===== Supabase fetch ===== */
 async function fetchRoomByCode(code) {
   const { data, error } = await supabase
