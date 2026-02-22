@@ -723,118 +723,190 @@
   .stageBottom{ grid-template-columns: 1fr; }
   .stageLeftBody{ max-height: 260px; }
 }
-    /* =========================
-   MOBILE / HP RESPONSIVE
+/* =========================
+   HP layout ala Gartic
    ========================= */
-@media (max-width: 720px) {
-  /* biar tidak maksa 100vh (di hp sering bikin kepotong) */
-  .gameWrap {
-    height: auto;
-    min-height: 100vh;
+@media (max-width: 720px){
+
+  /* jangan pakai 100vh di hp */
+  .gameWrap{
+    height:auto;
+    min-height:100vh;
+    padding:10px;
+    gap:10px;
+  }
+
+  /* TOP tetap */
+  .gameTop{
+    align-items:center;
+  }
+
+  /* MAIN jadi 1 kolom: stage di atas, panel di bawah */
+  .gameMain{
+    grid-template-columns: 1fr !important;
+    gap:10px;
+  }
+
+  /* ====== PENTING: gameCard (yang isinya qCard + bottomCard) ====== */
+  #gameCard.centerCol{
+    display:flex !important;
+    flex-direction:column;
+    gap:10px;
+    min-height:0;
+  }
+
+  /* Stage/pertanyaan full lebar, lebih tinggi */
+  .qCard{
+    min-height: 42vh;
     padding: 12px;
-    gap: 12px;
   }
 
-  /* header jadi rapih di hp */
-  .gameTop {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-  .brand b { font-size: 16px; }
-  .brand small { font-size: 10px; }
-
-  .nav {
-    gap: 6px;
-  }
-  .nav a {
-    padding: 7px 10px;
-    font-size: 12px;
-  }
-
-  /* dua kolom jadi 1 kolom (stack) */
-  .gameMain {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  /* leaderboard jangan kegedean, kasih scroll sendiri */
-  .lbCard {
-    max-height: 280px;
-  }
-  .lbBody {
-    max-height: 220px;
-    overflow: auto;
-  }
-
-  /* center column: jangan pakai 1fr yang bikin panel terlalu tinggi */
-  .centerCol {
-    grid-template-rows: auto auto;
-    gap: 12px;
-  }
-
-  /* question card: rapetin */
-  .qCard {
-    padding: 14px;
-  }
-  #qText {
-    font-size: 40px; /* biar tidak kebesaran */
+  #qText{
+    font-size: 44px;
     line-height: 1.05;
   }
 
-  /* tombol buzz full di hp */
-  #buzzBtn {
+  #buzzBtn{
     width: 100%;
     max-width: 100%;
   }
 
-  /* bottom panel */
-  .bottomCard {
-    padding: 12px;
+  /* ===== Bottom panel ala Gartic ===== */
+  .bottomCard{
+    padding: 10px;
+    min-height: 45vh;
+    max-height: 45vh;
+    overflow:hidden; /* scrollnya internal */
+    display:flex;
+    flex-direction:column;
   }
 
-  /* tabs lebih kecil */
-  .tab {
+  /* Tabs kecil di atas panel */
+  .tabs{
+    margin: 0 0 8px 0;
+  }
+  .tab{
     padding: 10px 12px;
-    border-radius: 14px;
     font-size: 12px;
+    border-radius: 14px;
   }
 
-  /* PANEL JAWABAN: tinggi lebih kecil di hp biar gak perlu scroll halaman */
-  #panelJawaban {
-    height: 360px;
-    max-height: 52vh;
+  /* ===== Panel aktif jadi layout 2 kolom: LB kiri + Feed kanan ===== */
+  .panels{
+    flex:1;
+    min-height:0;
   }
 
-  /* feed lebih dominan, input lebih ringkas */
-  #feedList {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
+  /* panel jawaban */
+  #panelJawaban.panel.is-active{
+    display:grid !important;
+    grid-template-columns: 40% 60%;
+    gap:10px;
+    height:100%;
+    min-height:0;
   }
 
-  /* textarea jangan kegedean di hp */
-  #answerText {
-    height: 64px;
-    max-height: 64px;
-    resize: none;
-    padding-right: 120px; /* ruang tombol */
+  /* panel obrolan (kalau kamu pake) */
+  #panelObrolan.panel.is-active{
+    display:grid !important;
+    grid-template-columns: 40% 60%;
+    gap:10px;
+    height:100%;
+    min-height:0;
   }
 
-  /* tombol kirim jangan “keluar layar” */
-  #sendAnswerBtn {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    transform: none;
-    padding: 10px 12px;
-    border-radius: 999px;
-    font-weight: 800;
+  /* ====== Leaderboard pindah ke KIRI BAWAH ======
+     Kita “ambil” aside leaderboard dan bikin fixed di panel kiri dengan CSS:
+     Caranya: di hp, lbCard kita kecilkan dan posisikan supaya cocok.
+  */
+  aside.lbCard{
+    max-height: none;
+    height:100%;
+    overflow:hidden;
+  }
+  .lbBody{
+    height: calc(100% - 60px);
+    overflow:auto;
   }
 
-  /* join grid jadi 1 kolom */
-  .joinGrid {
-    grid-template-columns: 1fr;
+  /* ====== Feed + Input di kanan ====== */
+  /* bungkus feedWrap + answerBox jadi kolom kanan dengan flex */
+  #panelJawaban .feedBox{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    height:100%;
+    overflow:hidden;
+    padding:0;
+    border:none;
+    background:transparent;
+  }
+
+  /* ilangin status dobel */
+  #feedStatus{ display:none !important; }
+
+  /* FEED (scroll) */
+  #feedWrap{
+    flex:1;
+    min-height:0;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  #feedList{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    padding-right:6px;
+  }
+
+  /* INPUT sticky bawah kanan */
+  #answerBox{
+    flex-shrink:0;
+    position:relative;
+    padding-top:10px;
+    margin-top:8px;
+    border-top:1px solid rgba(255,255,255,.10);
+  }
+
+  /* textarea pendek kayak gartic */
+  #answerText{
+    height: 52px !important;
+    max-height: 52px !important;
+    resize:none;
+    padding-right:110px;
+  }
+
+  /* tombol kirim nempel kanan bawah */
+  #sendAnswerBtn{
+    position:absolute;
+    right:0;
+    bottom:0;
+    transform:none;
+    padding:10px 12px;
+    border-radius: 12px;
+    font-weight:800;
+  }
+
+  /* ====== IMPORTANT: supaya leaderboard asli tidak makan tempat di atas ======
+     Kita geser leaderboard utama ke dalam panel: 
+     Karena HTML leaderboard kamu ada di luar gameCard,
+     di HP kita bikin dia jadi “bagian” dari panel kiri:
+     -> Cara paling aman: sembunyikan leaderboard atas,
+        lalu clone isinya via JS (kalau mau).
+     Tapi tanpa JS, kita cukup: buat leaderboard tetap tampil,
+     tapi posisinya tepat di bawah top dan sebelum stage (kurang gartic).
+     Jadi: kalau mau bener-bener 100% sama, perlu 1 perubahan HTML kecil.
+  */
+
+  /* SOLUSI TANPA UBAH HTML: leaderboard tetap tampil tapi diperkecil */
+  aside.lbCard{
+    order: 2;
+  }
+
+  /* game card jadi order 3 */
+  #gameCard{
+    order: 3;
   }
 }
   </style>
