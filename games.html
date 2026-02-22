@@ -906,14 +906,45 @@
 
 /* ===== RESPONSIVE HP: jadi 1 kolom seperti game mobile ===== */
 @media (max-width: 980px){
-  .stage4{
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
-  }
-  .stage-q{ grid-column:1; grid-row:1; }
-  .stage-ans{ grid-column:1; grid-row:2; }
-  .stage-chat{ grid-column:1; grid-row:3; }
-  .stage-lb{ grid-column:1; grid-row:4; } /* leaderboard terakhir */
+.stage4{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+  height: calc(100vh - 110px);
+}
+
+.stage-q{ grid-column:1; grid-row:1; }
+.stage-lb{ grid-column:2; grid-row:1; }
+.stage-ans{ grid-column:1; grid-row:2; display:flex; flex-direction:column; }
+.stage-chat{ grid-column:2; grid-row:2; }
+  .stage-ans{
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+#feedList{
+  flex:1;
+  overflow:auto;
+}
+
+#answerBox{
+  position:relative;
+}
+
+#answerText{
+  width:100%;
+  height:70px;
+  resize:none;
+  padding-right:110px;
+}
+
+#sendAnswerBtn{
+  position:absolute;
+  right:0;
+  bottom:0;
 }
   </style>
 </head>
@@ -968,14 +999,16 @@
         </div>
 
       <!-- GAME CARD -->
-     <div id="gameCard" class="stage4" style="display:none; min-height:0;">
+ <div id="gameCard" class="stage4" style="display:none; min-height:0;">
 
-  <!-- ATAS KIRI: SOAL + BUZZ -->
-  <div class="card qCard stage-q">
-          <div><b>Room:</b> <span id="roomLabel">-</span></div>
+  <!-- ATAS KIRI: SOAL -->
+  <div class="card stage-q">
+    <div class="qCard">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <b>Room:</b> <span id="roomLabel">-</span>
           <div class="kecil" id="gameStatus">—</div>
         </div>
-
         <button id="leaveBtn" class="btnMini">Keluar</button>
       </div>
 
@@ -987,50 +1020,47 @@
       <button id="buzzBtn" class="buzzBig" disabled>BUZZ</button>
       <div id="buzzInfo" class="buzzInfo"></div>
     </div>
+  </div>
+
 
   <!-- ATAS KANAN: LEADERBOARD -->
-  <aside class="card lbCard stage-lb">
-        <div class="lbHead">
-          <div>
-            <b>Players</b><br />
-            <small id="lbStatus">—</small>
-          </div>
-          <div id="meTag">—</div>
-        </div>
-        <div class="lbBody" id="lbList">
-          <div class="lb-item"><div class="muted">Belum ada peserta.</div></div>
-        </div>
+  <aside class="card stage-lb">
+    <div class="lbHead">
+      <div>
+        <b>Players</b><br />
+        <small id="lbStatus">—</small>
+      </div>
+      <div id="meTag">—</div>
+    </div>
+    <div class="lbBody" id="lbList">
+      <div class="lb-item">
+        <div class="muted">Belum ada peserta.</div>
+      </div>
+    </div>
   </aside>
 
+
   <!-- BAWAH KIRI: JAWABAN -->
-  <div class="card bottomCard stage-ans">
-    <!-- panel jawaban aja, nggak perlu tab -->
-    <div id="panelJawaban" class="panel is-active">
-      <div class="feedBox">
-        <div id="feedWrap">
-          <div id="feedStatus"></div>
-          <div id="feedList"></div>
-        </div>
+  <div class="card stage-ans">
+    <div style="font-weight:900; margin-bottom:10px;">JAWABAN</div>
 
-        <div id="answerBox">
-          <div style="font-weight:800; margin-bottom:8px;">Jawab sekarang</div>
-          <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
-          <button id="sendAnswerBtn" disabled>Kirim</button>
-          <div id="answerStatus"></div>
-        </div>
-      </div>
+    <div id="feedList"></div>
+
+    <div id="answerBox">
+      <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
+      <button id="sendAnswerBtn" disabled>Kirim</button>
     </div>
   </div>
 
-  <!-- BAWAH KANAN: CHAT -->
-  <div class="card bottomCard stage-chat">
-    <div id="panelObrolan" class="panel is-active">
-      <div style="font-weight:900; letter-spacing:.08em; margin-bottom:10px;">OBROLAN</div>
-      <div class="feedBox" style="min-height:0;">
-        <div class="a"><span class="muted">Chat coming soon...</span></div>
-      </div>
+
+  <!-- BAWAH KANAN: OBROLAN -->
+  <div class="card stage-chat">
+    <div style="font-weight:900; margin-bottom:10px;">OBROLAN</div>
+    <div class="feedBox">
+      <div class="muted">Chat coming soon...</div>
     </div>
   </div>
+
 </div>
       
     </div>
