@@ -270,17 +270,20 @@ async function syncRoomUI(room) {
   const q = await fetchQuestion(room.current_question_id);
   qText.textContent = q?.question_text || "—";
   
-// reset answer area every new question
-answerBox.style.display = "block";   // boleh tetap tampil
-answerStatus.textContent = "Tekan BUZZ dulu untuk menjawab.";
-answerText.value = "";
-answerText.disabled = true;          // wajib
-sendAnswerBtn.disabled = true;       // wajib
-  
-  if (prevQ !== room.current_question_id) {
-    setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
-    answerText.value = "";
-  }
+if (prevQ !== room.current_question_id) {
+  // reset tab + lock obrolan
+  setActiveTab("jawaban");
+  lockObrolan(true);
+
+  // reset jawab untuk soal baru
+  answerBox.style.display = "block";
+  answerText.value = "";
+  setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
+} else {
+  // jangan ganggu state jawab kalau soal sama
+  // cukup pastikan box tampil
+  answerBox.style.display = "block";
+}
   
   await refreshLeaderboard();
   await loadAnswerFeed();
@@ -384,15 +387,17 @@ async function buzz() {
   }
 
  // setelah buzz sukses
+// setelah buzz sukses
 play(sBuzz);
 buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
 answerBox.style.display = "block";
 
-// TAMBAH INI
-answerText.disabled = false;
-sendAnswerBtn.disabled = false;
-answerStatus.textContent = ""; // optional, biar bersih
-answerText.focus();            // optional, auto fokus
+setAnswerEnabled(true, "");     // ✅ ini yang bikin canAnswer = true
+answerStatus.textContent = "";
+answerText.focus();
+
+// kalau mau obrolan kebuka setelah menang buzz (sesuai requestmu)
+lockObrolan(false);
 }  
 async function sendAnswer() {
   if (!canAnswer) {
@@ -467,7 +472,10 @@ function subscribeRealtime() {
 
             // kalau salah, admin biasanya delete buzzes -> berarti buzz dibuka lagi
             buzzBtn.disabled = false;
-            answerBox.style.display = "none";
+            setAnswerEnabled(false, "Salah. Tekan BUZZ lagi untuk menjawab.");
+            buzzBtn.disabled = false;
+            lockObrolan(true);
+            setActiveTab("jawaban");
 
             // LOCK obrolan lagi kalau salah + balik jawaban
             lockObrolan(true);
