@@ -147,7 +147,7 @@ body{
    TITLES
 ========================= */
 .title{
-  font-family: "Playfair Display", serif;
+  font-family: Pacifico, cursive;
   font-size: 40px;
   font-weight: 700;
   color: var(--pink);
@@ -819,5 +819,6 @@ body {
     font-size: 12.5px;
   }
 }
+
 
 
