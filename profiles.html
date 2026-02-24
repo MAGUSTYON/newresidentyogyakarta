@@ -6,6 +6,24 @@
   <title>Profil Karakter • New Resident Yogyakarta</title>
   <link rel="stylesheet" href="./styles.css" />
   <style>
+          /* ===== Sticky Header ===== */
+    .header{
+      position: sticky;
+      top: 0;
+      z-index: 3000;
+      background: rgba(7,6,17,.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .headerInner{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
     .toolbar{
       display:flex;
       gap:10px;
