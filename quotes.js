@@ -1,32 +1,32 @@
 import { supabase } from "./supabaseClient.js";
 
-const qName = document.getElementById("qName");
-const qText = document.getElementById("qText");
-const qSend = document.getElementById("qSend");
-const qStatus = document.getElementById("qStatus");
+const list = document.getElementById("list");
+const refreshBtn = document.getElementById("refreshBtn");
 
-const qList = document.getElementById("qList");
-const wallStatus = document.getElementById("wallStatus");
-const qSearch = document.getElementById("qSearch");
-const qRefresh = document.getElementById("qRefresh");
+const nameEl = document.getElementById("name");
+const quoteEl = document.getElementById("quote");
+const submitBtn = document.getElementById("submitBtn");
+const statusEl = document.getElementById("status");
 
-function esc(s = "") {
+const modal = document.getElementById("quotesModal");
+
+function esc(s=""){
   return String(s)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
 }
 
-function fmtTime(iso) {
-  try {
-    return new Date(iso).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
-  } catch {
+function fmtTime(iso){
+  try{
+    return new Date(iso).toLocaleString([], { dateStyle:"medium", timeStyle:"short" });
+  }catch{
     return "";
   }
 }
 
-async function loadQuotes() {
-  wallStatus.textContent = "Loading…";
+async function loadQuotes(){
+  list.innerHTML = `<div class="quoteCard"><div class="quoteText" style="opacity:.75;">Loading…</div></div>`;
 
   const { data, error } = await supabase
     .from("quotes")
@@ -34,97 +34,67 @@ async function loadQuotes() {
     .order("created_at", { ascending: false })
     .limit(200);
 
-  if (error) {
-    wallStatus.textContent = "Error: " + error.message;
-    qList.innerHTML = `
-      <div class="quoteItem">
-        <div class="quoteText" style="opacity:.75;">Gagal load.</div>
-      </div>`;
+  if (error){
+    list.innerHTML = `<div class="quoteCard"><div class="quoteText" style="opacity:.75;">Error: ${esc(error.message)}</div></div>`;
     return;
   }
 
-  const keyword = (qSearch.value || "").trim().toLowerCase();
-  const filtered = (data || []).filter((x) => {
-    if (!keyword) return true;
-    const hay = `${x.name || ""} ${x.quote || ""}`.toLowerCase();
-    return hay.includes(keyword);
-  });
-
-  wallStatus.textContent = `${filtered.length} quotes`;
-
-  if (!filtered.length) {
-    qList.innerHTML = `
-      <div class="quoteItem">
-        <div class="quoteText" style="opacity:.75;">Tidak ada hasil.</div>
-      </div>`;
+  if (!data?.length){
+    list.innerHTML = `<div class="quoteCard"><div class="quoteText" style="opacity:.75;">Belum ada quotes.</div></div>`;
     return;
   }
 
-  qList.innerHTML = filtered
-    .map((x) => {
-      const name = esc(x.name || "Anonim");
-      const quote = esc(x.quote || "");
-      const time = fmtTime(x.created_at);
+  list.innerHTML = data.map((q) => {
+    const nm = esc(q.name || "Anonim");
+    const qt = esc(q.quote || "");
+    const tm = fmtTime(q.created_at);
 
-      return `
-        <div class="quoteItem">
-          <div class="quoteText">“${quote}”</div>
-          <div class="meta">
-            <span>— <b>${name}</b></span>
-            <span class="tag">${esc(time)}</span>
-          </div>
+    return `
+      <div class="quoteCard">
+        <div class="quoteText">“${qt}”</div>
+        <div class="quoteMeta">
+          <div>— <b>${nm}</b></div>
+          <div class="badge">${esc(tm)}</div>
         </div>
-      `;
-    })
-    .join("");
+      </div>
+    `;
+  }).join("");
 }
 
-async function sendQuote() {
-  const name = (qName.value || "").trim();
-  const quote = (qText.value || "").trim();
+async function sendQuote(){
+  const name = (nameEl.value || "").trim();
+  const quote = (quoteEl.value || "").trim();
 
-  if (!quote) {
-    qStatus.textContent = "Quotes tidak boleh kosong.";
+  if (!quote){
+    statusEl.textContent = "Quotes tidak boleh kosong.";
     return;
   }
 
-  qSend.disabled = true;
-  qStatus.textContent = "Mengirim…";
+  submitBtn.disabled = true;
+  statusEl.textContent = "Mengirim…";
 
   const { error } = await supabase.from("quotes").insert({
     name: name || null,
-    quote,
+    quote
   });
 
-  qSend.disabled = false;
+  submitBtn.disabled = false;
 
-  if (error) {
-    qStatus.textContent = "Gagal: " + error.message;
+  if (error){
+    statusEl.textContent = "Gagal: " + error.message;
     return;
   }
 
-  qStatus.textContent = "Terkirim ✅";
-  qText.value = "";
+  statusEl.textContent = "Terkirim ✅";
+  quoteEl.value = "";
+
+  // tutup modal + refresh feed
+  modal.classList.add("hidden");
   await loadQuotes();
 }
 
-qSend?.addEventListener("click", sendQuote);
-qRefresh?.addEventListener("click", loadQuotes);
+refreshBtn?.addEventListener("click", loadQuotes);
+submitBtn?.addEventListener("click", sendQuote);
 
-qSearch?.addEventListener("input", () => {
-  // debounce kecil
-  clearTimeout(window.__qdeb);
-  window.__qdeb = setTimeout(loadQuotes, 200);
-});
-
-qText?.addEventListener("keydown", (e) => {
-  // ctrl+enter untuk kirim
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    sendQuote();
-  }
-});
-
-(async () => {
-  await loadQuotes();
-})();
+// boot
+loadQuotes();
