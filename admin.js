@@ -18,6 +18,10 @@ const loginStatus  = document.getElementById("loginStatus");
 const confList     = document.getElementById("confessionsList");
 const refreshConf  = document.getElementById("refreshConfBtn");
 
+// Quotes
+const quotesList   = document.getElementById("quotesList");
+const refreshQuotes = document.getElementById("refreshQuotesBtn");
+
 // Events
 const eventTitle   = document.getElementById("eventTitle");
 const eventStart   = document.getElementById("eventStart");
@@ -159,6 +163,67 @@ async function loadConfessions() {
         return;
       }
       await loadConfessions();
+    });
+  });
+}
+
+/* =========================
+   QUOTES
+========================= */
+async function loadQuotes() {
+  if (!quotesList) return;
+
+  quotesList.innerHTML = "<small>Loading...</small>";
+
+  const { data, error } = await supabase
+    .from("quotes")
+    .select("id, name, quote, created_at")
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.error("loadQuotes error:", error);
+    quotesList.innerHTML = `<small>Gagal load quotes: ${esc(error.message)}</small>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    quotesList.innerHTML = "<small>Tidak ada quotes.</small>";
+    return;
+  }
+
+  quotesList.innerHTML = data
+    .map((q) => {
+      const name = q.name?.trim() ? esc(q.name) : "Anonim";
+      const quote = esc(q.quote || "");
+      const time = q.created_at ? new Date(q.created_at).toLocaleString("id-ID") : "";
+
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+            <div>
+              <b>${name}</b>
+              <div><small>${esc(time)}</small></div>
+            </div>
+            <button class="btn secondary" data-del-quote="${q.id}">Delete</button>
+          </div>
+          <p style="white-space:pre-wrap; margin:10px 0 0;">${quote}</p>
+        </div>
+      `;
+    })
+    .join("");
+
+  quotesList.querySelectorAll("[data-del-quote]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-del-quote");
+      if (!confirm("Yakin hapus quote ini?")) return;
+
+      const { error: delErr } = await supabase.from("quotes").delete().eq("id", id);
+      if (delErr) {
+        alert("Gagal delete quote: " + delErr.message);
+        return;
+      }
+      await loadQuotes();
     });
   });
 }
@@ -307,6 +372,7 @@ async function handleCreateEvent() {
 ========================= */
 async function initAdmin() {
   await loadConfessions();
+  await loadQuotes();
   await loadEvents();
 }
 
@@ -353,6 +419,7 @@ logoutBtn?.addEventListener("click", async () => {
 });
 
 refreshConf?.addEventListener("click", loadConfessions);
+refreshQuotes?.addEventListener("click", loadQuotes);
 createEvent?.addEventListener("click", handleCreateEvent);
 
 // auto-check kalau session masih ada
