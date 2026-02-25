@@ -394,19 +394,6 @@
       color: #fff;
       cursor:pointer;
     }
-    /* responsive */
-    @media (max-width: 980px){
-      .gameWrap{ height:auto; min-height: 100vh; }
-      .stage4{
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto;
-        height:auto;
-      }
-      .stage-q{ grid-column:1; grid-row:1; }
-      .stage-lb{ grid-column:1; grid-row:2; max-height: 280px; }
-      .stage-ans{ grid-column:1; grid-row:3; min-height: 320px; }
-      .stage-chat{ grid-column:1; grid-row:4; min-height: 240px; }
-    }
     /* ===== FIX: JAWABAN (history keliatan, input pill kecil) ===== */
 
 /* kotak jawaban jadi column */
@@ -476,6 +463,68 @@
     color: var(--pink);
     text-shadow: 0 0 18px rgba(242, 161, 179, .25);
     }
+    /* =========================
+   HP tetap 4 kotak (2x2)
+   ========================= */
+@media (max-width: 980px){
+
+  .gameWrap{
+    height: 100vh !important;
+    min-height: 100vh !important;
+    padding: 10px !important;
+    gap: 10px !important;
+  }
+
+  .stage4{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: 10px !important;
+
+    /* sesuaikan kalau header lebih tinggi */
+    height: calc(100vh - 120px) !important;
+    min-height: 0 !important;
+  }
+
+  .stage-q{ grid-column:1; grid-row:1; }
+  .stage-lb{ grid-column:2; grid-row:1; }
+  .stage-ans{ grid-column:1; grid-row:2; }
+  .stage-chat{ grid-column:2; grid-row:2; }
+
+  .stage4 > .card{
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  /* Scroll internal */
+  .stage-lb .lbBody,
+  .stage-ans #feedList,
+  .stage-chat .feedBox{
+    overflow:auto !important;
+    min-height:0 !important;
+  }
+
+  /* Perkecil soal biar muat */
+  .qBig{
+    font-size: 28px !important;
+  }
+
+  /* BUZZ full width */
+  .buzzBig{
+    width: 100% !important;
+  }
+
+  /* Input tetap kecil */
+  .stage-ans #answerText{
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+  }
+
+  .judul{
+    font-size: 14px !important;
+  }
+}
   </style>
 </head>
 
