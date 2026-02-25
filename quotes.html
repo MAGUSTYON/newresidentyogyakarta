@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quotes • New Resident Yogyakarta</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root{
+      --pink:#f2a3c7;
+      --pink2:#d98ab7;
+      --panel: rgba(15, 14, 28, .65);
+      --border: rgba(255,255,255,.12);
+      --muted: rgba(255,255,255,.72);
+    }
+
+    .pageWrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+      min-height: 100vh;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      box-sizing:border-box;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand b{
+      font-size:18px;
+      color: var(--pink);
+      letter-spacing:.02em;
+    }
+    .brand small{
+      color: rgba(255,255,255,.65);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .nav a{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      text-decoration:none;
+      background: rgba(255,255,255,.04);
+      transition: all .15s ease;
+    }
+    .nav a:hover{ background: rgba(255,255,255,.08); }
+    .nav a.active{
+      color:#0b0a12;
+      background: linear-gradient(180deg, var(--pink), var(--pink2));
+      border-color: rgba(255,255,255,.18);
+      font-weight: 700;
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      box-shadow: 0 28px 90px rgba(0,0,0,.55);
+    }
+
+    .composer{
+      padding: 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .input, .textarea{
+      width:100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:#fff;
+      padding: 10px 12px;
+      outline:none;
+      box-sizing:border-box;
+      font-size: 14px;
+    }
+    .textarea{
+      min-height: 110px;
+      resize:none;
+      line-height: 1.5;
+    }
+
+    .pillRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:#fff;
+      cursor:pointer;
+      font-weight: 800;
+      letter-spacing:.06em;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+    .hint{
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      min-height:0;
+    }
+
+    .wall{
+      padding: 14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:0;
+      overflow:hidden;
+    }
+
+    .wallTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .searchWrap{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .search{
+      width: 240px;
+      max-width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:#fff;
+      padding: 9px 12px;
+      outline:none;
+      box-sizing:border-box;
+      font-size: 13px;
+    }
+
+    .list{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+      padding-right: 6px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+
+    .quoteItem{
+      padding: 12px 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+    }
+
+    .quoteText{
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255,255,255,.92);
+    }
+
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.68);
+    }
+
+    .tag{
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size: 11px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="pageWrap">
+
+    <!-- TOP -->
+    <div class="top">
+      <div class="brand">
+        <b>New Resident</b>
+        <small>Yogyakarta</small>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html">Beranda</a>
+        <a href="confession.html">Confession</a>
+        <a href="event.html">Event</a>
+        <a href="profiles.html">Profil</a>
+        <a class="active" href="quotes.html">Quotes</a>
+        <a href="games.html">Games</a>
+      </nav>
+    </div>
+
+    <div class="grid">
+
+      <!-- KIRI: FORM KIRIM -->
+      <section class="card composer">
+        <h2 style="margin:0;color:var(--pink);">Quotes Wall</h2>
+        <div class="hint">Isi nama (boleh anonim) dan quotes kamu. Nanti muncul di wall.</div>
+
+        <div class="row">
+          <input id="qName" class="input" placeholder="Nama (opsional) • kosong = Anonim" />
+        </div>
+
+        <div class="row">
+          <textarea id="qText" class="textarea" placeholder="Tulis quotes kamu di sini..."></textarea>
+        </div>
+
+        <div class="pillRow">
+          <div id="qStatus" class="hint"></div>
+          <button id="qSend" class="btn">Kirim</button>
+        </div>
+
+        <div class="hint">Tips: enter boleh, auto rapih pakai line break.</div>
+      </section>
+
+      <!-- KANAN: LIST QUOTES -->
+      <section class="card wall">
+        <div class="wallTop">
+          <div>
+            <b style="font-size:14px;">Wall</b><br/>
+            <small id="wallStatus" class="hint">—</small>
+          </div>
+
+          <div class="searchWrap">
+            <input id="qSearch" class="search" placeholder="Cari nama / kata..." />
+            <button id="qRefresh" class="btn" type="button">Refresh</button>
+          </div>
+        </div>
+
+        <div id="qList" class="list">
+          <div class="quoteItem">
+            <div class="quoteText" style="opacity:.75;">Belum ada quotes.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="quotes.js"></script>
+</body>
+</html>
