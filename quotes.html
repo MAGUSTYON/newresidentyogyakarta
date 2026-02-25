@@ -8,45 +8,40 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    :root{
-      --pink:#f2a3c7;
-      --pink2:#d98ab7;
-      --panel: rgba(15, 14, 28, .65);
-      --border: rgba(255,255,255,.12);
-      --muted: rgba(255,255,255,.72);
+    /* ===== Sticky Header (sama kaya confession) ===== */
+    .header{
+      position: sticky;
+      top: 0;
+      z-index: 3000;
+      background: rgba(7,6,17,.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.14);
     }
-
-    .pageWrap{
+    .headerInner{
       max-width: 980px;
       margin: 0 auto;
-      padding: 18px;
-      min-height: 100vh;
-      display:flex;
-      flex-direction:column;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 14px;
-      box-sizing:border-box;
     }
-
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
     .brand{
+      font-family: Pacifico, cursive;
       display:flex;
       flex-direction:column;
       gap:2px;
     }
     .brand b{
-      font-size:18px;
+      font-family: Pacifico, cursive;
+      font-weight: 400;
+      font-size: 20px;
       color: var(--pink);
-      letter-spacing:.02em;
+      line-height:1;
     }
     .brand small{
-      color: rgba(255,255,255,.65);
+      font-family: Pacifico, cursive;
+      color: var(--muted);
       font-size: 11px;
       letter-spacing: .14em;
       text-transform: uppercase;
@@ -54,191 +49,132 @@
 
     .nav{
       display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
     }
     .nav a{
       padding: 8px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(255,255,255,.78);
+      border: 1px solid transparent;
+      color: var(--muted);
       font-size: 13px;
-      text-decoration:none;
-      background: rgba(255,255,255,.04);
       transition: all .15s ease;
+      text-decoration:none;
     }
-    .nav a:hover{ background: rgba(255,255,255,.08); }
+    .nav a:hover{
+      color: #fff;
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.14);
+    }
     .nav a.active{
-      color:#0b0a12;
-      background: linear-gradient(180deg, var(--pink), var(--pink2));
+      color: #0b0a12;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
       border-color: rgba(255,255,255,.18);
       font-weight: 700;
     }
 
-    .card{
-      border: 1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(10px);
+    /* ===== FAB + MODAL (sama kaya confession) ===== */
+    .fab{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      color: #0b0a12;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      z-index: 1000;
+    }
+    .modal{
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+    }
+    .modal.hidden{ display:none; }
+    .modalBox{
+      width: 100%;
+      max-width: 560px;
       border-radius: 22px;
-      box-shadow: 0 28px 90px rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(12,10,24,.92);
+      box-shadow: 0 28px 90px rgba(0,0,0,.7);
+      padding: 16px;
     }
-
-    .composer{
-      padding: 14px;
+    .modalHeader{
       display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .input, .textarea{
-      width:100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color:#fff;
-      padding: 10px 12px;
-      outline:none;
-      box-sizing:border-box;
-      font-size: 14px;
-    }
-    .textarea{
-      min-height: 110px;
-      resize:none;
-      line-height: 1.5;
-    }
-
-    .pillRow{
-      display:flex;
-      gap:10px;
       align-items:center;
       justify-content:space-between;
-      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom: 12px;
     }
-
-    .btn{
-      padding: 10px 16px;
-      border-radius: 999px;
+    .iconBtn{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
-      color:#fff;
-      cursor:pointer;
-      font-weight: 800;
-      letter-spacing:.06em;
-    }
-    .btn:hover{ background: rgba(255,255,255,.10); }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; }
-
-    .hint{
-      color: var(--muted);
-      font-size: 12px;
+      color: #fff;
+      cursor: pointer;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      min-height:0;
-    }
-
-    .wall{
-      padding: 14px;
+    .feedHeader{
       display:flex;
-      flex-direction:column;
-      gap:12px;
-      min-height:0;
-      overflow:hidden;
-    }
-
-    .wallTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .searchWrap{
-      display:flex;
-      gap:10px;
       align-items:center;
-      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:12px;
+      margin: 12px 0 12px;
     }
 
-    .search{
-      width: 240px;
-      max-width: 100%;
-      border-radius: 999px;
+    /* ===== List item (ikut style list/card di styles.css kamu) ===== */
+    .quoteCard{
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
-      color:#fff;
-      padding: 9px 12px;
-      outline:none;
-      box-sizing:border-box;
-      font-size: 13px;
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
     }
-
-    .list{
-      flex:1;
-      min-height:0;
-      overflow:auto;
-      padding-right: 6px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-    }
-
-    .quoteItem{
-      padding: 12px 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 16px;
-    }
-
     .quoteText{
       white-space: pre-wrap;
-      font-size: 14px;
       line-height: 1.6;
       color: rgba(255,255,255,.92);
+      font-size: 14px;
     }
-
-    .meta{
+    .quoteMeta{
       display:flex;
       justify-content:space-between;
-      gap:10px;
       align-items:center;
+      gap:10px;
       margin-top: 10px;
       font-size: 12px;
-      color: rgba(255,255,255,.68);
+      color: rgba(255,255,255,.70);
     }
-
-    .tag{
+    .badge{
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       font-size: 11px;
-      letter-spacing:.06em;
+      letter-spacing: .06em;
       text-transform: uppercase;
-    }
-
-    @media (max-width: 860px){
-      .grid{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
-  <div class="pageWrap">
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="headerInner">
 
-    <!-- TOP -->
-    <div class="top">
       <div class="brand">
         <b>New Resident</b>
         <small>Yogyakarta</small>
@@ -252,56 +188,77 @@
         <a class="active" href="quotes.html">Quotes</a>
         <a href="games.html">Games</a>
       </nav>
-    </div>
-
-    <div class="grid">
-
-      <!-- KIRI: FORM KIRIM -->
-      <section class="card composer">
-        <h2 style="margin:0;color:var(--pink);">Quotes Wall</h2>
-        <div class="hint">Isi nama (boleh anonim) dan quotes kamu. Nanti muncul di wall.</div>
-
-        <div class="row">
-          <input id="qName" class="input" placeholder="Nama (opsional) • kosong = Anonim" />
-        </div>
-
-        <div class="row">
-          <textarea id="qText" class="textarea" placeholder="Tulis quotes kamu di sini..."></textarea>
-        </div>
-
-        <div class="pillRow">
-          <div id="qStatus" class="hint"></div>
-          <button id="qSend" class="btn">Kirim</button>
-        </div>
-
-        <div class="hint">Tips: enter boleh, auto rapih pakai line break.</div>
-      </section>
-
-      <!-- KANAN: LIST QUOTES -->
-      <section class="card wall">
-        <div class="wallTop">
-          <div>
-            <b style="font-size:14px;">Wall</b><br/>
-            <small id="wallStatus" class="hint">—</small>
-          </div>
-
-          <div class="searchWrap">
-            <input id="qSearch" class="search" placeholder="Cari nama / kata..." />
-            <button id="qRefresh" class="btn" type="button">Refresh</button>
-          </div>
-        </div>
-
-        <div id="qList" class="list">
-          <div class="quoteItem">
-            <div class="quoteText" style="opacity:.75;">Belum ada quotes.</div>
-          </div>
-        </div>
-      </section>
 
     </div>
+  </header>
 
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
+        <h1 class="title">Quotes</h1>
+        <p class="sub">Semua quotes tampil di sini. Klik tombol ✏️ untuk nulis.</p>
+      </div>
+
+      <a class="btn secondary" href="index.html">← Beranda</a>
+    </div>
+
+    <!-- Feed -->
+    <div class="feedHeader">
+      <h2 style="margin:0;">✨ Semua Quotes</h2>
+      <button id="refreshBtn" class="btn secondary">Refresh</button>
+    </div>
+
+    <div id="list" class="list"></div>
+
+    <div style="margin-top:14px;">
+      <small>Tips: kosongin nama kalau mau anonim.</small>
+    </div>
   </div>
 
+  <!-- Floating Action Button -->
+  <button id="fab" class="fab" aria-label="Tulis quotes">✏️</button>
+
+  <!-- Modal Form -->
+  <div id="quotesModal" class="modal hidden" aria-hidden="true">
+    <div class="modalBox">
+      <div class="modalHeader">
+        <h2 style="margin:0;">Tulis Quotes</h2>
+        <button id="closeModal" class="iconBtn" aria-label="Tutup">✕</button>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Nama (opsional)</label>
+          <input id="name" placeholder="Anonim jika kosong" />
+        </div>
+
+        <div>
+          <label>Quotes</label>
+          <textarea id="quote" placeholder="Tulis quotes kamu..."></textarea>
+        </div>
+
+        <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
+        <small id="status"></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal toggle script -->
+  <script>
+    const fab = document.getElementById("fab");
+    const modal = document.getElementById("quotesModal");
+    const closeModal = document.getElementById("closeModal");
+
+    fab.addEventListener("click", () => modal.classList.remove("hidden"));
+    closeModal.addEventListener("click", () => modal.classList.add("hidden"));
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  </script>
+
+  <!-- Logic -->
   <script type="module" src="quotes.js"></script>
 </body>
 </html>
