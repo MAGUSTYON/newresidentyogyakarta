@@ -114,7 +114,7 @@ let state = {
 
 let roomCh = null,
   ansCh = null,
-  playersCh = null;
+  playersCh = null,
   chatCh = null; 
 
 let lastRoomStatus = null;
@@ -249,6 +249,7 @@ async function syncRoomUI(room) {
     await refreshLeaderboard();
     await loadAnswerFeed();
     await showFinalOverlay();
+    await loadChatFeed();
     return;
   }
 
@@ -617,7 +618,7 @@ function subscribeRealtime() {
       }
     )
     .subscribe();
-}
+  
   chatCh = supabase
     .channel(`cc-chat-${state.room_id}`)
     .on(
@@ -628,6 +629,7 @@ function subscribeRealtime() {
       }
     )
     .subscribe();
+}
 /* ===== Final Overlay ===== */
 async function showFinalOverlay() {
   const { data, error } = await supabase
@@ -700,6 +702,14 @@ leaveBtn?.addEventListener("click", () => {
   showJoin("");
 });
 
+sendChatBtn?.addEventListener("click", sendChat);
+
+chatText?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendChat();
+  }
+});
 /* ===== Boot ===== */
 (async () => {
   loadState();
