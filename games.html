@@ -525,6 +525,55 @@
     font-size: 14px !important;
   }
 }
+    /* ===== CHAT (kanan bawah) ===== */
+.stage-chat{
+  padding: 14px;
+  gap: 10px;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+.chatList{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding-right:8px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* input chat */
+.chatBox{
+  flex-shrink:0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+#chatText{
+  flex:1;
+  height: 36px;
+  max-height: 36px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color:#fff;
+  padding: 0 6px;
+  resize:none;
+  box-sizing:border-box;
+}
+
+#sendChatBtn{
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  font-weight: 800;
+  cursor:pointer;
+}
+#sendChatBtn:disabled{ opacity:.55; cursor:not-allowed; }
   </style>
 </head>
 
@@ -632,18 +681,23 @@
             </div>
           </div>
 
-          <!-- BAWAH KANAN: OBROLAN -->
-          <div class="card stage-chat">
-            <div class="judul">OBROLAN</div>
-            <div class="feedBox">
-              <div class="muted">Chat coming soon...</div>
-            </div>
-          </div>
+<!-- BAWAH KANAN: OBROLAN -->
+<div class="card stage-chat">
+  <div class="judul">OBROLAN</div>
 
-        </div><!-- /#gameCard -->
+  <!-- list chat -->
+  <div id="chatList" class="chatList">
+    <div class="ansItem"><span style="opacity:.75">Belum ada chat.</span></div>
+  </div>
 
-      </section>
+  <!-- input chat (pill) -->
+  <div id="chatBox" class="chatBox" data-disabled="0">
+    <div class="pillWrap">
+      <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
+      <button id="sendChatBtn">Kirim</button>
     </div>
+  </div>
+</div>
 
   </div>
 
