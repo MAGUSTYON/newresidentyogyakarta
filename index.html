@@ -103,12 +103,32 @@
     color: var(--pink);
     font-weight: 700;
     } 
+/* ===== Prologue typography fix (setelah reset *) ===== */
+.prologue{
+  white-space: normal;        /* karena kamu pakai <p> sudah cukup */
+  line-height: 1.75;
+  color: rgba(255,255,255,.88);
+}
+
+/* blok quote */
 .prologue .quote{
-  margin: 12px 0 16px;
+  margin: 14px 0 18px;        /* jarak quote ke paragraf */
+}
+
+.prologue .quote h3{
+  margin: 0;                  /* rapet antar h3 */
   line-height: 1.25;
 }
-.prologue .quote h3{ margin:0; }
-.prologue .quote h3 + h3{ margin-top: 6px; }
+
+/* jarak antar baris quote */
+.prologue .quote h3 + h3{
+  margin-top: 8px;
+}
+
+/* paragraf prologue */
+.prologue p{
+  margin: 10px 0;             /* balikin jarak antar paragraf */
+}
     
   </style>
 </head>
@@ -192,6 +212,7 @@
 
 </body>
 </html>
+
 
 
 
