@@ -53,6 +53,10 @@ const closeOverlay = document.getElementById("closeOverlay");
 const finalSub = document.getElementById("finalSub");
 const finalList = document.getElementById("finalList");
 
+/* ===== orolan ===== */
+const chatList = document.getElementById("chatList");
+const chatText = document.getElementById("chatText");
+const sendChatBtn = document.getElementById("sendChatBtn");
 /* ===== TAB DOM (Jawaban / Obrolan) =====
    (Kalau kamu sudah pindah ke layout 4 kotak tanpa tabs, ini aman karena pakai optional chaining)
 */
@@ -111,6 +115,7 @@ let state = {
 let roomCh = null,
   ansCh = null,
   playersCh = null;
+  chatCh = null; 
 
 let lastRoomStatus = null;
 
@@ -221,6 +226,7 @@ async function joinRoom(code, nickname) {
   await syncRoomUI(room);
   subscribeRealtime();
   await refreshLeaderboard();
+  await loadChatFeed();
 }
 
 /* ===== UI Sync ===== */
@@ -253,6 +259,7 @@ async function syncRoomUI(room) {
     buzzInfo.textContent = "Buzz akan aktif saat live.";
     setAnswerEnabled(false, "Jawaban aktif saat LIVE dan kamu menang BUZZ.");
     await refreshLeaderboard();
+    await loadChatFeed();
     await loadAnswerFeed();
     return;
   }
@@ -374,6 +381,75 @@ async function loadAnswerFeed() {
 
   scrollFeedToBottom();
 }
+/* ====chat==== */
+async function loadChatFeed() {
+  if (!state.room_id) {
+    chatList.innerHTML = "";
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("cc_chats")
+    .select("id, message, created_at, cc_players(nickname)")
+    .eq("room_id", state.room_id)
+    .order("created_at", { ascending: true })
+    .limit(80);
+
+  if (error) {
+    chatList.innerHTML = `<div class="ansItem"><span class="muted">Chat error: ${esc(error.message)}</span></div>`;
+    return;
+  }
+
+  if (!data?.length) {
+    chatList.innerHTML = `<div class="ansItem"><span style="opacity:.75">Belum ada chat.</span></div>`;
+    return;
+  }
+
+  chatList.innerHTML = data
+    .map((c) => {
+      const name = esc(c.cc_players?.nickname || "Player");
+      const msg = esc(c.message);
+      return `
+        <div class="ansItem">
+          <div class="meta">
+            <b>${name}</b>
+            <span style="opacity:.65;font-size:11px;">${new Date(c.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+          </div>
+          <div style="white-space:pre-wrap;">${msg}</div>
+        </div>
+      `;
+    })
+    .join("");
+
+  // auto scroll ke bawah
+  chatList.scrollTop = chatList.scrollHeight;
+}
+
+async function sendChat() {
+  if (!state.room_id || !state.player_id) return;
+
+  const text = (chatText.value || "").trim();
+  if (!text) return;
+
+  sendChatBtn.disabled = true;
+
+  const { error } = await supabase.from("cc_chats").insert({
+    room_id: state.room_id,
+    player_id: state.player_id,
+    message: text,
+  });
+
+  sendChatBtn.disabled = false;
+
+  if (error) {
+    // optional: tampilkan error kecil
+    console.log("Chat insert error:", error.message);
+    return;
+  }
+
+  chatText.value = "";
+  await loadChatFeed();
+}
 
 /* ===== GAME ACTIONS ===== */
 
@@ -478,7 +554,9 @@ function unsubscribe() {
   if (roomCh) supabase.removeChannel(roomCh);
   if (ansCh) supabase.removeChannel(ansCh);
   if (playersCh) supabase.removeChannel(playersCh);
-  roomCh = ansCh = playersCh = null;
+  if (chatCh) supabase.removeChannel(chatCh);
+
+  roomCh = ansCh = playersCh = chatCh = null;
 }
 
 function subscribeRealtime() {
@@ -540,7 +618,16 @@ function subscribeRealtime() {
     )
     .subscribe();
 }
-
+  chatCh = supabase
+    .channel(`cc-chat-${state.room_id}`)
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "cc_chats", filter: `room_id=eq.${state.room_id}` },
+      async () => {
+        await loadChatFeed();
+      }
+    )
+    .subscribe();
 /* ===== Final Overlay ===== */
 async function showFinalOverlay() {
   const { data, error } = await supabase
