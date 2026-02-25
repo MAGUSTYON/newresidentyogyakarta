@@ -574,6 +574,54 @@
   cursor:pointer;
 }
 #sendChatBtn:disabled{ opacity:.55; cursor:not-allowed; }
+    /* ===== FIX: OBROLAN biar sama kayak input JAWABAN ===== */
+.stage-chat .pillWrap{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  background: rgba(255,255,255,.04) !important;
+  border-radius: 999px !important;
+  padding: 8px 10px !important;
+}
+
+/* textarea chat kecil (pill) */
+#chatText{
+  flex:1 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color:#fff !important;
+  padding: 0 8px !important;
+  resize:none !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+
+/* tombol kirim chat kecil */
+#sendChatBtn{
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  background: rgba(255,255,255,.06) !important;
+  color:#fff !important;
+  font-weight: 800 !important;
+  cursor:pointer !important;
+  position: static !important; /* pastiin gak absolute */
+}
+
+#sendChatBtn:disabled{ opacity:.55; cursor:not-allowed; }
+
+/* list chat scroll */
+#chatList{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding-right:8px;
+}
   </style>
 </head>
 
