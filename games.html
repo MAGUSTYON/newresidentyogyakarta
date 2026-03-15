@@ -8,24 +8,6 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-          /* ===== Sticky Header ===== */
-    .header{
-      position: sticky;
-      top: 0;
-      z-index: 3000;
-      background: rgba(7,6,17,.82);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,.14);
-    }
-    .headerInner{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
     :root{
       --pink: #f2a3c7;
       --pink2:#d98ab7;
@@ -34,9 +16,11 @@
       --muted: rgba(255,255,255,.7);
     }
 
-    body{ min-height: 100vh; }
+    body{
+      min-height: 100vh;
+      margin: 0;
+    }
 
-    /* wrapper */
     .gameWrap{
       max-width: 1200px;
       margin: 0 auto;
@@ -44,17 +28,17 @@
       display: grid;
       grid-template-rows: auto 1fr;
       gap: 14px;
-      height: 100vh;
+      min-height: 100vh;
       box-sizing: border-box;
     }
 
-    /* header */
     .gameTop{
       display:flex;
       justify-content:space-between;
       align-items:flex-start;
       gap:14px;
     }
+
     .brand{ display:flex; flex-direction:column; gap:2px; }
     .brand b{ font-size:18px; color: var(--pink); letter-spacing:.02em; }
     .brand small{
@@ -83,12 +67,12 @@
       font-weight: 700;
     }
 
-    /* main */
     .gameMain{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
       min-height: 0;
+    }
+
+    .centerCol{
+      min-height: 100%;
     }
 
     .card{
@@ -99,23 +83,22 @@
       box-shadow: 0 28px 90px rgba(0,0,0,.55);
     }
 
-    /* ====== 4 KOTAK ====== */
     .stage4{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
       grid-template-rows: 1fr 1fr;
       gap: 14px;
-      height: calc(100vh - 110px); /* adjust bila perlu */
+      height: calc(100vh - 110px);
       min-height: 0;
     }
+
     .stage4 > .card{ min-height:0; overflow:hidden; }
 
-    .stage-q{ grid-column:1; grid-row:1; min-height:0; display:flex; }
-    .stage-lb{ grid-column:2; grid-row:1; min-height:0; display:flex; flex-direction:column; }
-    .stage-ans{ grid-column:1; grid-row:2; min-height:0; display:flex; flex-direction:column; }
-    .stage-chat{ grid-column:2; grid-row:2; min-height:0; display:flex; flex-direction:column; }
+    .stage-q{ grid-column:1; grid-row:1; display:flex; }
+    .stage-lb{ grid-column:2; grid-row:1; display:flex; flex-direction:column; }
+    .stage-ans{ grid-column:1; grid-row:2; display:flex; flex-direction:column; }
+    .stage-chat{ grid-column:2; grid-row:2; display:flex; flex-direction:column; }
 
-    /* ===== SOAL ===== */
     .qCard{
       width:100%;
       padding: 16px;
@@ -126,6 +109,7 @@
       text-align:center;
       min-height: 0;
     }
+
     .btnMini{
       padding: 8px 12px;
       border-radius: 999px;
@@ -134,7 +118,7 @@
       color: #fff;
       cursor:pointer;
     }
-    .btnMini:hover{ background: rgba(255,255,255,.08); }
+
     .qLabel{
       letter-spacing:.22em;
       font-size: 12px;
@@ -142,23 +126,26 @@
       font-weight:700;
       margin-top: 6px;
     }
+
     .qBig{
       font-size: clamp(30px, 5vw, 64px);
       font-weight: 900;
       line-height: 1.05;
-      margin: 1px 0 1px;
+      margin: 1px 0;
     }
+
     .qDivider{
       width:100%;
       height:1px;
       background: rgba(255,255,255,.10);
       margin: 10px 0 14px;
     }
+
     .buzzBig{
-      width: min(75px);
+      width: 75px;
       border: none;
       border-radius: 999px;
-      padding: 10px 10px;
+      padding: 10px;
       font-weight: 900;
       letter-spacing: .08em;
       cursor:pointer;
@@ -167,6 +154,7 @@
       box-shadow: 0 18px 55px rgba(0,0,0,.55);
     }
     .buzzBig:disabled{ opacity:.55; cursor:not-allowed; }
+
     .buzzInfo{
       margin-top: 10px;
       color: rgba(255,255,255,.78);
@@ -174,7 +162,6 @@
       min-height: 18px;
     }
 
-    /* ===== LEADERBOARD ===== */
     .lbHead{
       padding: 14px 14px 10px;
       border-bottom: 1px solid rgba(255,255,255,.10);
@@ -183,13 +170,16 @@
       align-items:center;
       gap:10px;
     }
+
     #meTag{ color: rgba(255,255,255,.75); font-size:12px; }
+
     .lbBody{
       padding: 12px;
       overflow:auto;
       min-height: 0;
       flex:1;
     }
+
     .lb-item{
       padding: 10px 12px;
       border: 1px solid rgba(255,255,255,.10);
@@ -201,17 +191,22 @@
       margin-bottom: 10px;
     }
 
-    /* ===== JAWABAN: history + pill input ===== */
-    .stage-ans{
-      padding: 14px;
-      gap: 10px;
-    }
-    .stage-ans .title{
-      font-weight:900;
-      margin-bottom:4px;
+    .judul {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--pink);
+      text-shadow: 0 0 18px rgba(242, 161, 179, .25);
     }
 
-    #feedList{
+    .stage-ans,
+    .stage-chat{
+      padding: 14px;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    #feedList,
+    #chatList{
       flex:1;
       min-height:0;
       overflow:auto;
@@ -221,7 +216,6 @@
       gap:10px;
     }
 
-    /* item history jawaban */
     .ansItem{
       padding: 10px 12px;
       border: 1px solid rgba(255,255,255,.10);
@@ -231,33 +225,9 @@
       font-size: 13px;
       line-height: 1.35;
     }
-    .ansItem .meta{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      font-size: 11px;
-      color: rgba(255,255,255,.65);
-      margin-bottom: 6px;
-      align-items:center;
-    }
 
-    /* badge verdict */
-    .verdict{
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:#fff;
-      font-weight: 800;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
-    .verdict.correct{ background: rgba(70, 220, 150, .12); }
-    .verdict.wrong{ background: rgba(255, 90, 120, .12); }
-    .verdict.pending{ opacity:.8; }
-
-    #answerBox{
+    #answerBox,
+    #chatBox{
       flex-shrink:0;
       padding-top: 10px;
       border-top: 1px solid rgba(255,255,255,.10);
@@ -273,20 +243,22 @@
       padding: 8px 10px;
     }
 
-    #answerText{
+    #answerText,
+    #chatText{
       flex:1;
       height: 36px;
-      max-height: 36px;
       border: none;
       outline: none;
       background: transparent;
       color:#fff;
-      padding: 0 6px;
+      padding: 0 8px;
       resize:none;
+      overflow:hidden;
       box-sizing:border-box;
     }
 
-    #sendAnswerBtn{
+    #sendAnswerBtn,
+    #sendChatBtn{
       padding: 8px 14px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.14);
@@ -295,41 +267,26 @@
       font-weight: 800;
       cursor:pointer;
     }
-    #sendAnswerBtn:disabled{ opacity:.55; cursor:not-allowed; }
 
-    #answerBox[data-disabled="1"]{
-      opacity: .65;
-      filter: grayscale(.15);
-    }
-    #answerBox[data-disabled="1"] textarea,
-    #answerBox[data-disabled="1"] button{
-      cursor: not-allowed;
+    #sendAnswerBtn:disabled,
+    #sendChatBtn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
     }
 
-    /* ===== OBROLAN ===== */
-    .stage-chat{
-      padding: 14px;
-      gap: 10px;
-    }
-    .stage-chat .title{ font-weight:900; margin-bottom:4px; }
-    .feedBox{
-      flex:1;
-      min-height:0;
-      overflow:auto;
-    }
-
-    /* join */
     .joinCard{
       padding: 18px;
       max-width: 860px;
       margin: 0 auto;
     }
+
     .joinGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 12px;
     }
+
     .joinGrid input{
       width:100%;
       border-radius: 14px;
@@ -340,12 +297,14 @@
       outline:none;
       box-sizing:border-box;
     }
+
     .joinActions{
       display:flex;
       gap: 10px;
       align-items:center;
       margin-top: 12px;
     }
+
     #joinBtn{
       padding: 10px 16px;
       border-radius: 999px;
@@ -355,10 +314,9 @@
       cursor:pointer;
       font-weight: 800;
     }
-    #joinBtn:hover{ background: rgba(255,255,255,.08); }
+
     #joinStatus{ color: rgba(255,255,255,.78); font-size: 13px; }
 
-    /* overlay */
     #endOverlay{
       position: fixed;
       inset: 0;
@@ -369,6 +327,7 @@
       padding: 18px;
       z-index: 9999;
     }
+
     .overlayBox{
       width: 100%;
       max-width: 560px;
@@ -378,6 +337,7 @@
       background: rgba(12,10,24,.92);
       box-shadow: 0 28px 90px rgba(0,0,0,.7);
     }
+
     .overlayHead{
       display:flex;
       justify-content:space-between;
@@ -385,6 +345,7 @@
       gap:10px;
       margin-bottom: 8px;
     }
+
     #closeOverlay{
       width: 38px;
       height: 38px;
@@ -394,233 +355,39 @@
       color: #fff;
       cursor:pointer;
     }
-    /* ===== FIX: JAWABAN (history keliatan, input pill kecil) ===== */
 
-/* kotak jawaban jadi column */
-.stage-ans{
-  display:flex !important;
-  flex-direction:column !important;
-  min-height:0 !important;
-}
+    @media (max-width: 980px){
+      .gameWrap{
+        min-height: 100vh;
+        padding: 10px;
+        gap: 10px;
+      }
 
-/* history harus ngisi ruang & bisa scroll */
-.stage-ans #feedList{
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  overflow: auto !important;
-  padding-right: 8px !important;
-  margin-bottom: 10px !important;
-}
+      .stage4{
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 10px;
+        height: calc(100vh - 120px);
+      }
 
-/* input area jangan gede */
-.stage-ans #answerBox{
-  flex: 0 0 auto !important;
-  margin-top: 0 !important;
-  padding-top: 10px !important;
-  border-top: 1px solid rgba(255,255,255,.10) !important;
-}
-
-/* pill wrapper kecil */
-.stage-ans .pillWrap{
-  display:flex !important;
-  align-items:center !important;
-  gap: 10px !important;
-  border: 1px solid rgba(255,255,255,.14) !important;
-  background: rgba(255,255,255,.04) !important;
-  border-radius: 999px !important;
-  padding: 8px 10px !important;
-}
-
-/* PAKSA textarea jadi kecil (override height lama 70/110) */
-.stage-ans #answerText{
-  flex: 1 1 auto !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  max-height: 36px !important;
-  padding: 0 8px !important;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  resize: none !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-}
-
-/* tombol kirim kecil */
-.stage-ans #sendAnswerBtn{
-  position: static !important;
-  padding: 8px 14px !important;
-  border-radius: 999px !important;
-}
-
-/* kalau ada rule lama yang bikin feedList kecil, matiin */
-#feedList{
-  max-height: none !important;
-}
-    .judul {
-    font-size: 18PX;
-    font-weight: 700;
-    color: var(--pink);
-    text-shadow: 0 0 18px rgba(242, 161, 179, .25);
+      .qBig{ font-size: 28px; }
+      .buzzBig{ width: 100%; }
+      .judul{ font-size: 14px; }
     }
-    /* =========================
-   HP tetap 4 kotak (2x2)
-   ========================= */
-@media (max-width: 980px){
-
-  .gameWrap{
-    height: 100vh !important;
-    min-height: 100vh !important;
-    padding: 10px !important;
-    gap: 10px !important;
-  }
-
-  .stage4{
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    grid-template-rows: 1fr 1fr !important;
-    gap: 10px !important;
-
-    /* sesuaikan kalau header lebih tinggi */
-    height: calc(100vh - 120px) !important;
-    min-height: 0 !important;
-  }
-
-  .stage-q{ grid-column:1; grid-row:1; }
-  .stage-lb{ grid-column:2; grid-row:1; }
-  .stage-ans{ grid-column:1; grid-row:2; }
-  .stage-chat{ grid-column:2; grid-row:2; }
-
-  .stage4 > .card{
-    min-height:0 !important;
-    overflow:hidden !important;
-  }
-
-  /* Scroll internal */
-  .stage-lb .lbBody,
-  .stage-ans #feedList,
-  .stage-chat .feedBox{
-    overflow:auto !important;
-    min-height:0 !important;
-  }
-
-  /* Perkecil soal biar muat */
-  .qBig{
-    font-size: 28px !important;
-  }
-
-  /* BUZZ full width */
-  .buzzBig{
-    width: 100% !important;
-  }
-
-  /* Input tetap kecil */
-  .stage-ans #answerText{
-    height: 34px !important;
-    min-height: 34px !important;
-    max-height: 34px !important;
-  }
-
-  .judul{
-    font-size: 14px !important;
-  }
-}
-    /* ===== CHAT (kanan bawah) ===== */
-.stage-chat{
-  padding: 14px;
-  gap: 10px;
-  display:flex;
-  flex-direction:column;
-  min-height:0;
+    .buzzOwner{
+  margin-top: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,.88);
+  text-align: center;
+  min-height: 18px;
 }
 
-.chatList{
-  flex:1;
-  min-height:0;
-  overflow:auto;
-  padding-right:8px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-/* input chat */
-.chatBox{
-  flex-shrink:0;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255,255,255,.10);
-}
-
-#chatText{
-  flex:1;
-  height: 36px;
-  max-height: 36px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color:#fff;
-  padding: 0 6px;
-  resize:none;
-  box-sizing:border-box;
-}
-
-#sendChatBtn{
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  color:#fff;
-  font-weight: 800;
-  cursor:pointer;
-}
-#sendChatBtn:disabled{ opacity:.55; cursor:not-allowed; }
-    /* ===== FIX: OBROLAN biar sama kayak input JAWABAN ===== */
-.stage-chat .pillWrap{
-  display:flex !important;
-  align-items:center !important;
-  gap:10px !important;
-  border: 1px solid rgba(255,255,255,.14) !important;
-  background: rgba(255,255,255,.04) !important;
-  border-radius: 999px !important;
-  padding: 8px 10px !important;
-}
-
-/* textarea chat kecil (pill) */
-#chatText{
-  flex:1 !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  max-height: 36px !important;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  color:#fff !important;
-  padding: 0 8px !important;
-  resize:none !important;
-  overflow:hidden !important;
-  box-sizing:border-box !important;
-}
-
-/* tombol kirim chat kecil */
-#sendChatBtn{
-  padding: 8px 14px !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(255,255,255,.14) !important;
-  background: rgba(255,255,255,.06) !important;
-  color:#fff !important;
-  font-weight: 800 !important;
-  cursor:pointer !important;
-  position: static !important; /* pastiin gak absolute */
-}
-
-#sendChatBtn:disabled{ opacity:.55; cursor:not-allowed; }
-
-/* list chat scroll */
-#chatList{
-  flex:1;
-  min-height:0;
-  overflow:auto;
-  padding-right:8px;
+.buzzTimer{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255,255,255,.68);
+  text-align: center;
+  min-height: 16px;
 }
   </style>
 </head>
@@ -628,7 +395,6 @@
 <body>
   <div class="gameWrap">
 
-    <!-- TOP -->
     <div class="gameTop">
       <div class="brand">
         <b>New Resident</b>
@@ -644,11 +410,9 @@
       </nav>
     </div>
 
-    <!-- MAIN -->
     <div class="gameMain">
       <section class="centerCol">
 
-        <!-- JOIN CARD -->
         <div id="joinCard" class="card joinCard" style="display:block;">
           <h2 style="margin:0 0 8px;color:var(--pink);">Cerdas Cermat (Live)</h2>
           <div style="color:rgba(255,255,255,.78);font-size:13px;">
@@ -672,10 +436,8 @@
           </div>
         </div>
 
-        <!-- GAME CARD -->
         <div id="gameCard" class="stage4" hidden>
 
-          <!-- ATAS KIRI: SOAL -->
           <div class="card stage-q">
             <div class="qCard">
               <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
@@ -693,10 +455,11 @@
 
               <button id="buzzBtn" class="buzzBig" disabled>BUZZ</button>
               <div id="buzzInfo" class="buzzInfo"></div>
+              <div id="buzzOwner" class="buzzOwner">Belum ada pemenang buzz.</div>
+              <div id="buzzTimer" class="buzzTimer"></div>
             </div>
           </div>
 
-          <!-- ATAS KANAN: LEADERBOARD -->
           <aside class="card stage-lb">
             <div class="lbHead">
               <div>
@@ -712,16 +475,11 @@
             </div>
           </aside>
 
-          <!-- BAWAH KIRI: JAWABAN -->
           <div class="card stage-ans">
             <div class="judul">JAWABAN</div>
-
-            <!-- History jawaban masuk ke sini -->
             <div id="feedList">
               <div class="ansItem"><span style="opacity:.75">Belum ada jawaban.</span></div>
             </div>
-
-            <!-- Pill input -->
             <div id="answerBox" data-disabled="1">
               <div class="pillWrap">
                 <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
@@ -730,27 +488,24 @@
             </div>
           </div>
 
-<!-- BAWAH KANAN: OBROLAN -->
-<div class="card stage-chat">
-  <div class="judul">OBROLAN</div>
+          <div class="card stage-chat">
+            <div class="judul">OBROLAN</div>
+            <div id="chatList" class="chatList">
+              <div class="ansItem"><span style="opacity:.75">Belum ada chat.</span></div>
+            </div>
+            <div id="chatBox" class="chatBox" data-disabled="0">
+              <div class="pillWrap">
+                <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
+                <button id="sendChatBtn">Kirim</button>
+              </div>
+            </div>
+          </div>
 
-  <!-- list chat -->
-  <div id="chatList" class="chatList">
-    <div class="ansItem"><span style="opacity:.75">Belum ada chat.</span></div>
-  </div>
-
-  <!-- input chat (pill) -->
-  <div id="chatBox" class="chatBox" data-disabled="0">
-    <div class="pillWrap">
-      <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
-      <button id="sendChatBtn">Kirim</button>
+        </div>
+      </section>
     </div>
   </div>
-</div>
 
-  </div>
-
-  <!-- END OVERLAY -->
   <div id="endOverlay">
     <div class="overlayBox">
       <div class="overlayHead">
