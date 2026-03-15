@@ -1,7 +1,7 @@
 // games.js
 import { supabase } from "./supabaseClient.js";
 
-/* ===== SOUND SYSTEM (ALL IN ROOT) ===== */
+/* ===== SOUND SYSTEM ===== */
 const sBuzz = new Audio("buzz.mp3");
 const sCorrect = new Audio("correct.mp3");
 const sWrong = new Audio("wrong.mp3");
@@ -26,21 +26,20 @@ const joinStatus = document.getElementById("joinStatus");
 
 const roomLabel = document.getElementById("roomLabel");
 const gameStatus = document.getElementById("gameStatus");
-
 const qText = document.getElementById("qText");
 
 const buzzBtn = document.getElementById("buzzBtn");
 const buzzInfo = document.getElementById("buzzInfo");
+const buzzOwner = document.getElementById("buzzOwner");
+const buzzTimer = document.getElementById("buzzTimer");
 
 const answerBox = document.getElementById("answerBox");
 const answerText = document.getElementById("answerText");
 const sendAnswerBtn = document.getElementById("sendAnswerBtn");
-// NOTE: di HTML stage4 kamu TIDAK punya #answerStatus, jadi kita guard:
 const answerStatus = document.getElementById("answerStatus") || null;
 
 const leaveBtn = document.getElementById("leaveBtn");
 
-// NOTE: di HTML stage4 kamu TIDAK punya #feedStatus, jadi kita guard:
 const feedStatus = document.getElementById("feedStatus") || null;
 const feedList = document.getElementById("feedList");
 
@@ -53,56 +52,12 @@ const closeOverlay = document.getElementById("closeOverlay");
 const finalSub = document.getElementById("finalSub");
 const finalList = document.getElementById("finalList");
 
-/* ===== orolan ===== */
 const chatList = document.getElementById("chatList");
 const chatText = document.getElementById("chatText");
 const sendChatBtn = document.getElementById("sendChatBtn");
-/* ===== TAB DOM (Jawaban / Obrolan) =====
-   (Kalau kamu sudah pindah ke layout 4 kotak tanpa tabs, ini aman karena pakai optional chaining)
-*/
-let tabJawaban = document.getElementById("tabJawaban");
-let tabObrolan = document.getElementById("tabObrolan");
-let panelJawaban = document.getElementById("panelJawaban");
-let panelObrolan = document.getElementById("panelObrolan");
-
-/* ===== TAB STATE ===== */
-let obrolanUnlocked = false;
-
-function setActiveTab(which) {
-  const isJawaban = which === "jawaban";
-
-  tabJawaban?.classList.toggle("is-active", isJawaban);
-  tabObrolan?.classList.toggle("is-active", !isJawaban);
-
-  panelJawaban?.classList.toggle("is-active", isJawaban);
-  panelObrolan?.classList.toggle("is-active", !isJawaban);
-}
-
-function lockObrolan(locked) {
-  obrolanUnlocked = !locked;
-
-  tabObrolan?.classList.toggle("is-locked", locked);
-  tabObrolan?.setAttribute("aria-disabled", locked ? "true" : "false");
-  tabObrolan && (tabObrolan.style.pointerEvents = locked ? "none" : "auto");
-  tabObrolan && (tabObrolan.style.opacity = locked ? "0.55" : "1");
-}
-
-function initTabsOnce() {
-  // pasang listener sekali aja
-  tabJawaban?.addEventListener("click", () => setActiveTab("jawaban"));
-  tabObrolan?.addEventListener("click", () => {
-    if (!obrolanUnlocked) return;
-    setActiveTab("obrolan");
-  });
-
-  // default state
-  setActiveTab("jawaban");
-  lockObrolan(true);
-}
-initTabsOnce();
 
 /* ===== STATE ===== */
-const LS_KEY = "cc_state_final_v1";
+const LS_KEY = "cc_state_final_v2";
 
 let state = {
   room_id: null,
@@ -112,14 +67,27 @@ let state = {
   current_question_id: null,
 };
 
-let roomCh = null,
-  ansCh = null,
-  playersCh = null,
-  chatCh = null; 
+let roomCh = null;
+let ansCh = null;
+let playersCh = null;
+let chatCh = null;
+let buzzCh = null;
 
 let lastRoomStatus = null;
+let canAnswer = false;
 
-/* ===== helpers ===== */
+let activeBuzz = null;
+// shape:
+// {
+//   player_id,
+//   nickname,
+//   created_at,
+//   expires_at
+// }
+
+let buzzCountdownInt = null;
+
+/* ===== HELPERS ===== */
 function esc(s = "") {
   return String(s)
     .replaceAll("&", "&amp;")
@@ -127,32 +95,17 @@ function esc(s = "") {
     .replaceAll(">", "&gt;");
 }
 
-let canAnswer = false;
-
-function setAnswerEnabled(enabled, note = "") {
-  canAnswer = !!enabled;
-
-  if (answerText) answerText.disabled = !canAnswer;
-  if (sendAnswerBtn) sendAnswerBtn.disabled = !canAnswer;
-
-  // kasih style biar keliatan disabled
-  if (answerBox) answerBox.dataset.disabled = canAnswer ? "0" : "1";
-
-  if (answerStatus) {
-    if (note) answerStatus.textContent = note;
-    else answerStatus.textContent = "";
-  }
-}
-
 function saveState() {
   localStorage.setItem(LS_KEY, JSON.stringify(state));
 }
+
 function loadState() {
   try {
-    const s = JSON.parse(localStorage.getItem(LS_KEY) || "null");
-    if (s) state = s;
+    const raw = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (raw) state = raw;
   } catch {}
 }
+
 function clearState() {
   localStorage.removeItem(LS_KEY);
   state = {
@@ -164,42 +117,218 @@ function clearState() {
   };
 }
 
-/* ===== show/hide ===== */
+function setAnswerEnabled(enabled, note = "") {
+  canAnswer = !!enabled;
+
+  if (answerText) answerText.disabled = !canAnswer;
+  if (sendAnswerBtn) sendAnswerBtn.disabled = !canAnswer;
+  if (answerBox) answerBox.dataset.disabled = canAnswer ? "0" : "1";
+
+  if (answerStatus) {
+    answerStatus.textContent = note || "";
+  }
+}
+
+function setChatEnabled(enabled) {
+  if (chatText) chatText.disabled = !enabled;
+  if (sendChatBtn) sendChatBtn.disabled = !enabled;
+}
+
+function scrollFeedToBottom() {
+  if (!feedList) return;
+  queueMicrotask(() => {
+    feedList.scrollTop = feedList.scrollHeight;
+  });
+}
+
+function scrollChatToBottom() {
+  if (!chatList) return;
+  queueMicrotask(() => {
+    chatList.scrollTop = chatList.scrollHeight;
+  });
+}
+
+function clearBuzzCountdown() {
+  if (buzzCountdownInt) {
+    clearInterval(buzzCountdownInt);
+    buzzCountdownInt = null;
+  }
+}
+
+function resetBuzzVisual(text = "Belum ada pemenang buzz.", timerText = "") {
+  if (buzzOwner) buzzOwner.textContent = text;
+  if (buzzTimer) buzzTimer.textContent = timerText;
+}
+
+function clearBuzzState() {
+  activeBuzz = null;
+  clearBuzzCountdown();
+  resetBuzzVisual();
+}
+
 function showJoin(msg = "") {
-  joinCard.style.display = "block";
-  gameCard.style.display = "none";
-  joinStatus.textContent = msg;
+  if (joinCard) {
+    joinCard.style.display = "block";
+    joinCard.removeAttribute("hidden");
+  }
+
+  if (gameCard) {
+    gameCard.style.display = "none";
+    gameCard.setAttribute("hidden", "");
+  }
+
+  if (joinStatus) joinStatus.textContent = msg;
 }
 
 function showGame() {
-  joinCard.style.display = "none";
-  // penting: harus grid biar 4 kotak jalan
-  gameCard.style.display = "grid";
+  if (joinCard) {
+    joinCard.style.display = "none";
+    joinCard.setAttribute("hidden", "");
+  }
 
-  roomLabel.textContent = state.room_code || "-";
-  meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
+  if (gameCard) {
+    gameCard.removeAttribute("hidden");
+    gameCard.style.display = "grid";
+  }
+
+  if (roomLabel) roomLabel.textContent = state.room_code || "-";
+  if (meTag) meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
 }
 
-/* ===== Supabase fetch ===== */
+/* ===== SUPABASE FETCH ===== */
 async function fetchRoomByCode(code) {
   const { data, error } = await supabase
     .from("cc_rooms")
     .select("id, code, status, current_question_id, question_index")
     .eq("code", code)
     .maybeSingle();
+
   if (error) throw error;
   return data;
 }
 
 async function fetchQuestion(qid) {
   if (!qid) return null;
+
   const { data, error } = await supabase
     .from("cc_questions")
     .select("id, question_text")
     .eq("id", qid)
     .maybeSingle();
+
   if (error) throw error;
   return data;
+}
+
+/* ===== BUZZ HELPERS ===== */
+function startBuzzCountdown() {
+  clearBuzzCountdown();
+
+  buzzCountdownInt = setInterval(() => {
+    if (!activeBuzz?.expires_at) {
+      clearBuzzCountdown();
+      return;
+    }
+
+    const leftMs = new Date(activeBuzz.expires_at).getTime() - Date.now();
+
+    if (leftMs <= 0) {
+      clearBuzzCountdown();
+      activeBuzz = null;
+
+      resetBuzzVisual("Belum ada pemenang buzz.", "Waktu habis. Buzz terbuka lagi.");
+
+      if (lastRoomStatus === "live") {
+        if (buzzBtn) buzzBtn.disabled = false;
+        if (buzzInfo) buzzInfo.textContent = "Buzz terbuka lagi.";
+      }
+
+      setAnswerEnabled(false, "Waktu jawab habis. Tekan BUZZ lagi.");
+      return;
+    }
+
+    const sec = Math.ceil(leftMs / 1000);
+    if (buzzTimer) buzzTimer.textContent = `Waktu jawab: ${sec} detik`;
+  }, 250);
+}
+
+async function fetchActiveBuzz() {
+  if (!state.room_id || !state.current_question_id) {
+    clearBuzzState();
+    return null;
+  }
+
+  const { data: buzzRow, error: buzzErr } = await supabase
+    .from("cc_buzzes")
+    .select("id, player_id, created_at, cc_players(nickname)")
+    .eq("room_id", state.room_id)
+    .eq("question_id", state.current_question_id)
+    .eq("is_winner", true)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (buzzErr) {
+    console.log("fetchActiveBuzz error:", buzzErr.message);
+    clearBuzzState();
+    return null;
+  }
+
+  if (!buzzRow) {
+    clearBuzzState();
+    return null;
+  }
+
+  const { data: answerAfterBuzz, error: answerErr } = await supabase
+    .from("cc_answers")
+    .select("id, created_at")
+    .eq("question_id", state.current_question_id)
+    .eq("player_id", buzzRow.player_id)
+    .gte("created_at", buzzRow.created_at)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (answerErr) {
+    console.log("answer check error:", answerErr.message);
+  }
+
+  if (answerAfterBuzz) {
+    clearBuzzState();
+    return null;
+  }
+
+  const created = new Date(buzzRow.created_at).getTime();
+  const expires = created + 15000;
+
+  if (Date.now() >= expires) {
+    clearBuzzState();
+    return null;
+  }
+
+  activeBuzz = {
+    player_id: buzzRow.player_id,
+    nickname: buzzRow.cc_players?.nickname || "Player",
+    created_at: buzzRow.created_at,
+    expires_at: new Date(expires).toISOString(),
+  };
+
+  if (buzzOwner) {
+    buzzOwner.textContent = `Pemenang buzz: ${activeBuzz.nickname}`;
+  }
+
+  if (state.player_id === activeBuzz.player_id) {
+    if (buzzInfo) buzzInfo.textContent = "Kamu menang buzz! Jawab dalam 15 detik.";
+    setAnswerEnabled(true, "");
+    if (buzzBtn) buzzBtn.disabled = true;
+  } else {
+    if (buzzInfo) buzzInfo.textContent = `${activeBuzz.nickname} sedang menjawab...`;
+    setAnswerEnabled(false, `Menunggu ${activeBuzz.nickname} menjawab.`);
+    if (buzzBtn) buzzBtn.disabled = true;
+  }
+
+  startBuzzCountdown();
+  return activeBuzz;
 }
 
 /* ===== JOIN ===== */
@@ -226,71 +355,85 @@ async function joinRoom(code, nickname) {
   await syncRoomUI(room);
   subscribeRealtime();
   await refreshLeaderboard();
+  await loadAnswerFeed();
   await loadChatFeed();
+  await fetchActiveBuzz();
 }
 
-/* ===== UI Sync ===== */
+/* ===== UI SYNC ===== */
 async function syncRoomUI(room) {
   const prevQ = state.current_question_id;
-
   state.current_question_id = room.current_question_id;
   saveState();
 
-  // play timer only when status becomes live (once per transition)
   if (room.status === "live" && lastRoomStatus !== "live") {
     play(sTimer);
   }
   lastRoomStatus = room.status;
 
   if (room.status === "ended") {
-    gameStatus.textContent = "Sesi sudah berakhir.";
-    buzzBtn.disabled = true;
+    if (gameStatus) gameStatus.textContent = "Sesi sudah berakhir.";
+    if (qText) qText.textContent = "—";
+    if (buzzBtn) buzzBtn.disabled = true;
+    if (buzzInfo) buzzInfo.textContent = "";
+    resetBuzzVisual("Sesi berakhir.", "");
+    clearBuzzCountdown();
     setAnswerEnabled(false, "Sesi sudah berakhir.");
+    setChatEnabled(true);
+
     await refreshLeaderboard();
     await loadAnswerFeed();
-    await showFinalOverlay();
     await loadChatFeed();
+    await showFinalOverlay();
     return;
   }
 
   if (room.status !== "live") {
-    gameStatus.textContent = `Status: ${room.status}. Menunggu admin mulai…`;
-    qText.textContent = "—";
-    buzzBtn.disabled = true;
-    buzzInfo.textContent = "Buzz akan aktif saat live.";
+    if (gameStatus) gameStatus.textContent = `Status: ${room.status}. Menunggu admin mulai…`;
+    if (qText) qText.textContent = "—";
+    if (buzzBtn) buzzBtn.disabled = true;
+    if (buzzInfo) buzzInfo.textContent = "Buzz akan aktif saat live.";
+    resetBuzzVisual("Belum ada pemenang buzz.", "");
+    clearBuzzCountdown();
     setAnswerEnabled(false, "Jawaban aktif saat LIVE dan kamu menang BUZZ.");
+    setChatEnabled(true);
+
     await refreshLeaderboard();
     await loadChatFeed();
     await loadAnswerFeed();
     return;
   }
 
-  // kalau soal berubah / masuk live baru: reset tab + lock obrolan
   if (prevQ !== room.current_question_id) {
-    setActiveTab("jawaban");
-    lockObrolan(true);
-
-    // reset jawab untuk soal baru
     if (answerText) answerText.value = "";
     setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
-  } else {
-    // tetap pastikan default tab jawaban
-    setActiveTab("jawaban");
+    clearBuzzState();
   }
 
-  // LIVE
-  gameStatus.textContent = `LIVE • Soal #${(room.question_index || 0) + 1}`;
-  buzzBtn.disabled = false;
-  buzzInfo.textContent = "";
+  if (gameStatus) {
+    gameStatus.textContent = `LIVE • Soal #${(room.question_index || 0) + 1}`;
+  }
 
   const q = await fetchQuestion(room.current_question_id);
-  qText.textContent = q?.question_text || "—";
+  if (qText) qText.textContent = q?.question_text || "—";
 
   await refreshLeaderboard();
   await loadAnswerFeed();
+  await loadChatFeed();
+
+  const active = await fetchActiveBuzz();
+
+  if (!active) {
+    resetBuzzVisual("Belum ada pemenang buzz.", "");
+    if (buzzBtn) buzzBtn.disabled = false;
+    if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
+    setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
+  }
+
+  setChatEnabled(true);
 }
 
-/* ===== Leaderboard ===== */
+/* ===== LEADERBOARD ===== */
 async function refreshLeaderboard() {
   if (!state.room_id) return;
 
@@ -303,40 +446,35 @@ async function refreshLeaderboard() {
     .limit(20);
 
   if (error) {
-    lbStatus.textContent = "Leaderboard error: " + error.message;
-    lbList.innerHTML = "";
+    if (lbStatus) lbStatus.textContent = "Leaderboard error: " + error.message;
+    if (lbList) lbList.innerHTML = "";
     return;
   }
 
   const clean = (data || []).filter((p) => !p.kicked);
-  lbStatus.textContent = `${clean.length} peserta`;
-  lbList.innerHTML =
-    clean
-      .map(
-        (p, i) => `
-    <div class="lb-item">
-      <div><b>${i + 1}. ${esc(p.nickname)}</b></div>
-      <div><b>${p.points}</b></div>
-    </div>
-  `
-      )
-      .join("") ||
-    `<div class="lb-item"><div class="muted">Belum ada peserta.</div></div>`;
+
+  if (lbStatus) lbStatus.textContent = `${clean.length} peserta`;
+
+  if (lbList) {
+    lbList.innerHTML =
+      clean
+        .map(
+          (p, i) => `
+        <div class="lb-item">
+          <div><b>${i + 1}. ${esc(p.nickname)}</b></div>
+          <div><b>${p.points}</b></div>
+        </div>
+      `
+        )
+        .join("") || `<div class="lb-item"><div class="muted">Belum ada peserta.</div></div>`;
+  }
 }
 
-/* ===== Feed Answers ===== */
-function scrollFeedToBottom() {
-  if (!feedList) return;
-  // tunggu DOM selesai render
-  queueMicrotask(() => {
-    feedList.scrollTop = feedList.scrollHeight;
-  });
-}
-
+/* ===== ANSWER FEED ===== */
 async function loadAnswerFeed() {
   if (!state.current_question_id) {
     if (feedStatus) feedStatus.textContent = "";
-    feedList.innerHTML = "";
+    if (feedList) feedList.innerHTML = "";
     return;
   }
 
@@ -349,43 +487,49 @@ async function loadAnswerFeed() {
 
   if (error) {
     if (feedStatus) feedStatus.textContent = "Feed error: " + error.message;
-    feedList.innerHTML = "";
+    if (feedList) feedList.innerHTML = "";
     return;
   }
 
   if (!data?.length) {
     if (feedStatus) feedStatus.textContent = "";
-    feedList.innerHTML = `
-      <div class="ansItem">
-        <span style="opacity:.75">Belum ada jawaban.</span>
-      </div>`;
+    if (feedList) {
+      feedList.innerHTML = `
+        <div class="ansItem">
+          <span style="opacity:.75">Belum ada jawaban.</span>
+        </div>
+      `;
+    }
     return;
   }
 
   if (feedStatus) feedStatus.textContent = `${data.length} jawaban`;
 
-  feedList.innerHTML = data
-    .map((a) => {
-      const verdict = a.verdict || "pending";
-      const name = a.cc_players?.nickname || "Player";
-      return `
-        <div class="ansItem">
-          <div class="meta">
-            <span><b>${esc(name)}</b></span>
-            <span class="verdict">${esc(verdict)}</span>
+  if (feedList) {
+    feedList.innerHTML = data
+      .map((a) => {
+        const verdict = a.verdict || "pending";
+        const name = a.cc_players?.nickname || "Player";
+        return `
+          <div class="ansItem">
+            <div class="meta">
+              <span><b>${esc(name)}</b></span>
+              <span class="verdict ${esc(verdict)}">${esc(verdict)}</span>
+            </div>
+            <div style="white-space:pre-wrap;">${esc(a.answer_text)}</div>
           </div>
-          <div style="white-space:pre-wrap;">${esc(a.answer_text)}</div>
-        </div>
-      `;
-    })
-    .join("");
+        `;
+      })
+      .join("");
+  }
 
   scrollFeedToBottom();
 }
-/* ====chat==== */
+
+/* ===== CHAT FEED ===== */
 async function loadChatFeed() {
   if (!state.room_id) {
-    chatList.innerHTML = "";
+    if (chatList) chatList.innerHTML = "";
     return;
   }
 
@@ -397,42 +541,60 @@ async function loadChatFeed() {
     .limit(80);
 
   if (error) {
-    chatList.innerHTML = `<div class="ansItem"><span class="muted">Chat error: ${esc(error.message)}</span></div>`;
+    if (chatList) {
+      chatList.innerHTML = `
+        <div class="ansItem">
+          <span class="muted">Chat error: ${esc(error.message)}</span>
+        </div>
+      `;
+    }
     return;
   }
 
   if (!data?.length) {
-    chatList.innerHTML = `<div class="ansItem"><span style="opacity:.75">Belum ada chat.</span></div>`;
+    if (chatList) {
+      chatList.innerHTML = `
+        <div class="ansItem">
+          <span style="opacity:.75">Belum ada chat.</span>
+        </div>
+      `;
+    }
     return;
   }
 
-  chatList.innerHTML = data
-    .map((c) => {
-      const name = esc(c.cc_players?.nickname || "Player");
-      const msg = esc(c.message);
-      return `
-        <div class="ansItem">
-          <div class="meta">
-            <b>${name}</b>
-            <span style="opacity:.65;font-size:11px;">${new Date(c.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-          </div>
-          <div style="white-space:pre-wrap;">${msg}</div>
-        </div>
-      `;
-    })
-    .join("");
+  if (chatList) {
+    chatList.innerHTML = data
+      .map((c) => {
+        const name = esc(c.cc_players?.nickname || "Player");
+        const msg = esc(c.message);
+        const time = new Date(c.created_at).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
 
-  // auto scroll ke bawah
-  chatList.scrollTop = chatList.scrollHeight;
+        return `
+          <div class="ansItem">
+            <div class="meta">
+              <b>${name}</b>
+              <span style="opacity:.65;font-size:11px;">${time}</span>
+            </div>
+            <div style="white-space:pre-wrap;">${msg}</div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  scrollChatToBottom();
 }
 
 async function sendChat() {
   if (!state.room_id || !state.player_id) return;
 
-  const text = (chatText.value || "").trim();
+  const text = (chatText?.value || "").trim();
   if (!text) return;
 
-  sendChatBtn.disabled = true;
+  if (sendChatBtn) sendChatBtn.disabled = true;
 
   const { error } = await supabase.from("cc_chats").insert({
     room_id: state.room_id,
@@ -440,57 +602,36 @@ async function sendChat() {
     message: text,
   });
 
-  sendChatBtn.disabled = false;
+  if (sendChatBtn) sendChatBtn.disabled = false;
 
   if (error) {
-    // optional: tampilkan error kecil
     console.log("Chat insert error:", error.message);
     return;
   }
 
-  chatText.value = "";
-  await loadChatFeed();
+  if (chatText) chatText.value = "";
 }
 
 /* ===== GAME ACTIONS ===== */
-
-/**
- * BUZZ FIX (MINIMUM):
- * - cek dulu apakah sudah ada winner untuk question ini
- * - kalau belum ada, insert is_winner:true
- *
- * Catatan: ini masih bisa race condition kalau 2 orang klik bareng persis.
- * Yang paling aman itu pakai trigger/RPC di Supabase. Tapi ini sudah jauh lebih bener
- * daripada sebelumnya (semua orang jadi winner).
- */
 async function buzz() {
   if (!state.room_id || !state.player_id || !state.current_question_id) return;
 
-  buzzBtn.disabled = true;
-  buzzInfo.textContent = "Mengirim buzz…";
+  await fetchActiveBuzz();
 
-  // 1) cek apakah sudah ada pemenang buzz
-  const { data: existing, error: checkErr } = await supabase
-    .from("cc_buzzes")
-    .select("id")
-    .eq("room_id", state.room_id)
-    .eq("question_id", state.current_question_id)
-    .eq("is_winner", true)
-    .limit(1);
-
-  if (checkErr) {
-    buzzBtn.disabled = false;
-    buzzInfo.textContent = "Gagal cek buzz: " + checkErr.message;
+  if (activeBuzz) {
+    if (activeBuzz.player_id === state.player_id) {
+      if (buzzInfo) buzzInfo.textContent = "Kamu sudah menang buzz. Jawab sekarang.";
+      setAnswerEnabled(true, "");
+    } else {
+      if (buzzInfo) buzzInfo.textContent = `${activeBuzz.nickname} sedang menjawab...`;
+      setAnswerEnabled(false, `Menunggu ${activeBuzz.nickname} menjawab.`);
+    }
     return;
   }
 
-  if (existing?.length) {
-    buzzBtn.disabled = false;
-    buzzInfo.textContent = "Kamu telat 😭";
-    return;
-  }
+  if (buzzBtn) buzzBtn.disabled = true;
+  if (buzzInfo) buzzInfo.textContent = "Mengirim buzz…";
 
-  // 2) insert sebagai winner
   const { error } = await supabase.from("cc_buzzes").insert({
     room_id: state.room_id,
     question_id: state.current_question_id,
@@ -499,25 +640,27 @@ async function buzz() {
   });
 
   if (error) {
-    buzzBtn.disabled = false;
-    buzzInfo.textContent = "Kamu telat 😭 (" + error.message + ")";
+    if (buzzBtn) buzzBtn.disabled = false;
+    if (buzzInfo) buzzInfo.textContent = "Gagal buzz: " + error.message;
     return;
   }
 
-  // setelah buzz sukses
   play(sBuzz);
-  buzzInfo.textContent = "Kamu menang buzz! Silakan jawab.";
+  await fetchActiveBuzz();
 
-  setAnswerEnabled(true, "");
-  if (answerText) answerText.focus();
-
-  // kalau mau obrolan kebuka setelah menang buzz
-  lockObrolan(false);
+  if (activeBuzz?.player_id === state.player_id) {
+    setAnswerEnabled(true, "");
+    if (answerText) answerText.focus();
+  } else {
+    setAnswerEnabled(false, "Menunggu pemenang buzz menjawab.");
+  }
 }
 
 async function sendAnswer() {
   if (!canAnswer) {
-    if (answerStatus) answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
+    if (answerStatus) {
+      answerStatus.textContent = "Kamu harus menang BUZZ dulu untuk menjawab.";
+    }
     return;
   }
 
@@ -527,7 +670,7 @@ async function sendAnswer() {
     return;
   }
 
-  sendAnswerBtn.disabled = true;
+  if (sendAnswerBtn) sendAnswerBtn.disabled = true;
   if (answerStatus) answerStatus.textContent = "Mengirim jawaban…";
 
   const { error } = await supabase.from("cc_answers").insert({
@@ -538,26 +681,36 @@ async function sendAnswer() {
   });
 
   if (error) {
-    sendAnswerBtn.disabled = false;
+    if (sendAnswerBtn) sendAnswerBtn.disabled = false;
     if (answerStatus) answerStatus.textContent = "Gagal kirim: " + error.message;
     return;
   }
 
-  // setelah kirim: kunci lagi (biar 1x jawab per buzz)
   if (answerText) answerText.value = "";
   setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+
+  activeBuzz = null;
+  clearBuzzCountdown();
+  resetBuzzVisual("Menunggu verifikasi jawaban...", "");
 
   await loadAnswerFeed();
 }
 
-/* ===== Real-time ===== */
+/* ===== REALTIME ===== */
 function unsubscribe() {
   if (roomCh) supabase.removeChannel(roomCh);
   if (ansCh) supabase.removeChannel(ansCh);
   if (playersCh) supabase.removeChannel(playersCh);
   if (chatCh) supabase.removeChannel(chatCh);
+  if (buzzCh) supabase.removeChannel(buzzCh);
 
-  roomCh = ansCh = playersCh = chatCh = null;
+  roomCh = null;
+  ansCh = null;
+  playersCh = null;
+  chatCh = null;
+  buzzCh = null;
+
+  clearBuzzCountdown();
 }
 
 function subscribeRealtime() {
@@ -567,9 +720,16 @@ function subscribeRealtime() {
     .channel(`cc-room-${state.room_id}`)
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "cc_rooms", filter: `id=eq.${state.room_id}` },
-      async (p) => {
-        await syncRoomUI(p.new);
+      {
+        event: "*",
+        schema: "public",
+        table: "cc_rooms",
+        filter: `id=eq.${state.room_id}`,
+      },
+      async (payload) => {
+        if (payload?.new) {
+          await syncRoomUI(payload.new);
+        }
       }
     )
     .subscribe();
@@ -578,32 +738,46 @@ function subscribeRealtime() {
     .channel(`cc-ans-${state.room_id}`)
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "cc_answers", filter: `room_id=eq.${state.room_id}` },
-      async (p) => {
-        const a = p.new;
+      {
+        event: "*",
+        schema: "public",
+        table: "cc_answers",
+        filter: `room_id=eq.${state.room_id}`,
+      },
+      async (payload) => {
+        const a = payload.new;
         if (!a) return;
         if (a.question_id !== state.current_question_id) return;
 
-        // update status pribadi + sound verdict
         if (a.player_id === state.player_id) {
           if (a.verdict === "correct") {
             if (answerStatus) answerStatus.textContent = "✅ Benar!";
             play(sCorrect);
+
+            activeBuzz = null;
+            clearBuzzCountdown();
+            resetBuzzVisual("Jawaban benar.", "");
           } else if (a.verdict === "wrong") {
             if (answerStatus) answerStatus.textContent = "❌ Salah!";
             play(sWrong);
 
-            // kalau salah: buka buzz lagi & lock jawab
-            buzzBtn.disabled = false;
-            setAnswerEnabled(false, "Salah. Tekan BUZZ lagi untuk menjawab.");
+            activeBuzz = null;
+            clearBuzzCountdown();
+            resetBuzzVisual("Belum ada pemenang buzz.", "");
 
-            // LOCK obrolan lagi kalau salah + balik jawaban
-            lockObrolan(true);
-            setActiveTab("jawaban");
+            setAnswerEnabled(false, "Salah. Buzz dibuka lagi.");
+            if (buzzBtn) buzzBtn.disabled = false;
+            if (buzzInfo) buzzInfo.textContent = "Buzz terbuka lagi.";
           }
         }
 
         await loadAnswerFeed();
+        await fetchActiveBuzz();
+
+        if (!activeBuzz && lastRoomStatus === "live") {
+          if (buzzBtn) buzzBtn.disabled = false;
+          if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
+        }
       }
     )
     .subscribe();
@@ -612,25 +786,63 @@ function subscribeRealtime() {
     .channel(`cc-players-${state.room_id}`)
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "cc_players", filter: `room_id=eq.${state.room_id}` },
+      {
+        event: "*",
+        schema: "public",
+        table: "cc_players",
+        filter: `room_id=eq.${state.room_id}`,
+      },
       async () => {
         await refreshLeaderboard();
       }
     )
     .subscribe();
-  
+
   chatCh = supabase
     .channel(`cc-chat-${state.room_id}`)
     .on(
       "postgres_changes",
-      { event: "INSERT", schema: "public", table: "cc_chats", filter: `room_id=eq.${state.room_id}` },
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "cc_chats",
+        filter: `room_id=eq.${state.room_id}`,
+      },
       async () => {
         await loadChatFeed();
       }
     )
     .subscribe();
+
+  buzzCh = supabase
+    .channel(`cc-buzz-${state.room_id}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "cc_buzzes",
+        filter: `room_id=eq.${state.room_id}`,
+      },
+      async (payload) => {
+        const b = payload.new;
+        if (!b) return;
+        if (b.question_id !== state.current_question_id) return;
+
+        await fetchActiveBuzz();
+
+        if (activeBuzz?.player_id === state.player_id) {
+          setAnswerEnabled(true, "");
+          if (answerText) answerText.focus();
+        } else if (activeBuzz) {
+          setAnswerEnabled(false, "Menunggu pemenang buzz menjawab.");
+        }
+      }
+    )
+    .subscribe();
 }
-/* ===== Final Overlay ===== */
+
+/* ===== FINAL OVERLAY ===== */
 async function showFinalOverlay() {
   const { data, error } = await supabase
     .from("cc_players")
@@ -645,50 +857,57 @@ async function showFinalOverlay() {
   const list = (data || []).filter((x) => !x.kicked);
   const winner = list[0];
 
-  finalSub.textContent = winner
-    ? `Pemenang: ${winner.nickname} (${winner.points} poin)`
-    : "Belum ada data peserta.";
+  if (finalSub) {
+    finalSub.textContent = winner
+      ? `Pemenang: ${winner.nickname} (${winner.points} poin)`
+      : "Belum ada data peserta.";
+  }
 
-  finalList.innerHTML =
-    list
-      .map(
-        (p, i) => `
-    <div class="lb-item" style="margin-top:10px;">
-      <div><b>${i + 1}. ${esc(p.nickname)}</b></div>
-      <div><b>${p.points}</b></div>
-    </div>
-  `
-      )
-      .join("") || `<div class="lb-item"><div class="muted">Kosong.</div></div>`;
+  if (finalList) {
+    finalList.innerHTML =
+      list
+        .map(
+          (p, i) => `
+        <div class="lb-item" style="margin-top:10px;">
+          <div><b>${i + 1}. ${esc(p.nickname)}</b></div>
+          <div><b>${p.points}</b></div>
+        </div>
+      `
+        )
+        .join("") || `<div class="lb-item"><div class="muted">Kosong.</div></div>`;
+  }
 
-  endOverlay.style.display = "flex";
+  if (endOverlay) endOverlay.style.display = "flex";
   play(sWinner);
 }
 
+/* ===== EVENTS ===== */
 closeOverlay?.addEventListener("click", () => {
-  endOverlay.style.display = "none";
+  if (endOverlay) endOverlay.style.display = "none";
 });
 
-/* ===== Events ===== */
 joinBtn?.addEventListener("click", async () => {
-  joinStatus.textContent = "Joining…";
+  if (joinStatus) joinStatus.textContent = "Joining…";
+
   try {
-    const code = (roomCodeEl.value || "").trim().toUpperCase();
-    const nick = (nickEl.value || "").trim();
+    const code = (roomCodeEl?.value || "").trim().toUpperCase();
+    const nick = (nickEl?.value || "").trim();
+
     if (!code || !nick) {
-      joinStatus.textContent = "Kode room & nickname wajib.";
+      if (joinStatus) joinStatus.textContent = "Kode room & nickname wajib.";
       return;
     }
+
     await joinRoom(code, nick);
   } catch (e) {
-    joinStatus.textContent = e?.message || "Gagal join.";
+    if (joinStatus) joinStatus.textContent = e?.message || "Gagal join.";
   }
 });
 
 buzzBtn?.addEventListener("click", buzz);
 sendAnswerBtn?.addEventListener("click", sendAnswer);
+sendChatBtn?.addEventListener("click", sendChat);
 
-// Enter untuk kirim (enak buat pill input)
 answerText?.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
@@ -696,37 +915,43 @@ answerText?.addEventListener("keydown", (e) => {
   }
 });
 
-leaveBtn?.addEventListener("click", () => {
-  unsubscribe();
-  clearState();
-  showJoin("");
-});
-
-sendChatBtn?.addEventListener("click", sendChat);
-
 chatText?.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     sendChat();
   }
 });
-/* ===== Boot ===== */
+
+leaveBtn?.addEventListener("click", () => {
+  unsubscribe();
+  clearState();
+  clearBuzzState();
+  showJoin("");
+});
+
+/* ===== BOOT ===== */
 (async () => {
   loadState();
 
   if (state.room_code && state.room_id && state.player_id) {
     try {
       showGame();
+
       const room = await fetchRoomByCode(state.room_code);
       if (!room) {
         clearState();
         showJoin("Room tidak ditemukan.");
         return;
       }
+
       await syncRoomUI(room);
       subscribeRealtime();
       await refreshLeaderboard();
-    } catch {
+      await loadAnswerFeed();
+      await loadChatFeed();
+      await fetchActiveBuzz();
+    } catch (err) {
+      console.log("boot error:", err);
       clearState();
       showJoin("Session join invalid. Join ulang ya.");
     }
