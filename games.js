@@ -333,26 +333,7 @@ async function fetchActiveBuzz() {
     clearBuzzState();
     return null;
   }
-
-  const { data: answerAfterBuzz, error: answerErr } = await supabase
-    .from("cc_answers")
-    .select("id, created_at")
-    .eq("question_id", state.current_question_id)
-    .eq("player_id", buzzRow.player_id)
-    .gte("created_at", buzzRow.created_at)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (answerErr) {
-    console.log("answer check error:", answerErr.message);
-  }
-
-  if (answerAfterBuzz) {
-    await releaseActiveBuzz("answered");
-    return null;
-  }
-
+  
   activeBuzz = {
     id: buzzRow.id,
     player_id: buzzRow.player_id,
@@ -757,11 +738,19 @@ async function sendAnswer() {
     return;
   }
 
-  if (answerText) answerText.value = "";
-  setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
-  await releaseActiveBuzz("answered");
-  await loadAnswerFeed();
-}
+ if (answerText) answerText.value = "";
+setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+
+// buzz tetap dikunci sampai admin kasih verdict
+resetBuzzVisual(
+  `Pemenang buzz: ${state.nickname || "Player"}`,
+  "Menunggu ACC admin..."
+);
+
+if (buzzBtn) buzzBtn.disabled = true;
+if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+
+await loadAnswerFeed();
 
 /* ===== REALTIME ===== */
 function unsubscribe() {
