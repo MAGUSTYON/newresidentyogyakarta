@@ -5,556 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Games • New Resident Yogyakarta</title>
 
+  <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="games.css" />
-
-  <style>
-    :root{
-      --pink: #f2a3c7;
-      --pink2:#d98ab7;
-      --panel: rgba(15, 14, 28, .65);
-      --border: rgba(255,255,255,.12);
-      --muted: rgba(255,255,255,.7);
-    }
-
-    body{
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    .gameWrap{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 18px;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 14px;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
-
-    .gameTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-    }
-
-    .brand{ display:flex; flex-direction:column; gap:2px; }
-    .brand b{ font-size:18px; color: var(--pink); letter-spacing:.02em; }
-    .brand small{
-      color: rgba(255,255,255,.65);
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
-    .nav{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
-    .nav a{
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(255,255,255,.78);
-      font-size: 13px;
-      text-decoration:none;
-      background: rgba(255,255,255,.04);
-      transition: all .15s ease;
-    }
-    .nav a:hover{ background: rgba(255,255,255,.08); }
-    .nav a.active{
-      color:#0b0a12;
-      background: linear-gradient(180deg, var(--pink), var(--pink2));
-      border-color: rgba(255,255,255,.18);
-      font-weight: 700;
-    }
-
-    .gameMain{
-      min-height: 0;
-    }
-
-    .centerCol{
-      min-height: 100%;
-    }
-
-    .card{
-      border: 1px solid var(--border);
-      background: var(--panel);
-      backdrop-filter: blur(10px);
-      border-radius: 22px;
-      box-shadow: 0 28px 90px rgba(0,0,0,.55);
-    }
-
-    .stage4{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 14px;
-      height: calc(100vh - 110px);
-      min-height: 0;
-    }
-
-    .stage4 > .card{ min-height:0; overflow:hidden; }
-
-    .stage-q{ grid-column:1; grid-row:1; display:flex; }
-    .stage-lb{ grid-column:2; grid-row:1; display:flex; flex-direction:column; }
-    .stage-ans{ grid-column:1; grid-row:2; display:flex; flex-direction:column; }
-    .stage-chat{ grid-column:2; grid-row:2; display:flex; flex-direction:column; }
-
-    .qCard{
-      width:100%;
-      padding: 16px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      min-height: 0;
-    }
-
-    .btnMini{
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      color: #fff;
-      cursor:pointer;
-    }
-
-    .qLabel{
-      letter-spacing:.22em;
-      font-size: 12px;
-      color: rgba(255,255,255,.65);
-      font-weight:700;
-      margin-top: 6px;
-    }
-
-    .qBig{
-      font-size: clamp(30px, 5vw, 64px);
-      font-weight: 900;
-      line-height: 1.05;
-      margin: 1px 0;
-    }
-
-    .qDivider{
-      width:100%;
-      height:1px;
-      background: rgba(255,255,255,.10);
-      margin: 10px 0 14px;
-    }
-
-    .buzzBig{
-      width: 75px;
-      border: none;
-      border-radius: 999px;
-      padding: 10px;
-      font-weight: 900;
-      letter-spacing: .08em;
-      cursor:pointer;
-      background: linear-gradient(180deg, rgba(242,163,199,.65), rgba(217,138,183,.55));
-      color:#0b0a12;
-      box-shadow: 0 18px 55px rgba(0,0,0,.55);
-    }
-    .buzzBig:disabled{ opacity:.55; cursor:not-allowed; }
-
-    .buzzInfo{
-      margin-top: 10px;
-      color: rgba(255,255,255,.78);
-      font-size: 13px;
-      min-height: 18px;
-    }
-
-    .lbHead{
-      padding: 14px 14px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-    }
-
-    #meTag{ color: rgba(255,255,255,.75); font-size:12px; }
-
-    .lbBody{
-      padding: 12px;
-      overflow:auto;
-      min-height: 0;
-      flex:1;
-    }
-
-    .lb-item{
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 14px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 10px;
-    }
-
-    .judul {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--pink);
-      text-shadow: 0 0 18px rgba(242, 161, 179, .25);
-    }
-
-    .stage-ans,
-    .stage-chat{
-      padding: 14px;
-      gap: 10px;
-      min-height: 0;
-    }
-
-    #feedList,
-    #chatList{
-      flex:1;
-      min-height:0;
-      overflow:auto;
-      padding-right:8px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .ansItem{
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      border-radius: 14px;
-      color: rgba(255,255,255,.92);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    #answerBox,
-    #chatBox{
-      flex-shrink:0;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,.10);
-    }
-
-    .pillWrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      border-radius: 999px;
-      padding: 8px 10px;
-    }
-
-    #answerText,
-    #chatText{
-      flex:1;
-      height: 36px;
-      border: none;
-      outline: none;
-      background: transparent;
-      color:#fff;
-      padding: 0 8px;
-      resize:none;
-      overflow:hidden;
-      box-sizing:border-box;
-    }
-
-    #sendAnswerBtn,
-    #sendChatBtn{
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color:#fff;
-      font-weight: 800;
-      cursor:pointer;
-    }
-
-    #sendAnswerBtn:disabled,
-    #sendChatBtn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-    }
-
-    .joinCard{
-      padding: 18px;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-
-    .joinGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .joinGrid input{
-      width:100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color:#fff;
-      padding: 10px 12px;
-      outline:none;
-      box-sizing:border-box;
-    }
-
-    .joinActions{
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      margin-top: 12px;
-    }
-
-    #joinBtn{
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      color:#fff;
-      cursor:pointer;
-      font-weight: 800;
-    }
-
-    #joinStatus{ color: rgba(255,255,255,.78); font-size: 13px; }
-
-    #endOverlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.72);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 18px;
-      z-index: 9999;
-    }
-
-    .overlayBox{
-      width: 100%;
-      max-width: 560px;
-      padding: 16px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(12,10,24,.92);
-      box-shadow: 0 28px 90px rgba(0,0,0,.7);
-    }
-
-    .overlayHead{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom: 8px;
-    }
-
-    #closeOverlay{
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      cursor:pointer;
-    }
-
-   @media (max-width: 768px){
-
-  body{
-    overflow-x: hidden;
-  }
-
-  .gameWrap{
-    padding: 10px !important;
-    gap: 10px !important;
-    min-height: 100dvh;
-    height: auto !important;
-  }
-
-  .gameTop{
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .nav{
-    justify-content: flex-start;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 4px;
-  }
-
-  .nav a{
-    flex: 0 0 auto;
-    white-space: nowrap;
-    font-size: 12px;
-    padding: 8px 12px;
-  }
-
-  .stage4{
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    grid-template-rows: auto !important;
-    height: auto !important;
-    gap: 12px !important;
-  }
-
-  .stage-q,
-  .stage-lb,
-  .stage-ans,
-  .stage-chat{
-    grid-column: auto !important;
-    grid-row: auto !important;
-    min-height: auto !important;
-  }
-
-  .stage-q{
-    min-height: 320px !important;
-  }
-
-  .stage-lb{
-    min-height: 240px !important;
-  }
-
-  .stage-ans,
-  .stage-chat{
-    min-height: 300px !important;
-  }
-
-  .stage4 > .card{
-    overflow: hidden !important;
-  }
-
-  .qCard{
-    padding: 14px !important;
-  }
-
-  .qBig{
-    font-size: clamp(22px, 8vw, 34px) !important;
-    line-height: 1.12 !important;
-    word-break: break-word;
-  }
-
-  .buzzBig{
-    width: 100% !important;
-    max-width: 220px !important;
-  }
-
-  .buzzInfo,
-  .buzzOwner,
-  .buzzTimer{
-    text-align: center;
-    line-height: 1.35;
-    min-height: unset !important;
-  }
-
-  .buzzInfo{
-    margin-top: 12px !important;
-    font-size: 14px !important;
-  }
-
-  .buzzOwner{
-    margin-top: 8px !important;
-    font-size: 13px !important;
-  }
-
-  .buzzTimer{
-    margin-top: 4px !important;
-    font-size: 12px !important;
-  }
-
-  .lbBody,
-  #feedList,
-  #chatList{
-    max-height: 180px;
-    overflow: auto !important;
-  }
-
-  .judul{
-    font-size: 14px !important;
-  }
-
-  .ansItem{
-    font-size: 13px !important;
-  }
-
-  #answerBox,
-  #chatBox{
-    padding-top: 10px !important;
-  }
-
-  .pillWrap{
-    border-radius: 18px !important;
-    padding: 8px 10px !important;
-    min-height: auto !important;
-  }
-
-  #answerText,
-  #chatText{
-    height: 40px !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-    font-size: 14px !important;
-    line-height: 40px !important;
-    padding: 0 8px !important;
-  }
-
-  #sendAnswerBtn,
-  #sendChatBtn{
-    flex: 0 0 auto;
-    padding: 8px 14px !important;
-    font-size: 14px !important;
-  }
-
-  .joinGrid{
-    grid-template-columns: 1fr !important;
-  }
-}
-    .buzzOwner{
-  margin-top: 10px;
-  font-size: 13px;
-  color: rgba(255,255,255,.88);
-  text-align: center;
-  min-height: 18px;
-}
-
-.buzzTimer{
-  margin-top: 4px;
-  font-size: 12px;
-  color: rgba(255,255,255,.68);
-  text-align: center;
-  min-height: 16px;
-}
-    #answerBox,
-#chatBox{
-  width: 100%;
-}
-
-#answerBox .pillWrap,
-#chatBox .pillWrap{
-  width: 100%;
-  box-sizing: border-box;
-}
-
-#answerText,
-#chatText{
-  width: 100%;
-}
-    .buzzInfo,
-.buzzOwner,
-.buzzTimer{
-  display: block;
-  width: 100%;
-  word-break: break-word;
-}
-  </style>
 </head>
-
 <body>
   <div class="gameWrap">
 
-    <div class="gameTop">
+    <!-- TOP -->
+    <header class="gameTop">
       <div class="brand">
         <b>New Resident</b>
-        <small>Yogyakarta</small>
+        <small>YOGYAKARTA</small>
       </div>
 
       <nav class="nav">
@@ -564,44 +25,50 @@
         <a href="event.html">Event</a>
         <a class="active" href="games.html">Games</a>
       </nav>
-    </div>
+    </header>
 
-    <div class="gameMain">
+    <!-- MAIN -->
+    <main class="gameMain">
       <section class="centerCol">
 
-        <div id="joinCard" class="card joinCard" style="display:block;">
-          <h2 style="margin:0 0 8px;color:var(--pink);">Cerdas Cermat (Live)</h2>
-          <div style="color:rgba(255,255,255,.78);font-size:13px;">
+        <!-- JOIN CARD -->
+        <div id="joinCard" class="card joinCard">
+          <h2 class="joinTitle">Cerdas Cermat (Live)</h2>
+          <p class="joinDesc">
             Masukkan kode room dari admin dan nickname kamu.
-          </div>
+          </p>
 
           <div class="joinGrid">
-            <div>
-              <label style="display:block;font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px;">Kode Room</label>
-              <input id="roomCode" placeholder="ABCDE1" />
+            <div class="field">
+              <label for="roomCode">Kode Room</label>
+              <input id="roomCode" type="text" placeholder="ABCDE1" autocomplete="off" />
             </div>
-            <div>
-              <label style="display:block;font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px;">Nickname</label>
-              <input id="nickname" placeholder="nama kamu" />
+
+            <div class="field">
+              <label for="nickname">Nickname</label>
+              <input id="nickname" type="text" placeholder="nama kamu" autocomplete="off" />
             </div>
           </div>
 
           <div class="joinActions">
-            <button id="joinBtn">Join</button>
+            <button id="joinBtn" type="button">Join</button>
             <div id="joinStatus"></div>
           </div>
         </div>
 
+        <!-- GAME CARD -->
         <div id="gameCard" class="stage4" hidden>
 
-          <div class="card stage-q">
+          <!-- ATAS: SOAL -->
+          <section class="card stage-q">
             <div class="qCard">
-              <div style="width:100%; display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-                <div style="text-align:left; font-size:13px; color:rgba(255,255,255,.78);">
-                  <b>Room:</b> <span id="roomLabel">-</span>
-                  <div id="gameStatus" style="opacity:.85; margin-top:6px;">—</div>
+              <div class="qTopBar">
+                <div class="roomMeta">
+                  <div><b>Room:</b> <span id="roomLabel">-</span></div>
+                  <div id="gameStatus">—</div>
                 </div>
-                <button id="leaveBtn" class="btnMini">Keluar</button>
+
+                <button id="leaveBtn" class="btnMini" type="button">Keluar</button>
               </div>
 
               <div class="qLabel">PERTANYAAN</div>
@@ -609,13 +76,14 @@
 
               <div class="qDivider"></div>
 
-              <button id="buzzBtn" class="buzzBig" disabled>BUZZ</button>
+              <button id="buzzBtn" class="buzzBig" type="button" disabled>BUZZ</button>
               <div id="buzzInfo" class="buzzInfo"></div>
               <div id="buzzOwner" class="buzzOwner">Belum ada pemenang buzz.</div>
               <div id="buzzTimer" class="buzzTimer"></div>
             </div>
-          </div>
+          </section>
 
+          <!-- KIRI BAWAH: PLAYERS -->
           <aside class="card stage-lb">
             <div class="lbHead">
               <div>
@@ -624,6 +92,7 @@
               </div>
               <div id="meTag">—</div>
             </div>
+
             <div class="lbBody" id="lbList">
               <div class="lb-item">
                 <div class="muted">Belum ada peserta.</div>
@@ -631,49 +100,100 @@
             </div>
           </aside>
 
-          <div class="card stage-ans">
-            <div class="judul">JAWABAN</div>
-            <div id="feedList">
-              <div class="ansItem"><span style="opacity:.75">Belum ada jawaban.</span></div>
+          <!-- KANAN BAWAH: FEED PANEL -->
+          <section class="card stage-feed">
+            <div class="mobileSwitch">
+              <button id="switchJawaban" class="active" type="button">Jawaban</button>
+              <button id="switchObrolan" type="button">Obrolan</button>
             </div>
-            <div id="answerBox" data-disabled="1">
-              <div class="pillWrap">
-                <textarea id="answerText" placeholder="Tulis jawaban..." disabled></textarea>
-                <button id="sendAnswerBtn" disabled>Kirim</button>
+
+            <!-- PANEL JAWABAN -->
+            <div id="panelJawabanMobile" class="feedPanel active">
+              <div class="panelTitle">JAWABAN</div>
+
+              <div id="feedStatus" class="panelStatus"></div>
+
+              <div id="feedList">
+                <div class="ansItem">
+                  <span style="opacity:.75">Belum ada jawaban.</span>
+                </div>
+              </div>
+
+              <div id="answerBox" data-disabled="1">
+                <div class="pillWrap">
+                  <textarea
+                    id="answerText"
+                    placeholder="Tulis jawaban..."
+                    disabled
+                  ></textarea>
+                  <button id="sendAnswerBtn" type="button" disabled>Kirim</button>
+                </div>
+                <div id="answerStatus"></div>
               </div>
             </div>
-          </div>
 
-          <div class="card stage-chat">
-            <div class="judul">OBROLAN</div>
-            <div id="chatList" class="chatList">
-              <div class="ansItem"><span style="opacity:.75">Belum ada chat.</span></div>
-            </div>
-            <div id="chatBox" class="chatBox" data-disabled="0">
-              <div class="pillWrap">
-                <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
-                <button id="sendChatBtn">Kirim</button>
+            <!-- PANEL OBROLAN -->
+            <div id="panelObrolanMobile" class="feedPanel">
+              <div class="panelTitle">OBROLAN</div>
+
+              <div id="chatList" class="chatList">
+                <div class="ansItem">
+                  <span style="opacity:.75">Belum ada chat.</span>
+                </div>
+              </div>
+
+              <div id="chatBox" class="chatBox" data-disabled="0">
+                <div class="pillWrap">
+                  <textarea
+                    id="chatText"
+                    placeholder="Tulis chat..."
+                    maxlength="300"
+                  ></textarea>
+                  <button id="sendChatBtn" type="button">Kirim</button>
+                </div>
               </div>
             </div>
-          </div>
-
+          </section>
         </div>
       </section>
-    </div>
+    </main>
   </div>
 
+  <!-- END OVERLAY -->
   <div id="endOverlay">
     <div class="overlayBox">
       <div class="overlayHead">
         <div>
-          <div style="font-weight:900;font-size:18px;">Sesi Berakhir</div>
-          <div id="finalSub" style="color:rgba(255,255,255,.78);margin-top:4px;">—</div>
+          <div class="overlayTitle">Sesi Berakhir</div>
+          <div id="finalSub" class="overlaySub">—</div>
         </div>
-        <button id="closeOverlay" title="Tutup">✕</button>
+        <button id="closeOverlay" type="button" title="Tutup">✕</button>
       </div>
+
       <div id="finalList"></div>
     </div>
   </div>
+
+  <script>
+    // switch panel mobile/desktop kanan bawah
+    const switchJawaban = document.getElementById("switchJawaban");
+    const switchObrolan = document.getElementById("switchObrolan");
+    const panelJawabanMobile = document.getElementById("panelJawabanMobile");
+    const panelObrolanMobile = document.getElementById("panelObrolanMobile");
+
+    function setFeedPanel(which) {
+      const isJawaban = which === "jawaban";
+
+      switchJawaban?.classList.toggle("active", isJawaban);
+      switchObrolan?.classList.toggle("active", !isJawaban);
+
+      panelJawabanMobile?.classList.toggle("active", isJawaban);
+      panelObrolanMobile?.classList.toggle("active", !isJawaban);
+    }
+
+    switchJawaban?.addEventListener("click", () => setFeedPanel("jawaban"));
+    switchObrolan?.addEventListener("click", () => setFeedPanel("obrolan"));
+  </script>
 
   <script type="module" src="games.js"></script>
 </body>
