@@ -1,185 +1,161 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Games • New Resident Yogyakarta</title>
-
-  <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="games.css" />
 </head>
 <body>
-  <div class="games-page-bg"></div>
+  <div class="bg-pattern"></div>
 
-  <div class="games-app">
-    <header class="games-topbar">
-      <div class="games-brand">
-        <b>New Resident</b>
-        <small>YOGYAKARTA</small>
-      </div>
-
-      <nav class="games-nav">
-        <a href="index.html">Beranda</a>
-        <a href="quotes.html">Quotes</a>
-        <a href="confession.html">Confession</a>
-        <a href="event.html">Event</a>
-        <a class="active" href="games.html">Games</a>
-      </nav>
-    </header>
-
-    <!-- JOIN -->
-    <section id="joinCard" class="games-join panel">
+  <div class="app">
+    <!-- JOIN CARD -->
+    <section id="joinCard" class="panel join-card">
       <h2>Cerdas Cermat (Live)</h2>
       <p>Masukkan kode room dari admin dan nickname kamu.</p>
 
-      <div class="games-join-grid">
-        <div class="games-field">
+      <div class="join-grid">
+        <div class="field">
           <label for="roomCode">Kode Room</label>
           <input id="roomCode" type="text" placeholder="ABCDE1" autocomplete="off" />
         </div>
 
-        <div class="games-field">
+        <div class="field">
           <label for="nickname">Nickname</label>
           <input id="nickname" type="text" placeholder="nama kamu" autocomplete="off" />
         </div>
       </div>
 
-      <div class="games-join-actions">
+      <div class="join-actions">
         <button id="joinBtn" type="button">Join</button>
         <div id="joinStatus"></div>
       </div>
     </section>
 
-<div class="game-shell">
-
-  <!-- PLAYERS -->
-  <aside class="panel players">
-    <div class="player-list" id="lbList">
-
-      <!-- contoh player -->
-      <div class="player">
-        <div class="check">✔</div>
-        <div class="avatar">🙂</div>
-
-        <div class="player-name">
-          <span id="meTag">Player</span>
-          <strong>0 poin</strong>
+    <!-- GAME -->
+    <div id="gameCard" class="game-shell" hidden>
+      <!-- PLAYERS -->
+      <aside class="panel players">
+        <div class="players-top">
+          <div>
+            <div class="players-title">Players</div>
+            <div id="lbStatus" class="players-sub">—</div>
+          </div>
+          <div id="meTag" class="players-me">—</div>
         </div>
 
-        <div class="plus"></div>
-      </div>
-
-    </div>
-  </aside>
-
-
-  <!-- MAIN -->
-  <section class="main">
-
-    <!-- BOARD -->
-    <div class="panel board">
-
-      <div class="board-top">
-        <div id="roomLabel">Room</div>
-
-        <div style="display:flex; gap:18px;">
-          <button id="leaveBtn">Keluar</button>
+        <div class="player-list" id="lbList">
+          <div class="player">
+            <div class="check">•</div>
+            <div class="avatar no-badge">🙂</div>
+            <div class="player-name">Belum ada peserta.<strong>0 poin</strong></div>
+            <div class="plus"></div>
+          </div>
         </div>
-      </div>
+      </aside>
 
-      <div id="gameStatus"></div>
+      <!-- MAIN -->
+      <section class="main">
+        <!-- BOARD -->
+        <div class="panel board">
+          <div class="board-top">
+            <div class="board-left-meta">
+              <div><b>Room:</b> <span id="roomLabel">-</span></div>
+              <div id="gameStatus">—</div>
+            </div>
 
-      <div class="board-center">
-
-        <div style="text-align:center">
-
-          <div style="font-weight:900; letter-spacing:3px; color:#777;">
-            PERTANYAAN
+            <div style="display:flex; gap:18px; align-items:center;">
+              <button id="leaveBtn" class="mini-btn" type="button">Keluar</button>
+            </div>
           </div>
 
-          <div id="qText" style="font-size:26px; font-weight:900; margin-top:10px;">
-            —
+          <div class="board-center">
+            <div class="question-wrap">
+              <div class="question-label">PERTANYAAN</div>
+              <div id="qText" class="question-text">—</div>
+            </div>
+
+            <div class="ghost-logo">Gartic</div>
           </div>
 
-          <button id="buzzBtn" class="buzz-btn">
-            BUZZ
-          </button>
-
-          <div id="buzzInfo"></div>
-          <div id="buzzOwner">Belum ada pemenang buzz.</div>
-          <div id="buzzTimer"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- BOTTOM -->
-    <div class="panel bottom">
-
-      <div class="tab left">Jawaban</div>
-      <div class="tab right">Obrolan</div>
-
-
-      <!-- ANSWERS -->
-      <div class="answers">
-
-        <div id="feedStatus"></div>
-
-        <div id="feedList">
-          <!-- jawaban muncul disini -->
-        </div>
-
-        <div class="input-row" id="answerBox">
-          <div class="input-box">
-
-            <textarea
-              id="answerText"
-              placeholder="Jawab disini..."
-              disabled
-            ></textarea>
-
-            <button id="sendAnswerBtn" disabled>
-              Kirim
-            </button>
-
+          <div class="board-bottom-ui">
+            <button id="buzzBtn" class="buzz-btn" type="button" disabled>BUZZ</button>
+            <div id="buzzInfo" class="buzz-meta"></div>
+            <div id="buzzOwner" class="buzz-meta">Belum ada pemenang buzz.</div>
+            <div id="buzzTimer" class="buzz-meta small"></div>
           </div>
         </div>
 
-        <div id="answerStatus"></div>
+        <!-- BOTTOM -->
+        <div class="panel bottom">
+          <div class="tab left">Jawaban</div>
+          <div class="tab right">Obrolan</div>
 
-      </div>
+          <!-- ANSWERS -->
+          <div class="answers">
+            <div id="feedStatus" class="small-status"></div>
 
+            <div id="feedList" class="answer-list">
+              <div class="answer-line pending">
+                <div class="answer-user">System</div>
+                <div class="answer-text">Belum ada jawaban.</div>
+              </div>
+            </div>
 
-      <!-- CHAT -->
-      <div class="chat">
+            <div class="input-row" id="answerBox" data-disabled="1">
+              <div class="input-box">
+                <span class="pencil">✎</span>
 
-        <div id="chatList">
-          <!-- chat muncul disini -->
+                <textarea
+                  id="answerText"
+                  placeholder="Jawab disini..."
+                  disabled
+                ></textarea>
+
+                <button id="sendAnswerBtn" type="button" disabled>Kirim</button>
+              </div>
+            </div>
+
+            <div id="answerStatus" class="small-status"></div>
+          </div>
+
+          <!-- CHAT -->
+          <div class="chat">
+            <div id="chatList" class="chat-list">
+              <div class="chat-line">Belum ada chat.</div>
+            </div>
+
+            <div class="chat-box">
+              <span class="search-icon">💬</span>
+
+              <textarea
+                id="chatText"
+                placeholder="Tulis chat..."
+                maxlength="300"
+              ></textarea>
+
+              <button id="sendChatBtn" type="button">Kirim</button>
+            </div>
+          </div>
         </div>
-
-        <div class="chat-box">
-
-          <textarea
-            id="chatText"
-            placeholder="Tulis chat..."
-          ></textarea>
-
-          <button id="sendChatBtn">
-            Kirim
-          </button>
-
-        </div>
-
-      </div>
-
+      </section>
     </div>
+  </div>
 
-  </section>
-
-</div>
+  <!-- END OVERLAY -->
+  <div id="endOverlay">
+    <div class="overlayBox">
+      <div class="overlayHead">
+        <div>
+          <div class="overlayTitle">Sesi Berakhir</div>
+          <div id="finalSub" class="overlaySub">—</div>
+        </div>
+        <button id="closeOverlay" type="button">✕</button>
+      </div>
+      <div id="finalList"></div>
+    </div>
+  </div>
 
   <script type="module" src="games.js"></script>
 </body>
