@@ -57,7 +57,7 @@ const chatText = document.getElementById("chatText");
 const sendChatBtn = document.getElementById("sendChatBtn");
 
 /* ===== STATE ===== */
-const LS_KEY = "cc_state_final_v3";
+const LS_KEY = "cc_state_final_v4";
 
 let state = {
   room_id: null,
@@ -77,7 +77,6 @@ let lastRoomStatus = null;
 let canAnswer = false;
 
 let activeBuzz = null;
-// shape:
 // {
 //   id,
 //   player_id,
@@ -254,8 +253,6 @@ async function releaseActiveBuzz(reason = "expired") {
         if (buzzInfo) buzzInfo.textContent = "Buzz terbuka lagi.";
       }
       setAnswerEnabled(false, "Waktu jawab habis. Tekan BUZZ lagi.");
-    } else if (reason === "answered") {
-      resetBuzzVisual("Menunggu verifikasi jawaban...", "");
     } else if (reason === "wrong") {
       resetBuzzVisual("Belum ada pemenang buzz.", "");
       if (lastRoomStatus === "live") {
@@ -265,6 +262,8 @@ async function releaseActiveBuzz(reason = "expired") {
       setAnswerEnabled(false, "Salah. Buzz dibuka lagi.");
     } else if (reason === "correct") {
       resetBuzzVisual("Jawaban benar.", "");
+      setAnswerEnabled(false, "Jawaban benar.");
+      if (buzzBtn) buzzBtn.disabled = true;
     } else {
       resetBuzzVisual("Belum ada pemenang buzz.", "");
     }
@@ -303,7 +302,7 @@ async function fetchActiveBuzz() {
 
   const nowIso = new Date().toISOString();
 
-  // release otomatis buzz yang expired di DB
+  // release otomatis buzz yang expired
   await supabase
     .from("cc_buzzes")
     .update({ released_at: nowIso })
@@ -333,7 +332,7 @@ async function fetchActiveBuzz() {
     clearBuzzState();
     return null;
   }
-  
+
   activeBuzz = {
     id: buzzRow.id,
     player_id: buzzRow.player_id,
@@ -345,6 +344,34 @@ async function fetchActiveBuzz() {
 
   if (buzzOwner) {
     buzzOwner.textContent = `Pemenang buzz: ${activeBuzz.nickname}`;
+  }
+
+  // cek apakah pemenang buzz sudah kirim jawaban pending
+  const { data: pendingAnswer } = await supabase
+    .from("cc_answers")
+    .select("id, verdict, created_at")
+    .eq("question_id", state.current_question_id)
+    .eq("player_id", activeBuzz.player_id)
+    .gte("created_at", activeBuzz.created_at)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const waitingAdmin = !!pendingAnswer && !pendingAnswer.verdict;
+
+  if (waitingAdmin) {
+    clearBuzzCountdown();
+    if (buzzTimer) buzzTimer.textContent = "Menunggu ACC admin...";
+    if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+    if (buzzBtn) buzzBtn.disabled = true;
+
+    if (state.player_id === activeBuzz.player_id) {
+      setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+    } else {
+      setAnswerEnabled(false, `Menunggu ACC admin untuk jawaban ${activeBuzz.nickname}.`);
+    }
+
+    return activeBuzz;
   }
 
   if (state.player_id === activeBuzz.player_id) {
@@ -654,7 +681,7 @@ async function buzz() {
       setAnswerEnabled(true, "");
     } else {
       if (buzzInfo) buzzInfo.textContent = `${activeBuzz.nickname} sedang menjawab...`;
-      setAnswerEnabled(false, `Menunggu ${activeBuzz.nickname} menjawab.`);
+      setAnswerEnabled(false, `Menunggu ${activeBuzz.nickname} menjawab / ACC admin.`);
     }
     return;
   }
@@ -682,7 +709,7 @@ async function buzz() {
           buzzInfo.textContent =
             activeBuzz.player_id === state.player_id
               ? "Kamu sudah menang buzz. Jawab sekarang."
-              : `${activeBuzz.nickname} sedang menjawab...`;
+              : `${activeBuzz.nickname} sedang menjawab / menunggu ACC admin.`;
         }
       } else {
         if (buzzInfo) buzzInfo.textContent = "Buzz masih terkunci. Coba sebentar lagi.";
@@ -738,19 +765,18 @@ async function sendAnswer() {
     return;
   }
 
- if (answerText) answerText.value = "";
-setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+  if (answerText) answerText.value = "";
+  setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
 
-// buzz tetap dikunci sampai admin kasih verdict
-resetBuzzVisual(
-  `Pemenang buzz: ${state.nickname || "Player"}`,
-  "Menunggu ACC admin..."
-);
+  clearBuzzCountdown();
+  if (buzzTimer) buzzTimer.textContent = "Menunggu ACC admin...";
+  resetBuzzVisual(`Pemenang buzz: ${state.nickname || "Player"}`, "Menunggu ACC admin...");
 
-if (buzzBtn) buzzBtn.disabled = true;
-if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+  if (buzzBtn) buzzBtn.disabled = true;
+  if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
 
-await loadAnswerFeed();
+  await loadAnswerFeed();
+}
 
 /* ===== REALTIME ===== */
 function unsubscribe() {
@@ -809,12 +835,17 @@ function subscribeRealtime() {
           if (a.verdict === "correct") {
             if (answerStatus) answerStatus.textContent = "✅ Benar!";
             play(sCorrect);
-            await releaseActiveBuzz("correct");
           } else if (a.verdict === "wrong") {
             if (answerStatus) answerStatus.textContent = "❌ Salah!";
             play(sWrong);
-            await releaseActiveBuzz("wrong");
           }
+        }
+
+        // keputusan admin berlaku untuk semua client
+        if (a.verdict === "correct") {
+          await releaseActiveBuzz("correct");
+        } else if (a.verdict === "wrong") {
+          await releaseActiveBuzz("wrong");
         }
 
         await loadAnswerFeed();
@@ -878,10 +909,24 @@ function subscribeRealtime() {
         await fetchActiveBuzz();
 
         if (activeBuzz?.player_id === state.player_id) {
-          setAnswerEnabled(true, "");
-          if (answerText) answerText.focus();
+          const { data: myPendingAnswer } = await supabase
+            .from("cc_answers")
+            .select("id, verdict, created_at")
+            .eq("question_id", state.current_question_id)
+            .eq("player_id", state.player_id)
+            .gte("created_at", activeBuzz.created_at)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (myPendingAnswer && !myPendingAnswer.verdict) {
+            setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+          } else {
+            setAnswerEnabled(true, "");
+            if (answerText) answerText.focus();
+          }
         } else if (activeBuzz) {
-          setAnswerEnabled(false, "Menunggu pemenang buzz menjawab.");
+          setAnswerEnabled(false, "Menunggu pemenang buzz / ACC admin.");
         } else {
           setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
           if (lastRoomStatus === "live") {
