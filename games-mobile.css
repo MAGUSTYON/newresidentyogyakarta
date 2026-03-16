@@ -1,0 +1,349 @@
+html, body{
+  overflow:auto !important;
+}
+
+.games-app{
+  padding:10px !important;
+  gap:10px !important;
+  min-height:100dvh;
+}
+
+/* top */
+.games-topbar{
+  flex-direction:column !important;
+  align-items:stretch !important;
+  gap:10px !important;
+}
+
+.games-nav{
+  justify-content:flex-start !important;
+  overflow-x:auto !important;
+  flex-wrap:nowrap !important;
+  padding-bottom:4px;
+}
+
+.games-nav a{
+  flex:0 0 auto;
+  white-space:nowrap;
+  font-size:12px !important;
+  padding:8px 12px !important;
+}
+
+/* join */
+.games-join{
+  width:100% !important;
+  padding:14px !important;
+}
+
+.games-join-grid{
+  grid-template-columns:1fr !important;
+}
+
+/* game shell:
+   players kiri, main kanan */
+.game-shell{
+  display:grid !important;
+  grid-template-columns: 110px minmax(0, 1fr) !important;
+  gap:10px !important;
+  align-items:stretch !important;
+  width:100% !important;
+}
+
+/* players panel */
+.players-panel{
+  min-height: 520px !important;
+  max-height: 520px !important;
+  overflow:hidden !important;
+  border-radius:18px !important;
+}
+
+.players-header{
+  padding:10px 10px 8px !important;
+}
+
+.players-title{
+  font-size:16px !important;
+}
+
+.players-sub,
+.players-me{
+  font-size:11px !important;
+}
+
+.player-list{
+  padding:6px 0 !important;
+  overflow:auto !important;
+}
+
+.player-row,
+.lb-item{
+  min-height:54px !important;
+  padding:8px !important;
+  border-radius:10px !important;
+  margin:0 6px 8px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-start !important;
+  justify-content:center !important;
+  gap:2px !important;
+  font-size:12px !important;
+}
+
+.player-name{
+  font-size:12px !important;
+  line-height:1.15 !important;
+}
+
+.player-score{
+  font-size:13px !important;
+  font-weight:900 !important;
+}
+
+/* right main */
+.main-panel{
+  display:grid !important;
+  grid-template-rows: 330px 220px !important;
+  gap:10px !important;
+  min-height:0 !important;
+}
+
+/* board */
+.board-panel{
+  min-height:330px !important;
+  border-radius:18px !important;
+  padding:12px 14px 14px !important;
+}
+
+.board-top{
+  gap:8px !important;
+}
+
+.board-room-meta{
+  font-size:13px !important;
+  line-height:1.2 !important;
+}
+
+.board-room-meta #gameStatus{
+  margin-top:4px !important;
+}
+
+.board-mini-btn,
+#leaveBtn{
+  height:34px !important;
+  padding:0 12px !important;
+  font-size:12px !important;
+  border-radius:999px !important;
+}
+
+.board-center{
+  inset:54px 14px 102px !important;
+}
+
+.board-question-label,
+.question-label{
+  font-size:11px !important;
+  letter-spacing:.2em !important;
+  margin-bottom:8px !important;
+}
+
+.board-question-text,
+.question-text,
+#qText{
+  font-size: clamp(16px, 4.6vw, 24px) !important;
+  line-height:1.14 !important;
+  font-weight:900 !important;
+  word-break:break-word !important;
+  overflow-wrap:anywhere !important;
+  max-width:100% !important;
+}
+
+.board-bottom,
+.board-bottom-ui{
+  left:14px !important;
+  right:14px !important;
+  bottom:12px !important;
+  gap:6px !important;
+}
+
+.buzz-btn,
+#buzzBtn{
+  width:min(100%, 220px) !important;
+  height:46px !important;
+  font-size:15px !important;
+  border-radius:999px !important;
+}
+
+.buzz-info,
+.buzz-owner,
+.buzz-timer{
+  font-size:12px !important;
+  text-align:center !important;
+  line-height:1.25 !important;
+}
+
+/* feeds panel: persis dua kolom seperti screenshot */
+.feeds-panel{
+  min-height:220px !important;
+  height:220px !important;
+  padding:10px 10px 10px !important;
+  border-radius:18px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  overflow:hidden !important;
+}
+
+.feeds-head{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:10px !important;
+  flex:0 0 auto !important;
+}
+
+.feeds-chip{
+  height:28px !important;
+  font-size:11px !important;
+  border-radius:999px !important;
+}
+
+.feeds-columns{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:10px !important;
+}
+
+.answers-panel,
+.chat-panel{
+  min-width:0 !important;
+  min-height:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+
+.answers-panel{
+  padding-right:8px !important;
+  border-right:1px solid rgba(255,255,255,.08) !important;
+}
+
+.chat-panel{
+  padding-left:2px !important;
+}
+
+.feed-status,
+#feedStatus,
+#answerStatus{
+  font-size:10px !important;
+  min-height:14px !important;
+  margin-bottom:4px !important;
+}
+
+.answer-feed,
+.chat-feed,
+#feedList,
+#chatList{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:6px !important;
+}
+
+.feed-item,
+.chat-item,
+.ansItem{
+  font-size:12px !important;
+  line-height:1.35 !important;
+  padding:8px 9px !important;
+  border-radius:10px !important;
+}
+
+.ansItem .meta{
+  font-size:10px !important;
+  margin-bottom:4px !important;
+}
+
+/* input answer/chat */
+.input-wrap,
+#answerBox,
+#chatBox{
+  margin-top:8px !important;
+  flex:0 0 auto !important;
+  display:block !important;
+}
+
+.input-pill{
+  min-height:38px !important;
+  height:38px !important;
+  padding:0 8px !important;
+  gap:6px !important;
+  border-radius:10px !important;
+  width:100% !important;
+}
+
+.input-icon{
+  font-size:12px !important;
+}
+
+#answerText,
+#chatText{
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
+  font-size:12px !important;
+  padding:4px 0 !important;
+}
+
+#sendAnswerBtn,
+#sendChatBtn{
+  height:26px !important;
+  padding:0 8px !important;
+  font-size:11px !important;
+  border-radius:6px !important;
+  flex:0 0 auto !important;
+}
+
+/* overlay */
+.overlayBox{
+  width:min(92vw, 520px) !important;
+}
+
+/* kalau layar lebih kecil lagi */
+@media (max-width: 480px){
+  .game-shell{
+    grid-template-columns: 96px minmax(0, 1fr) !important;
+  }
+
+  .players-panel{
+    min-height:500px !important;
+    max-height:500px !important;
+  }
+
+  .main-panel{
+    grid-template-rows: 300px 210px !important;
+  }
+
+  .board-panel{
+    min-height:300px !important;
+  }
+
+  .feeds-panel{
+    min-height:210px !important;
+    height:210px !important;
+  }
+
+  .player-row,
+  .lb-item{
+    min-height:50px !important;
+    font-size:11px !important;
+  }
+
+  .board-question-text,
+  .question-text,
+  #qText{
+    font-size: clamp(15px, 4.4vw, 21px) !important;
+  }
+}
