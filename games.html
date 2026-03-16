@@ -50,117 +50,136 @@
       </div>
     </section>
 
-    <!-- GAME -->
-    <main id="gameCard" class="game-shell" hidden>
-      <!-- LEFT -->
-      <aside class="players-panel panel">
-        <div class="players-header">
-          <div>
-            <div class="players-title">Players</div>
-            <div id="lbStatus" class="players-sub">—</div>
-          </div>
-          <div id="meTag" class="players-me">—</div>
+<div class="game-shell">
+
+  <!-- PLAYERS -->
+  <aside class="panel players">
+    <div class="player-list" id="lbList">
+
+      <!-- contoh player -->
+      <div class="player">
+        <div class="check">✔</div>
+        <div class="avatar">🙂</div>
+
+        <div class="player-name">
+          <span id="meTag">Player</span>
+          <strong>0 poin</strong>
         </div>
 
-        <div id="lbList" class="player-list">
-          <div class="player-row">
-            <div class="player-main">
-              <div class="player-name">Belum ada peserta.</div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- RIGHT -->
-      <section class="main-panel">
-        <!-- BOARD -->
-        <section class="board-panel panel">
-          <div class="board-top">
-            <div class="board-room-meta">
-              <div><b>Room:</b> <span id="roomLabel">-</span></div>
-              <div id="gameStatus">—</div>
-            </div>
-
-            <button id="leaveBtn" class="board-mini-btn" type="button">Keluar</button>
-          </div>
-
-          <div class="board-center">
-            <div class="board-question-wrap">
-              <div class="board-question-label">PERTANYAAN</div>
-              <div id="qText" class="board-question-text">—</div>
-            </div>
-          </div>
-
-          <div class="board-bottom">
-            <button id="buzzBtn" class="buzz-btn" type="button" disabled>BUZZ</button>
-            <div id="buzzInfo" class="buzz-info"></div>
-            <div id="buzzOwner" class="buzz-owner">Belum ada pemenang buzz.</div>
-            <div id="buzzTimer" class="buzz-timer"></div>
-          </div>
-        </section>
-
-        <!-- FEEDS -->
-        <section class="feeds-panel panel">
-          <div class="feeds-head">
-            <div class="feeds-chip">Jawaban</div>
-            <div class="feeds-chip">Obrolan</div>
-          </div>
-
-          <div class="feeds-columns">
-            <!-- ANSWERS -->
-            <section class="answers-panel">
-              <div id="feedStatus" class="feed-status"></div>
-
-              <div id="feedList" class="answer-feed">
-                <div class="feed-item">
-                  <div class="feed-item-body">Belum ada jawaban.</div>
-                </div>
-              </div>
-
-              <div id="answerBox" class="input-wrap" data-disabled="1">
-                <div class="input-pill">
-                  <span class="input-icon">✎</span>
-                  <textarea id="answerText" placeholder="Jawab disini..." disabled></textarea>
-                  <button id="sendAnswerBtn" type="button" disabled>Kirim</button>
-                </div>
-                <div id="answerStatus" class="input-status"></div>
-              </div>
-            </section>
-
-            <!-- CHAT -->
-            <section class="chat-panel">
-              <div id="chatList" class="chat-feed">
-                <div class="chat-item">Belum ada chat.</div>
-              </div>
-
-              <div id="chatBox" class="input-wrap">
-                <div class="input-pill">
-                  <span class="input-icon">💬</span>
-                  <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
-                  <button id="sendChatBtn" type="button">Kirim</button>
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
-      </section>
-    </main>
-  </div>
-
-  <!-- OVERLAY -->
-  <div id="endOverlay">
-    <div class="overlayBox">
-      <div class="overlayHead">
-        <div>
-          <div class="overlayTitle">Sesi Berakhir</div>
-          <div id="finalSub" class="overlaySub">—</div>
-        </div>
-        <button id="closeOverlay" type="button">✕</button>
+        <div class="plus"></div>
       </div>
 
-      <div id="finalList"></div>
     </div>
-  </div>
+  </aside>
+
+
+  <!-- MAIN -->
+  <section class="main">
+
+    <!-- BOARD -->
+    <div class="panel board">
+
+      <div class="board-top">
+        <div id="roomLabel">Room</div>
+
+        <div style="display:flex; gap:18px;">
+          <button id="leaveBtn">Keluar</button>
+        </div>
+      </div>
+
+      <div id="gameStatus"></div>
+
+      <div class="board-center">
+
+        <div style="text-align:center">
+
+          <div style="font-weight:900; letter-spacing:3px; color:#777;">
+            PERTANYAAN
+          </div>
+
+          <div id="qText" style="font-size:26px; font-weight:900; margin-top:10px;">
+            —
+          </div>
+
+          <button id="buzzBtn" class="buzz-btn">
+            BUZZ
+          </button>
+
+          <div id="buzzInfo"></div>
+          <div id="buzzOwner">Belum ada pemenang buzz.</div>
+          <div id="buzzTimer"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- BOTTOM -->
+    <div class="panel bottom">
+
+      <div class="tab left">Jawaban</div>
+      <div class="tab right">Obrolan</div>
+
+
+      <!-- ANSWERS -->
+      <div class="answers">
+
+        <div id="feedStatus"></div>
+
+        <div id="feedList">
+          <!-- jawaban muncul disini -->
+        </div>
+
+        <div class="input-row" id="answerBox">
+          <div class="input-box">
+
+            <textarea
+              id="answerText"
+              placeholder="Jawab disini..."
+              disabled
+            ></textarea>
+
+            <button id="sendAnswerBtn" disabled>
+              Kirim
+            </button>
+
+          </div>
+        </div>
+
+        <div id="answerStatus"></div>
+
+      </div>
+
+
+      <!-- CHAT -->
+      <div class="chat">
+
+        <div id="chatList">
+          <!-- chat muncul disini -->
+        </div>
+
+        <div class="chat-box">
+
+          <textarea
+            id="chatText"
+            placeholder="Tulis chat..."
+          ></textarea>
+
+          <button id="sendChatBtn">
+            Kirim
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
 
   <script type="module" src="games.js"></script>
 </body>
