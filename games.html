@@ -28,7 +28,7 @@
       </nav>
     </header>
 
-    <!-- JOIN -->
+    <!-- JOIN CARD -->
     <section id="joinCard" class="games-join panel">
       <h2>Cerdas Cermat (Live)</h2>
       <p>Masukkan kode room dari admin dan nickname kamu.</p>
@@ -54,7 +54,7 @@
     <!-- GAME -->
     <main id="gameCard" class="game-shell" hidden>
       <!-- LEFT: PLAYERS -->
-      <aside class="panel players-panel">
+      <aside class="players-panel panel">
         <div class="players-header">
           <div>
             <div class="players-title">Players</div>
@@ -63,7 +63,7 @@
           <div id="meTag" class="players-me">—</div>
         </div>
 
-        <div class="player-list" id="lbList">
+        <div id="lbList" class="player-list">
           <div class="player-row">
             <div class="player-check">•</div>
             <div class="player-avatar no-badge">🙂</div>
@@ -78,16 +78,14 @@
       <!-- RIGHT -->
       <section class="main-panel">
         <!-- BOARD -->
-        <section class="panel board-panel">
+        <section class="board-panel panel">
           <div class="board-top">
             <div class="board-room-meta">
               <div><b>Room:</b> <span id="roomLabel">-</span></div>
               <div id="gameStatus">—</div>
             </div>
 
-            <div class="board-actions">
-              <button id="leaveBtn" class="board-mini-btn" type="button">Keluar</button>
-            </div>
+            <button id="leaveBtn" class="board-mini-btn" type="button">Keluar</button>
           </div>
 
           <div class="board-center">
@@ -108,54 +106,52 @@
         </section>
 
         <!-- FEEDS -->
-        <section class="panel feeds-panel">
+        <section class="feeds-panel panel">
           <div class="feeds-tabs">
             <div class="feeds-tab left">Jawaban</div>
             <div class="feeds-tab right">Obrolan</div>
           </div>
 
-          <div class="feeds-grid">
-            <!-- ANSWERS -->
-            <section class="answers-panel">
-              <div id="feedStatus" class="feed-status"></div>
+          <!-- ANSWERS -->
+          <section class="answers-panel">
+            <div id="feedStatus" class="feed-status"></div>
 
-              <div id="feedList" class="answer-feed">
-                <div class="feed-item">
-                  <div class="feed-item-body">Belum ada jawaban.</div>
-                </div>
+            <div id="feedList" class="answer-feed">
+              <div class="feed-item">
+                <div class="feed-item-body">Belum ada jawaban.</div>
               </div>
+            </div>
 
-              <div id="answerBox" class="input-wrap" data-disabled="1">
-                <div class="input-pill">
-                  <span class="input-icon">✎</span>
-                  <textarea id="answerText" placeholder="Jawab disini..." disabled></textarea>
-                  <button id="sendAnswerBtn" type="button" disabled>Kirim</button>
-                </div>
-                <div id="answerStatus" class="input-status"></div>
+            <div id="answerBox" class="input-wrap" data-disabled="1">
+              <div class="input-pill">
+                <span class="input-icon">✎</span>
+                <textarea id="answerText" placeholder="Jawab disini..." disabled></textarea>
+                <button id="sendAnswerBtn" type="button" disabled>Kirim</button>
               </div>
-            </section>
+              <div id="answerStatus" class="input-status"></div>
+            </div>
+          </section>
 
-            <!-- CHAT -->
-            <section class="chat-panel">
-              <div id="chatList" class="chat-feed">
-                <div class="chat-item">Belum ada chat.</div>
-              </div>
+          <!-- CHAT -->
+          <section class="chat-panel">
+            <div id="chatList" class="chat-feed">
+              <div class="chat-item">Belum ada chat.</div>
+            </div>
 
-              <div id="chatBox" class="input-wrap">
-                <div class="input-pill">
-                  <span class="input-icon">💬</span>
-                  <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
-                  <button id="sendChatBtn" type="button">Kirim</button>
-                </div>
+            <div id="chatBox" class="input-wrap">
+              <div class="input-pill">
+                <span class="input-icon">💬</span>
+                <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
+                <button id="sendChatBtn" type="button">Kirim</button>
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
         </section>
       </section>
     </main>
   </div>
 
-  <!-- OVERLAY -->
+  <!-- END OVERLAY -->
   <div id="endOverlay">
     <div class="overlayBox">
       <div class="overlayHead">
