@@ -576,5 +576,283 @@ body{
 }
 
 /* ===== TABLET ===== */
-@media (max-width: 980px){
-  .gameWrap
+/* =========================
+   DESKTOP DEFAULT
+   ========================= */
+#gameCard.stage4{
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+.stage-q{ grid-column:1; grid-row:1; }
+.stage-lb{ grid-column:2; grid-row:1; }
+.stage-ans{ grid-column:1; grid-row:2; }
+.stage-chat{ grid-column:2; grid-row:2; }
+
+/* =========================
+   MOBILE: MIRIP GARTIC
+   ========================= */
+@media (max-width: 768px){
+
+  body{
+    overflow-x: hidden;
+  }
+
+  .gameWrap{
+    padding: 10px !important;
+    gap: 10px !important;
+    min-height: 100dvh;
+  }
+
+  .gameTop{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .nav{
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding-bottom: 4px;
+  }
+
+  .nav a{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  /* GRID UTAMA MOBILE */
+  #gameCard.stage4{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 12px !important;
+    height: auto !important;
+  }
+
+  /* SOAL DI ATAS FULL */
+  .stage-q{
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    min-height: 360px;
+  }
+
+  .stage-q .qCard{
+    min-height: 100%;
+    padding: 16px 14px;
+    justify-content: flex-start;
+  }
+
+  .stage-q .qBig{
+    font-size: clamp(22px, 7vw, 38px) !important;
+    line-height: 1.1;
+    word-break: break-word;
+    margin-top: 12px;
+  }
+
+  .stage-q .qLabel{
+    margin-top: 18px;
+  }
+
+  .stage-q .qDivider{
+    margin: 18px 0 16px;
+  }
+
+  .buzzBig{
+    width: 100% !important;
+    max-width: 320px;
+    margin-inline: auto;
+    min-height: 52px;
+    font-size: 16px;
+  }
+
+  .buzzInfo,
+  .buzzOwner,
+  .buzzTimer{
+    width: 100%;
+    text-align: center;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .buzzInfo{
+    margin-top: 14px !important;
+    font-size: 15px;
+  }
+
+  .buzzOwner{
+    margin-top: 8px !important;
+    font-size: 14px;
+    color: rgba(255,255,255,.82);
+  }
+
+  .buzzTimer{
+    margin-top: 4px !important;
+    font-size: 13px;
+    color: rgba(255,255,255,.7);
+  }
+
+  /* BAGIAN BAWAH = 2 KOLOM */
+  .stage-lb,
+  .stage-ans,
+  .stage-chat{
+    min-height: 0 !important;
+  }
+
+  /* leaderboard kiri */
+  .stage-lb{
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+  /* jawaban kanan */
+  .stage-ans{
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+  }
+
+  /* obrolan disembunyikan di mobile, nanti bisa pakai tab */
+  .stage-chat{
+    display: none !important;
+  }
+
+  /* Bikin area bawah mirip screenshot:
+     players kiri kecil, jawaban kanan besar */
+  .gameMain,
+  .centerCol{
+    min-height: 0;
+  }
+
+  /* ubah stage bawah jadi nested split */
+  #gameCard.stage4{
+    position: relative;
+  }
+
+  .stage-lb,
+  .stage-ans{
+    display: inline-flex;
+    vertical-align: top;
+  }
+
+  /* trik agar dua card bawah sejajar */
+  .stage-lb{
+    width: 34%;
+    margin-right: 2%;
+    float: left;
+    min-height: 420px;
+  }
+
+  .stage-ans{
+    width: 64%;
+    float: left;
+    min-height: 420px;
+  }
+
+  /* clear float sesudah kedua card bawah */
+  #gameCard.stage4::after{
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  /* players */
+  .stage-lb .lbHead{
+    padding: 14px 12px 10px;
+  }
+
+  .stage-lb .lbBody{
+    padding: 10px;
+    overflow: auto;
+    max-height: 340px;
+  }
+
+  .lb-item{
+    border-radius: 14px;
+    padding: 12px 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  /* jawaban kanan */
+  .stage-ans{
+    padding: 0 !important;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  .stage-ans .judul{
+    padding: 14px 14px 8px;
+    margin: 0;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+
+  #feedList{
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 280px;
+    overflow: auto !important;
+    padding: 12px 12px 8px;
+    box-sizing: border-box;
+  }
+
+  .ansItem{
+    padding: 10px 12px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .ansItem .meta{
+    font-size: 11px;
+  }
+
+  #answerBox{
+    flex: 0 0 auto;
+    padding: 10px 12px 12px !important;
+    border-top: 1px solid rgba(255,255,255,.08);
+    margin-top: auto;
+  }
+
+  .pillWrap{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 16px !important;
+    padding: 8px 10px !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #answerText{
+    flex: 1;
+    min-width: 0;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    line-height: 42px;
+    font-size: 15px;
+    padding: 0 8px !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #sendAnswerBtn{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 10px 14px !important;
+    border-radius: 14px !important;
+    font-size: 14px;
+  }
+
+  /* kalau mau ganti jawaban -> obrolan di mobile, nanti JS tinggal toggle class */
+  .mobile-hidden{
+    display: none !important;
+  }
+}
