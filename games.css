@@ -3,14 +3,14 @@
   --pink2:#d98ab7;
   --bg1:#070616;
   --bg2:#0c0b22;
-  --panel: rgba(12, 10, 28, .9);
+  --panel: rgba(12, 10, 28, .94);
   --panel-soft: rgba(255,255,255,.04);
   --border: rgba(255,255,255,.12);
   --text: #ffffff;
   --muted: rgba(255,255,255,.72);
-  --muted2: rgba(255,255,255,.58);
-  --good: rgba(70, 220, 150, .16);
-  --bad: rgba(255, 90, 120, .16);
+  --muted2: rgba(255,255,255,.56);
+  --good: rgba(70, 220, 150, .18);
+  --bad: rgba(255, 90, 120, .18);
   --shadow: 0 24px 70px rgba(0,0,0,.45);
 }
 
@@ -18,7 +18,8 @@
   box-sizing: border-box;
 }
 
-html, body{
+html,
+body{
   margin: 0;
   padding: 0;
 }
@@ -193,22 +194,25 @@ body{
   color: var(--muted);
 }
 
-/* ===== GAME GRID DESKTOP ===== */
+/* ===== GRID DESKTOP ===== */
 .stage4{
   display: grid;
   grid-template-columns: .9fr 1.1fr;
   grid-template-rows: auto auto;
+  grid-template-areas:
+    "question question"
+    "players feed";
   gap: 16px;
   min-height: 0;
 }
 
 .stage-q{
-  grid-column: 1 / -1;
+  grid-area: question;
   min-height: 360px;
 }
 
 .stage-lb{
-  grid-column: 1;
+  grid-area: players;
   min-height: 460px;
   display: flex;
   flex-direction: column;
@@ -216,7 +220,7 @@ body{
 }
 
 .stage-feed{
-  grid-column: 2;
+  grid-area: feed;
   min-height: 460px;
   display: flex;
   flex-direction: column;
@@ -279,7 +283,7 @@ body{
 
 .qBig{
   font-size: clamp(30px, 5vw, 62px);
-  line-height: 1.05;
+  line-height: 1.08;
   font-weight: 900;
   margin: 10px 0 0;
   word-break: break-word;
@@ -423,7 +427,7 @@ body{
   color: var(--muted2);
 }
 
-/* ===== ANSWERS ===== */
+/* ===== ANSWERS / CHAT ===== */
 #feedList,
 .chatList{
   flex: 1;
@@ -605,21 +609,28 @@ body{
   .stage4{
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "question"
+      "players"
+      "feed";
   }
 
   .stage-q,
   .stage-lb,
   .stage-feed{
-    grid-column: 1;
+    min-height: auto;
   }
 
-  .stage-lb,
+  .stage-lb{
+    min-height: 320px;
+  }
+
   .stage-feed{
-    min-height: 380px;
+    min-height: 360px;
   }
 }
 
-/* ===== MOBILE GARTIC-LIKE FIXED ===== */
+/* ===== MOBILE GARTIC STYLE ===== */
 @media (max-width: 768px){
   body{
     overflow-x: hidden;
@@ -654,10 +665,9 @@ body{
     grid-template-columns: 1fr;
   }
 
-  /* GRID UTAMA MOBILE */
   .stage4{
     display: grid !important;
-    grid-template-columns: minmax(120px, 34%) minmax(0, 66%) !important;
+    grid-template-columns: minmax(110px, 34%) minmax(0, 66%) !important;
     grid-template-rows: auto minmax(420px, auto) !important;
     grid-template-areas:
       "question question"
@@ -689,14 +699,6 @@ body{
     display: flex;
     flex-direction: column;
     overflow: hidden;
-  }
-
-  /* pastikan ga ada rule desktop yang nyangkut */
-  .stage-q,
-  .stage-lb,
-  .stage-feed{
-    grid-column: auto !important;
-    grid-row: auto !important;
   }
 
   .qCard{
@@ -751,7 +753,6 @@ body{
     font-size: 12px;
   }
 
-  /* leaderboard */
   .lbHead{
     padding: 14px 12px 10px;
     gap: 8px;
@@ -777,7 +778,6 @@ body{
     margin-bottom: 10px;
   }
 
-  /* feed kanan */
   .mobileSwitch{
     padding: 10px 10px 0;
     flex-shrink: 0;
@@ -849,7 +849,7 @@ body{
 
 @media (max-width: 520px){
   .stage4{
-    grid-template-columns: minmax(110px, 36%) minmax(0, 64%) !important;
+    grid-template-columns: minmax(100px, 36%) minmax(0, 64%) !important;
     grid-template-rows: auto minmax(390px, auto) !important;
     gap: 10px !important;
   }
