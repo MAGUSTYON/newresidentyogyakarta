@@ -619,7 +619,7 @@ body{
   }
 }
 
-/* ===== MOBILE GARTIC-LIKE ===== */
+/* ===== MOBILE GARTIC-LIKE FIXED ===== */
 @media (max-width: 768px){
   body{
     overflow-x: hidden;
@@ -633,6 +633,7 @@ body{
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
+    margin-bottom: 12px;
   }
 
   .nav{
@@ -649,38 +650,53 @@ body{
     font-size: 12px;
   }
 
-  .joinCard{
-    padding: 16px;
-    margin-bottom: 14px;
-  }
-
   .joinGrid{
     grid-template-columns: 1fr;
   }
 
+  /* GRID UTAMA MOBILE */
   .stage4{
-    display: grid;
-    grid-template-columns: 34% 66%;
-    grid-template-rows: auto minmax(420px, 1fr);
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: minmax(120px, 34%) minmax(0, 66%) !important;
+    grid-template-rows: auto minmax(420px, auto) !important;
+    grid-template-areas:
+      "question question"
+      "players feed";
+    gap: 12px !important;
+    align-items: stretch;
   }
 
   .stage-q{
-    grid-column: 1 / -1;
-    grid-row: 1;
-    min-height: 330px;
+    grid-area: question !important;
+    min-height: 320px;
+    width: 100%;
   }
 
   .stage-lb{
-    grid-column: 1;
-    grid-row: 2;
+    grid-area: players !important;
     min-height: 420px;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .stage-feed{
-    grid-column: 2;
-    grid-row: 2;
+    grid-area: feed !important;
     min-height: 420px;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* pastikan ga ada rule desktop yang nyangkut */
+  .stage-q,
+  .stage-lb,
+  .stage-feed{
+    grid-column: auto !important;
+    grid-row: auto !important;
   }
 
   .qCard{
@@ -706,9 +722,10 @@ body{
   }
 
   .qBig{
-    font-size: clamp(24px, 7vw, 38px);
+    font-size: clamp(22px, 7.2vw, 38px);
     line-height: 1.08;
     margin-top: 10px;
+    word-break: break-word;
   }
 
   .qDivider{
@@ -734,21 +751,36 @@ body{
     font-size: 12px;
   }
 
+  /* leaderboard */
   .lbHead{
     padding: 14px 12px 10px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #meTag{
+    font-size: 12px;
   }
 
   .lbBody{
     padding: 10px;
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
   }
 
   .lb-item{
     padding: 10px 10px;
     font-size: 13px;
+    border-radius: 14px;
+    margin-bottom: 10px;
   }
 
+  /* feed kanan */
   .mobileSwitch{
     padding: 10px 10px 0;
+    flex-shrink: 0;
   }
 
   .mobileSwitch button{
@@ -756,18 +788,28 @@ body{
     font-size: 13px;
   }
 
+  .feedPanel{
+    min-height: 0;
+    flex: 1;
+  }
+
   .panelTitle{
     padding: 12px 12px 8px;
     font-size: 15px;
+    flex-shrink: 0;
   }
 
   .panelStatus{
     padding: 0 12px 8px;
+    flex-shrink: 0;
   }
 
   #feedList,
   .chatList{
     padding: 0 10px 10px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
   }
 
   .ansItem{
@@ -778,6 +820,8 @@ body{
   #answerBox,
   .chatBox{
     padding: 10px;
+    margin-top: auto;
+    flex-shrink: 0;
   }
 
   .pillWrap{
@@ -803,11 +847,11 @@ body{
   }
 }
 
-/* ===== VERY SMALL PHONE ===== */
 @media (max-width: 520px){
   .stage4{
-    grid-template-columns: 36% 64%;
-    gap: 10px;
+    grid-template-columns: minmax(110px, 36%) minmax(0, 64%) !important;
+    grid-template-rows: auto minmax(390px, auto) !important;
+    gap: 10px !important;
   }
 
   .stage-q{
@@ -824,7 +868,7 @@ body{
   }
 
   .qBig{
-    font-size: clamp(22px, 8vw, 32px);
+    font-size: clamp(21px, 8vw, 32px);
   }
 
   .lb-item{
