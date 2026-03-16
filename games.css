@@ -4,20 +4,16 @@
   --bg1:#070616;
   --bg2:#0c0b22;
   --panel:rgba(12,10,28,.94);
-  --panel-soft:rgba(255,255,255,.04);
   --border:rgba(255,255,255,.12);
   --text:#ffffff;
   --muted:rgba(255,255,255,.72);
   --muted2:rgba(255,255,255,.56);
-  --good:rgba(70,220,150,.18);
-  --bad:rgba(255,90,120,.18);
   --shadow:0 24px 70px rgba(0,0,0,.45);
 }
 
 *{ box-sizing:border-box; }
 
-html,
-body{
+html, body{
   margin:0;
   padding:0;
   height:100%;
@@ -196,7 +192,7 @@ body{
   color:var(--muted);
 }
 
-/* GAME LAYOUT */
+/* MAIN */
 .game-shell{
   flex:1;
   min-height:0;
@@ -206,7 +202,7 @@ body{
   gap:10px;
 }
 
-/* LEFT PLAYERS */
+/* PLAYERS */
 .players-panel{
   display:flex;
   flex-direction:column;
@@ -289,9 +285,7 @@ body{
   display:none;
 }
 
-.player-meta{
-  min-width:0;
-}
+.player-meta{ min-width:0; }
 
 .player-name{
   font-size:13px;
@@ -312,7 +306,7 @@ body{
 .main-panel{
   min-height:0;
   display:grid;
-  grid-template-rows:330px 220px;
+  grid-template-rows:330px minmax(260px, 1fr);
   gap:10px;
 }
 
@@ -378,14 +372,13 @@ body{
 }
 
 .board-question-text{
-  font-size:clamp(18px, 2.6vw, 30px);
+  font-size:clamp(18px, 2.4vw, 28px);
   font-weight:900;
   line-height:1.15;
   color:#fff;
   word-break:break-word;
   overflow-wrap:anywhere;
   max-width:100%;
-  text-wrap:balance;
 }
 
 .board-ghost-logo{
@@ -444,8 +437,7 @@ body{
 /* FEEDS */
 .feeds-panel{
   min-height:0;
-  height:220px;
-  padding:12px 14px 12px;
+  padding:14px 14px 12px;
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:14px;
@@ -484,11 +476,9 @@ body{
 .chat-panel{
   min-width:0;
   min-height:0;
-  height:100%;
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  align-self:stretch;
 }
 
 .answers-panel{
@@ -502,7 +492,7 @@ body{
 
 .feed-status{
   min-height:16px;
-  margin-bottom:4px;
+  margin-bottom:6px;
   color:var(--muted2);
   font-size:11px;
   font-weight:700;
@@ -512,7 +502,7 @@ body{
 .answer-feed,
 .chat-feed{
   flex:1 1 auto;
-  min-height:90px;
+  min-height:120px;
   overflow:auto;
   display:flex;
   flex-direction:column;
@@ -663,13 +653,6 @@ body{
   cursor:pointer;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1100px){
-  .board-question-text{
-    font-size:clamp(16px,2.2vw,26px);
-  }
-}
-
 @media (max-width: 900px){
   body{ overflow:auto; }
 
@@ -703,11 +686,10 @@ body{
   }
 
   .main-panel{
-    grid-template-rows:300px 300px;
+    grid-template-rows:300px auto;
   }
 
   .feeds-panel{
-    height:auto;
     grid-template-columns:1fr;
     gap:14px;
   }
