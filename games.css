@@ -567,3 +567,149 @@ body {
   .tab.left { left: 20px; }
   .tab.right { right: 20px; }
 }
+
+/* ===== PATCH AGAR COCOK DENGAN OUTPUT games.js ===== */
+
+/* leaderboard dari JS */
+#lbList{
+  overflow:auto;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.lb-item{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  color:#fff;
+  font-weight:700;
+}
+
+/* feed jawaban dari JS */
+#feedList{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:4px 0;
+}
+
+.ansItem{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  color:#fff;
+  font-size:14px;
+  line-height:1.4;
+}
+
+.ansItem .meta{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  margin-bottom:6px;
+  font-size:11px;
+  color:rgba(255,255,255,.7);
+}
+
+.verdict{
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.verdict.correct{
+  background:rgba(70,220,150,.18);
+}
+
+.verdict.wrong{
+  background:rgba(255,90,120,.18);
+}
+
+.verdict.pending{
+  background:rgba(255,255,255,.06);
+}
+
+/* chat dari JS */
+#chatList{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:4px 0;
+}
+
+/* textarea & tombol biar ga berantakan */
+#answerText,
+#chatText{
+  width:100%;
+}
+
+#answerBox,
+#chatBox{
+  margin-top:10px;
+}
+
+/* board question agar ga numpuk */
+.board-center{
+  inset:72px 24px 120px;
+}
+
+.question-text,
+#qText{
+  font-size:clamp(18px, 2.1vw, 30px);
+  line-height:1.15;
+  text-align:center;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+  max-width:100%;
+}
+
+/* header kecil feed */
+.feeds-head{
+  margin-bottom:2px;
+}
+
+.feeds-chip{
+  font-size:12px;
+  height:26px;
+}
+
+/* tombol leave biar sesuai */
+#leaveBtn{
+  height:38px;
+  padding:0 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+
+/* status kecil */
+#feedStatus,
+#answerStatus{
+  color:rgba(255,255,255,.65);
+  font-size:12px;
+}
