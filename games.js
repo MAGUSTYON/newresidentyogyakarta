@@ -57,7 +57,7 @@ const chatText = document.getElementById("chatText");
 const sendChatBtn = document.getElementById("sendChatBtn");
 
 /* ===== STATE ===== */
-const LS_KEY = "cc_state_final_v4";
+const LS_KEY = "cc_state_final_v5";
 
 let state = {
   room_id: null,
@@ -170,13 +170,13 @@ function clearBuzzState() {
 
 function showJoin(msg = "") {
   if (joinCard) {
+    joinCard.hidden = false;
     joinCard.style.display = "block";
-    joinCard.removeAttribute("hidden");
   }
 
   if (gameCard) {
+    gameCard.hidden = true;
     gameCard.style.display = "none";
-    gameCard.setAttribute("hidden", "");
   }
 
   if (joinStatus) joinStatus.textContent = msg;
@@ -184,17 +184,19 @@ function showJoin(msg = "") {
 
 function showGame() {
   if (joinCard) {
+    joinCard.hidden = true;
     joinCard.style.display = "none";
-    joinCard.setAttribute("hidden", "");
   }
 
   if (gameCard) {
-    gameCard.removeAttribute("hidden");
+    gameCard.hidden = false;
     gameCard.style.display = "grid";
   }
 
   if (roomLabel) roomLabel.textContent = state.room_code || "-";
   if (meTag) meTag.textContent = state.nickname ? `@${state.nickname}` : "—";
+
+  console.log("showGame called", state);
 }
 
 /* ===== SUPABASE FETCH ===== */
@@ -264,6 +266,7 @@ async function releaseActiveBuzz(reason = "expired") {
       resetBuzzVisual("Jawaban benar.", "");
       setAnswerEnabled(false, "Jawaban benar.");
       if (buzzBtn) buzzBtn.disabled = true;
+      if (buzzInfo) buzzInfo.textContent = "Menunggu soal berikutnya.";
     } else {
       resetBuzzVisual("Belum ada pemenang buzz.", "");
     }
@@ -302,7 +305,7 @@ async function fetchActiveBuzz() {
 
   const nowIso = new Date().toISOString();
 
-  // release otomatis buzz yang expired
+  // auto release yang expired
   await supabase
     .from("cc_buzzes")
     .update({ released_at: nowIso })
@@ -346,8 +349,8 @@ async function fetchActiveBuzz() {
     buzzOwner.textContent = `Pemenang buzz: ${activeBuzz.nickname}`;
   }
 
-  // cek apakah pemenang buzz sudah kirim jawaban pending
-  const { data: pendingAnswer } = await supabase
+  // cek apakah pemenang buzz sudah kirim jawaban dan masih pending admin
+  const { data: pendingAnswer, error: pendingErr } = await supabase
     .from("cc_answers")
     .select("id, verdict, created_at")
     .eq("question_id", state.current_question_id)
@@ -356,6 +359,10 @@ async function fetchActiveBuzz() {
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  if (pendingErr) {
+    console.log("pending answer check error:", pendingErr.message);
+  }
 
   const waitingAdmin = !!pendingAnswer && !pendingAnswer.verdict;
 
@@ -390,16 +397,29 @@ async function fetchActiveBuzz() {
 
 /* ===== JOIN ===== */
 async function joinRoom(code, nickname) {
+  console.log("joinRoom start", { code, nickname });
+
   const room = await fetchRoomByCode(code);
-  if (!room) throw new Error("Room tidak ditemukan.");
+  console.log("room result", room);
+
+  if (!room) {
+    throw new Error("Room tidak ditemukan.");
+  }
 
   const { data: player, error } = await supabase
     .from("cc_players")
-    .insert({ room_id: room.id, nickname })
+    .insert({
+      room_id: room.id,
+      nickname: nickname,
+    })
     .select("id")
     .single();
 
-  if (error) throw error;
+  console.log("player insert result", { player, error });
+
+  if (error) {
+    throw new Error(error.message || "Gagal masuk ke room.");
+  }
 
   state.room_id = room.id;
   state.room_code = room.code;
@@ -408,13 +428,14 @@ async function joinRoom(code, nickname) {
   state.current_question_id = room.current_question_id;
   saveState();
 
-  showGame();
   await syncRoomUI(room);
-  subscribeRealtime();
   await refreshLeaderboard();
   await loadAnswerFeed();
   await loadChatFeed();
   await fetchActiveBuzz();
+
+  showGame();
+  subscribeRealtime();
 }
 
 /* ===== UI SYNC ===== */
@@ -841,7 +862,6 @@ function subscribeRealtime() {
           }
         }
 
-        // keputusan admin berlaku untuk semua client
         if (a.verdict === "correct") {
           await releaseActiveBuzz("correct");
         } else if (a.verdict === "wrong") {
@@ -983,21 +1003,33 @@ closeOverlay?.addEventListener("click", () => {
   if (endOverlay) endOverlay.style.display = "none";
 });
 
-joinBtn?.addEventListener("click", async () => {
-  if (joinStatus) joinStatus.textContent = "Joining…";
+joinBtn?.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const code = (roomCodeEl?.value || "").trim().toUpperCase();
+  const nick = (nickEl?.value || "").trim();
+
+  console.log("JOIN CLICKED", { code, nick });
+
+  if (!code || !nick) {
+    if (joinStatus) joinStatus.textContent = "Kode room & nickname wajib.";
+    return;
+  }
+
+  if (joinBtn) joinBtn.disabled = true;
+  if (joinStatus) joinStatus.textContent = "Joining...";
 
   try {
-    const code = (roomCodeEl?.value || "").trim().toUpperCase();
-    const nick = (nickEl?.value || "").trim();
-
-    if (!code || !nick) {
-      if (joinStatus) joinStatus.textContent = "Kode room & nickname wajib.";
-      return;
-    }
-
     await joinRoom(code, nick);
-  } catch (e) {
-    if (joinStatus) joinStatus.textContent = e?.message || "Gagal join.";
+    if (joinStatus) joinStatus.textContent = "";
+  } catch (e2) {
+    console.error("JOIN ERROR:", e2);
+    if (joinStatus) {
+      joinStatus.textContent = e2?.message || "Gagal join.";
+    }
+    showJoin(e2?.message || "Gagal join.");
+  } finally {
+    if (joinBtn) joinBtn.disabled = false;
   }
 });
 
