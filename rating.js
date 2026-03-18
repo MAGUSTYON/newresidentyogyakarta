@@ -1,5 +1,11 @@
 import { supabase } from "./supabaseClient.js";
 
+// GANTI INI TIAP MINGGU
+// Minggu 1 = 1
+// Minggu 2 = 8
+// Minggu 3 = 15
+const START_PART = 23;
+
 const elName = document.getElementById("name");
 const elReason = document.getElementById("reason");
 const elSubmit = document.getElementById("submitBtn");
@@ -38,11 +44,22 @@ function sanitizeScore(value) {
   return Math.round(num * 10) / 10;
 }
 
+function getPartLabel(index, startPart) {
+  return `Part ${startPart + index}`;
+}
+
+function applyPartLabels() {
+  partInputs.forEach((input, index) => {
+    if (!input) return;
+    input.placeholder = `${getPartLabel(index, START_PART)} (0-10)`;
+  });
+}
+
 function validateForm() {
   for (let i = 0; i < partInputs.length; i++) {
     const score = sanitizeScore(partInputs[i].value);
     if (score === null) {
-      setStatus(`Part ${i + 1} harus angka 0 sampai 10, boleh 1 angka di belakang koma.`);
+      setStatus(`${getPartLabel(i, START_PART)} harus angka 0 sampai 10, boleh 1 angka di belakang koma.`);
       partInputs[i].focus();
       return false;
     }
@@ -60,12 +77,13 @@ function renderItem(item) {
   const created = new Date(item.created_at).toLocaleString("id-ID");
   const reason = escapeHtml(item.reason || "-");
   const avg = averageScore(item);
+  const startPart = Number(item.start_part || 1);
 
   const scoresHtml = partKeys.map((key, index) => {
     const score = Number(item[key] || 0).toFixed(1);
     return `
       <div class="scoreBox">
-        <small>Part ${index + 1}</small>
+        <small>${getPartLabel(index, startPart)}</small>
         <b>${score}/10</b>
       </div>
     `;
@@ -74,8 +92,15 @@ function renderItem(item) {
   return `
     <div class="ratingCard">
       <div class="ratingMeta">
-        <div><b>${name}</b> <span class="badge">${created}</span></div>
+        <div>
+          <b>${name}</b>
+          <span class="badge">${created}</span>
+        </div>
         <div class="badge avgBadge">Rata-rata ${avg}/10</div>
+      </div>
+
+      <div class="badge" style="margin-bottom:12px;">
+        Part ${startPart}–${startPart + 6}
       </div>
 
       <div class="scoreGrid">
@@ -115,6 +140,7 @@ async function submitRating() {
   const payload = {
     name: elName?.value.trim() || null,
     reason: elReason?.value || "",
+    start_part: START_PART,
   };
 
   for (const key of partKeys) {
@@ -207,4 +233,5 @@ partInputs.forEach((input) => {
 if (elSubmit) elSubmit.addEventListener("click", submitRating);
 if (elRefresh) elRefresh.addEventListener("click", loadFeed);
 
+applyPartLabels();
 loadFeed();
