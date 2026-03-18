@@ -70,15 +70,20 @@
       display:flex;
       gap:8px;
       flex-wrap:wrap;
+      align-items:center;
     }
-    .nav a{
+    .nav a,
+    .nav button{
       padding:8px 12px;
       border-radius:999px;
       color:var(--muted);
       font-size:13px;
       border:1px solid transparent;
+      background:transparent;
+      cursor:pointer;
     }
-    .nav a.active{
+    .nav a.active,
+    .nav button.active{
       color:#0b0a12;
       background:linear-gradient(180deg, var(--pink), var(--pink-2));
       font-weight:700;
@@ -92,7 +97,7 @@
 
     .hero{
       display:grid;
-      grid-template-columns:1.1fr .9fr;
+      grid-template-columns:1.05fr .95fr;
       gap:22px;
       align-items:start;
       margin-bottom:26px;
@@ -154,11 +159,51 @@
       padding:22px;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:22px;
-      align-items:start;
+    .floatingComposer{
+      position:sticky;
+      top:86px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .composeButton{
+      width:72px;
+      height:72px;
+      border-radius:999px;
+      border:none;
+      cursor:pointer;
+      font-size:30px;
+      color:#0b0a12;
+      background:linear-gradient(180deg, var(--pink), var(--pink-2));
+      box-shadow:0 20px 55px rgba(0,0,0,.38);
+      align-self:flex-end;
+    }
+
+    .composeHint{
+      align-self:flex-end;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .formPanel{
+      max-height:0;
+      overflow:hidden;
+      opacity:0;
+      transform:translateY(-8px);
+      transition:max-height .35s ease, opacity .22s ease, transform .22s ease;
+      pointer-events:none;
+    }
+
+    .formPanel.open{
+      max-height:1400px;
+      opacity:1;
+      transform:translateY(0);
+      pointer-events:auto;
     }
 
     label{
@@ -255,7 +300,7 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
-      margin:28px 0 14px;
+      margin:8px 0 14px;
     }
 
     .list{
@@ -328,7 +373,9 @@
     }
 
     @media (max-width: 920px){
-      .hero, .grid{grid-template-columns:1fr}
+      .hero{grid-template-columns:1fr}
+      .floatingComposer{position:static}
+      .composeButton,.composeHint{align-self:flex-start}
       .scores{grid-template-columns:repeat(2, minmax(0,1fr))}
     }
 
@@ -338,6 +385,7 @@
       .heroCard,.panel,.ratingCard{padding:18px}
       .parts,.scores,.statWrap{grid-template-columns:1fr}
       .title{font-size:34px}
+      .composeButton{width:62px;height:62px;font-size:26px}
     }
   </style></head>
 <body>
@@ -347,81 +395,93 @@
         <b>Rating AU</b>
         <small>Anonymous Review Board</small>
       </div><nav class="nav">
-    <a href="#form" class="active">Isi Rating</a>
-    <a href="#list">Semua Rating</a>
+    <a href="index.html">Beranda</a>
+    <a href="quotes.html">Quotes</a>
+    <a href="confession.html">Confession</a>
+    <a href="games.html">Games</a>
+    <a href="event.html">Event</a>
+    <a href="profil.html">Profil</a>
   </nav>
 </div>
 
   </header>  <main class="container">
     <section class="hero">
       <div class="card heroCard">
-        <p class="kicker">FORM RATING AU</p>
-        <h1 class="title">Kasih nilai per part dengan format yang rapi dan gampang diisi.</h1>
+        <p class="kicker">RATING BOARD</p>
+        <h1 class="title">Website langsung menampilkan semua rating, dan form isi rating dibuka lewat tombol pensil.</h1>
         <p class="sub">
-          Pengunjung bisa isi nama atau anonim, kasih nilai untuk Part 1 sampai Part 7,
-          lalu nulis alasan tanpa batas. Input nilai dibatasi hanya angka <b>0 sampai 10</b>.
+          Saat website dibuka, pengunjung langsung melihat semua rating yang sudah ada.
+          Kalau mau kirim rating baru, tinggal pencet tombol pensil untuk membuka form.
         </p><div class="statWrap">
       <div class="stat">
         <b>7 Part</b>
-        <span>Setiap part punya nilai sendiri</span>
+        <span>Setiap part wajib diisi nilai 0 sampai 10</span>
       </div>
       <div class="stat">
-        <b>0–10</b>
-        <span>Validasi otomatis hanya menerima angka valid</span>
+        <b>Anonim</b>
+        <span>Nama boleh dikosongkan, alasan bebas tanpa batas</span>
       </div>
     </div>
   </div>
 
-  <div class="card panel" id="form">
-    <label for="name">Nama (bisa anonim)</label>
-    <input id="name" type="text" maxlength="80" placeholder="Kosongkan kalau mau anonim" />
+  <div class="floatingComposer">
+    <button id="toggleComposerBtn" class="composeButton" type="button" aria-expanded="false" aria-controls="composerPanel">✏️</button>
+    <div class="composeHint">Pencet pensil buat isi rating</div>
 
-    <div class="parts" style="margin-top:18px;">
-      <div class="partField">
-        <label for="part1">Part 1</label>
-        <input id="part1" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-      <div class="partField">
-        <label for="part2">Part 2</label>
-        <input id="part2" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-      <div class="partField">
-        <label for="part3">Part 3</label>
-        <input id="part3" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-      <div class="partField">
-        <label for="part4">Part 4</label>
-        <input id="part4" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-      <div class="partField">
-        <label for="part5">Part 5</label>
-        <input id="part5" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-      <div class="partField">
-        <label for="part6">Part 6</label>
-        <input id="part6" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-      <div class="partField" style="grid-column:1 / -1;">
-        <label for="part7">Part 7</label>
-        <input id="part7" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
-      </div>
-    </div>
+    <section id="composerPanel" class="card panel formPanel" aria-hidden="true">
+      <label for="name">Nama (bisa anonim)</label>
+      <input id="name" type="text" maxlength="80" placeholder="Kosongkan kalau mau anonim" />
 
-    <label for="reason">Alasan</label>
-    <textarea id="reason" placeholder="Tulis alasan kamu di sini... bebas sepanjang apa pun."></textarea>
-    <p class="hint">Semua nilai wajib diisi. Hanya angka bulat 0 sampai 10 yang akan diterima.</p>
+      <div class="parts" style="margin-top:18px;">
+        <div class="partField">
+          <label for="part1">Part 1</label>
+          <input id="part1" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+        <div class="partField">
+          <label for="part2">Part 2</label>
+          <input id="part2" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+        <div class="partField">
+          <label for="part3">Part 3</label>
+          <input id="part3" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+        <div class="partField">
+          <label for="part4">Part 4</label>
+          <input id="part4" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+        <div class="partField">
+          <label for="part5">Part 5</label>
+          <input id="part5" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+        <div class="partField">
+          <label for="part6">Part 6</label>
+          <input id="part6" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+        <div class="partField" style="grid-column:1 / -1;">
+          <label for="part7">Part 7</label>
+          <input id="part7" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+        </div>
+      </div>
 
-    <div class="actions">
-      <button id="submitBtn" class="btn">Kirim Rating</button>
-      <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
-      <small id="status"></small>
-    </div>
+      <label for="reason">Alasan</label>
+      <textarea id="reason" placeholder="Tulis alasan kamu di sini... bebas sepanjang apa pun."></textarea>
+      <p class="hint">Semua nilai wajib diisi. Hanya angka bulat 0 sampai 10 yang akan diterima.</p>
+
+      <div class="actions">
+        <button id="submitBtn" class="btn">Kirim Rating</button>
+        <button id="closeBtn" class="btn secondary" type="button">Tutup</button>
+        <small id="status"></small>
+      </div>
+    </section>
   </div>
 </section>
 
 <div class="feedHeader">
   <h2 style="margin:0;">📝 Semua Rating AU</h2>
-  <div class="badge" id="countBadge">0 rating</div>
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
+    <div class="badge" id="countBadge">0 rating</div>
+  </div>
 </div>
 
 <section id="list" class="list"></section>
@@ -441,12 +501,17 @@
       reason: document.getElementById("reason"),
       submitBtn: document.getElementById("submitBtn"),
       refreshBtn: document.getElementById("refreshBtn"),
+      closeBtn: document.getElementById("closeBtn"),
+      toggleComposerBtn: document.getElementById("toggleComposerBtn"),
+      toggleTopBtn: document.getElementById("toggleTopBtn"),
+      composerPanel: document.getElementById("composerPanel"),
       status: document.getElementById("status"),
       list: document.getElementById("list"),
       countBadge: document.getElementById("countBadge"),
     };
 
     const partKeys = ["part1", "part2", "part3", "part4", "part5", "part6", "part7"];
+    let isComposerOpen = false;
 
     function setStatus(text) {
       fields.status.textContent = text || "";
@@ -493,6 +558,18 @@
     function averageScore(item) {
       const total = partKeys.reduce((sum, key) => sum + Number(item[key] || 0), 0);
       return (total / partKeys.length).toFixed(1);
+    }
+
+    function setComposerState(open) {
+      isComposerOpen = open;
+      fields.composerPanel.classList.toggle("open", open);
+      fields.composerPanel.setAttribute("aria-hidden", open ? "false" : "true");
+      fields.toggleComposerBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      fields.toggleTopBtn.classList.toggle("active", open);
+      fields.toggleTopBtn.textContent = open ? "✖ Tutup Form" : "✏️ Tulis Rating";
+      if (open) {
+        setTimeout(() => fields.name.focus(), 180);
+      }
     }
 
     function renderItem(item) {
@@ -593,6 +670,7 @@
       });
 
       await loadRatings();
+      setComposerState(false);
     }
 
     partKeys.forEach((key) => {
@@ -613,215 +691,11 @@
 
     fields.submitBtn.addEventListener("click", submitRating);
     fields.refreshBtn.addEventListener("click", loadRatings);
+    fields.closeBtn.addEventListener("click", () => setComposerState(false));
+    fields.toggleComposerBtn.addEventListener("click", () => setComposerState(!isComposerOpen));
+    fields.toggleTopBtn.addEventListener("click", () => setComposerState(!isComposerOpen));
 
     loadRatings();
-  </script></body>
-</html>d="reason" placeholder="Tulis alasan kamu di sini... bebas sepanjang apa pun."></textarea>
-    <p class="hint">Semua nilai wajib diisi. Hanya angka bulat 0 sampai 10 yang akan diterima.</p>
-
-    <div class="actions">
-      <button id="submitBtn" class="btn">Kirim Rating</button>
-      <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
-      <small id="status"></small>
-    </div>
-  </div>
-</section>
-
-<div class="feedHeader">
-  <h2 style="margin:0;">📝 Semua Rating AU</h2>
-  <div class="badge" id="countBadge">0 rating</div>
-</div>
-
-<section id="list" class="list"></section>
-
-  </main>  <script type="module">
-    import { supabase } from "./supabaseClient.js";
-
-    const fields = {
-      name: document.getElementById("name"),
-      part1: document.getElementById("part1"),
-      part2: document.getElementById("part2"),
-      part3: document.getElementById("part3"),
-      part4: document.getElementById("part4"),
-      part5: document.getElementById("part5"),
-      part6: document.getElementById("part6"),
-      part7: document.getElementById("part7"),
-      reason: document.getElementById("reason"),
-      submitBtn: document.getElementById("submitBtn"),
-      refreshBtn: document.getElementById("refreshBtn"),
-      status: document.getElementById("status"),
-      list: document.getElementById("list"),
-      countBadge: document.getElementById("countBadge"),
-    };
-
-    const partKeys = ["part1", "part2", "part3", "part4", "part5", "part6", "part7"];
-
-    function setStatus(text) {
-      fields.status.textContent = text || "";
-    }
-
-    function escapeHtml(str = "") {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function sanitizeScore(value) {
-      if (value === "" || value === null || value === undefined) return null;
-      const num = Number(value);
-      if (!Number.isInteger(num)) return null;
-      if (num < 0 || num > 10) return null;
-      return num;
-    }
-
-    function validateForm() {
-      for (const key of partKeys) {
-        const score = sanitizeScore(fields[key].value);
-        if (score === null) {
-          fields[key].focus();
-          throw new Error(`Nilai ${key.replace("part", "Part ")} harus angka bulat 0 sampai 10.`);
-        }
-      }
-    }
-
-    function formatDate(dateString) {
-      try {
-        return new Date(dateString).toLocaleString("id-ID", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        });
-      } catch {
-        return dateString || "";
-      }
-    }
-
-    function averageScore(item) {
-      const total = partKeys.reduce((sum, key) => sum + Number(item[key] || 0), 0);
-      return (total / partKeys.length).toFixed(1);
-    }
-
-    function renderItem(item) {
-      const name = item.name?.trim() ? escapeHtml(item.name.trim()) : "Anonim";
-      const reason = escapeHtml(item.reason || "-");
-      const created = formatDate(item.created_at);
-
-      const scoresHtml = partKeys
-        .map((key, index) => `
-          <div class="scoreItem">
-            <span>Part ${index + 1}</span>
-            <b>${Number(item[key] || 0)}</b>
-          </div>
-        `)
-        .join("");
-
-      return `
-        <article class="card ratingCard">
-          <div class="ratingTop">
-            <div>
-              <div class="nameRow">
-                <b>${name}</b>
-                <span class="badge">${created}</span>
-              </div>
-            </div>
-            <div class="badge">Rata-rata ${averageScore(item)}/10</div>
-          </div>
-
-          <div class="scores">${scoresHtml}</div>
-
-          <div>
-            <b>Alasan:</b>
-            <p class="reason">${reason}</p>
-          </div>
-        </article>
-      `;
-    }
-
-    async function loadRatings() {
-      fields.list.innerHTML = `<div class="card empty">Loading...</div>`;
-
-      const { data, error } = await supabase
-        .from("au_ratings")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100);
-
-      if (error) {
-        fields.list.innerHTML = `<div class="card empty">Gagal load data: ${escapeHtml(error.message)}</div>`;
-        fields.countBadge.textContent = "Error";
-        return;
-      }
-
-      const items = data || [];
-      fields.countBadge.textContent = `${items.length} rating`;
-      fields.list.innerHTML = items.length
-        ? items.map(renderItem).join("")
-        : `<div class="card empty">Belum ada rating yang masuk.</div>`;
-    }
-
-    async function submitRating() {
-      try {
-        validateForm();
-      } catch (err) {
-        setStatus(err.message);
-        return;
-      }
-
-      const payload = {
-        name: fields.name.value.trim() || null,
-        part1: sanitizeScore(fields.part1.value),
-        part2: sanitizeScore(fields.part2.value),
-        part3: sanitizeScore(fields.part3.value),
-        part4: sanitizeScore(fields.part4.value),
-        part5: sanitizeScore(fields.part5.value),
-        part6: sanitizeScore(fields.part6.value),
-        part7: sanitizeScore(fields.part7.value),
-        reason: fields.reason.value || "",
-      };
-
-      fields.submitBtn.disabled = true;
-      setStatus("Mengirim...");
-
-      const { error } = await supabase.from("au_ratings").insert(payload);
-
-      fields.submitBtn.disabled = false;
-
-      if (error) {
-        setStatus(`Gagal kirim: ${error.message}`);
-        return;
-      }
-
-      setStatus("Rating berhasil dikirim ✅");
-      fields.name.value = "";
-      fields.reason.value = "";
-      partKeys.forEach((key) => {
-        fields[key].value = "";
-      });
-
-      await loadRatings();
-    }
-
-    partKeys.forEach((key) => {
-      fields[key].addEventListener("input", (event) => {
-        const raw = event.target.value;
-        if (raw === "") return;
-        let num = Number(raw);
-        if (!Number.isFinite(num)) {
-          event.target.value = "";
-          return;
-        }
-        num = Math.round(num);
-        if (num < 0) num = 0;
-        if (num > 10) num = 10;
-        event.target.value = String(num);
-      });
-    });
-
-    fields.submitBtn.addEventListener("click", submitRating);
-    fields.refreshBtn.addEventListener("click", loadRatings);
-
-    loadRatings();
+    setComposerState(false);
   </script></body>
 </html>
