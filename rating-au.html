@@ -616,4 +616,212 @@
 
     loadRatings();
   </script></body>
+</html>d="reason" placeholder="Tulis alasan kamu di sini... bebas sepanjang apa pun."></textarea>
+    <p class="hint">Semua nilai wajib diisi. Hanya angka bulat 0 sampai 10 yang akan diterima.</p>
+
+    <div class="actions">
+      <button id="submitBtn" class="btn">Kirim Rating</button>
+      <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
+      <small id="status"></small>
+    </div>
+  </div>
+</section>
+
+<div class="feedHeader">
+  <h2 style="margin:0;">📝 Semua Rating AU</h2>
+  <div class="badge" id="countBadge">0 rating</div>
+</div>
+
+<section id="list" class="list"></section>
+
+  </main>  <script type="module">
+    import { supabase } from "./supabaseClient.js";
+
+    const fields = {
+      name: document.getElementById("name"),
+      part1: document.getElementById("part1"),
+      part2: document.getElementById("part2"),
+      part3: document.getElementById("part3"),
+      part4: document.getElementById("part4"),
+      part5: document.getElementById("part5"),
+      part6: document.getElementById("part6"),
+      part7: document.getElementById("part7"),
+      reason: document.getElementById("reason"),
+      submitBtn: document.getElementById("submitBtn"),
+      refreshBtn: document.getElementById("refreshBtn"),
+      status: document.getElementById("status"),
+      list: document.getElementById("list"),
+      countBadge: document.getElementById("countBadge"),
+    };
+
+    const partKeys = ["part1", "part2", "part3", "part4", "part5", "part6", "part7"];
+
+    function setStatus(text) {
+      fields.status.textContent = text || "";
+    }
+
+    function escapeHtml(str = "") {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function sanitizeScore(value) {
+      if (value === "" || value === null || value === undefined) return null;
+      const num = Number(value);
+      if (!Number.isInteger(num)) return null;
+      if (num < 0 || num > 10) return null;
+      return num;
+    }
+
+    function validateForm() {
+      for (const key of partKeys) {
+        const score = sanitizeScore(fields[key].value);
+        if (score === null) {
+          fields[key].focus();
+          throw new Error(`Nilai ${key.replace("part", "Part ")} harus angka bulat 0 sampai 10.`);
+        }
+      }
+    }
+
+    function formatDate(dateString) {
+      try {
+        return new Date(dateString).toLocaleString("id-ID", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        });
+      } catch {
+        return dateString || "";
+      }
+    }
+
+    function averageScore(item) {
+      const total = partKeys.reduce((sum, key) => sum + Number(item[key] || 0), 0);
+      return (total / partKeys.length).toFixed(1);
+    }
+
+    function renderItem(item) {
+      const name = item.name?.trim() ? escapeHtml(item.name.trim()) : "Anonim";
+      const reason = escapeHtml(item.reason || "-");
+      const created = formatDate(item.created_at);
+
+      const scoresHtml = partKeys
+        .map((key, index) => `
+          <div class="scoreItem">
+            <span>Part ${index + 1}</span>
+            <b>${Number(item[key] || 0)}</b>
+          </div>
+        `)
+        .join("");
+
+      return `
+        <article class="card ratingCard">
+          <div class="ratingTop">
+            <div>
+              <div class="nameRow">
+                <b>${name}</b>
+                <span class="badge">${created}</span>
+              </div>
+            </div>
+            <div class="badge">Rata-rata ${averageScore(item)}/10</div>
+          </div>
+
+          <div class="scores">${scoresHtml}</div>
+
+          <div>
+            <b>Alasan:</b>
+            <p class="reason">${reason}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadRatings() {
+      fields.list.innerHTML = `<div class="card empty">Loading...</div>`;
+
+      const { data, error } = await supabase
+        .from("au_ratings")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) {
+        fields.list.innerHTML = `<div class="card empty">Gagal load data: ${escapeHtml(error.message)}</div>`;
+        fields.countBadge.textContent = "Error";
+        return;
+      }
+
+      const items = data || [];
+      fields.countBadge.textContent = `${items.length} rating`;
+      fields.list.innerHTML = items.length
+        ? items.map(renderItem).join("")
+        : `<div class="card empty">Belum ada rating yang masuk.</div>`;
+    }
+
+    async function submitRating() {
+      try {
+        validateForm();
+      } catch (err) {
+        setStatus(err.message);
+        return;
+      }
+
+      const payload = {
+        name: fields.name.value.trim() || null,
+        part1: sanitizeScore(fields.part1.value),
+        part2: sanitizeScore(fields.part2.value),
+        part3: sanitizeScore(fields.part3.value),
+        part4: sanitizeScore(fields.part4.value),
+        part5: sanitizeScore(fields.part5.value),
+        part6: sanitizeScore(fields.part6.value),
+        part7: sanitizeScore(fields.part7.value),
+        reason: fields.reason.value || "",
+      };
+
+      fields.submitBtn.disabled = true;
+      setStatus("Mengirim...");
+
+      const { error } = await supabase.from("au_ratings").insert(payload);
+
+      fields.submitBtn.disabled = false;
+
+      if (error) {
+        setStatus(`Gagal kirim: ${error.message}`);
+        return;
+      }
+
+      setStatus("Rating berhasil dikirim ✅");
+      fields.name.value = "";
+      fields.reason.value = "";
+      partKeys.forEach((key) => {
+        fields[key].value = "";
+      });
+
+      await loadRatings();
+    }
+
+    partKeys.forEach((key) => {
+      fields[key].addEventListener("input", (event) => {
+        const raw = event.target.value;
+        if (raw === "") return;
+        let num = Number(raw);
+        if (!Number.isFinite(num)) {
+          event.target.value = "";
+          return;
+        }
+        num = Math.round(num);
+        if (num < 0) num = 0;
+        if (num > 10) num = 10;
+        event.target.value = String(num);
+      });
+    });
+
+    fields.submitBtn.addEventListener("click", submitRating);
+    fields.refreshBtn.addEventListener("click", loadRatings);
+
+    loadRatings();
+  </script></body>
 </html>
