@@ -26,6 +26,23 @@
     @media (min-width:900px){
       .split{ grid-template-columns: 1fr 1fr; }
     }
+    .ratingGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+    .ratingItem{
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .ratingItem small{
+      display:block;
+      color: rgba(255,255,255,.7);
+      margin-bottom:4px;
+    }
   </style>
 </head>
 
@@ -33,7 +50,6 @@
 
   <div class="adminWrap">
 
-    <!-- LOGIN -->
     <div id="loginSection" class="card">
       <h2>Admin Login</h2>
 
@@ -45,7 +61,6 @@
       </div>
     </div>
 
-    <!-- ADMIN PANEL -->
     <div id="adminPanel" style="display:none;">
 
       <div class="card" style="margin-bottom:12px;">
@@ -57,7 +72,6 @@
 
       <div class="split">
 
-        <!-- CONFESSIONS -->
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 style="margin:0;">Confessions</h3>
@@ -65,17 +79,23 @@
           </div>
           <div id="confessionsList" class="list" style="margin-top:12px;"></div>
         </div>
-        
-<!-- QUOTES -->
-<div class="card">
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h3 style="margin:0;">Quotes</h3>
-    <button id="refreshQuotesBtn" class="btn secondary">Refresh</button>
-  </div>
-  <div id="quotesList" class="list" style="margin-top:12px;"></div>
-</div>
-        
-        <!-- EVENTS -->
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0;">Quotes</h3>
+            <button id="refreshQuotesBtn" class="btn secondary">Refresh</button>
+          </div>
+          <div id="quotesList" class="list" style="margin-top:12px;"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0;">Ratings</h3>
+            <button id="refreshRatingsBtn" class="btn secondary">Refresh</button>
+          </div>
+          <div id="ratingsList" class="list" style="margin-top:12px;"></div>
+        </div>
+
         <div class="card">
           <h3>Tambah Event</h3>
 
