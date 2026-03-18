@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rating AU • New Resident Yogyakarta</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* ===== Sticky Header ===== */
+    .header{
+      position: sticky;
+      top: 0;
+      z-index: 3000;
+      background: rgba(7,6,17,.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .headerInner{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand b{
+      font-family: Pacifico, cursive;
+      font-weight: 400;
+      font-size: 20px;
+      color: var(--pink);
+      line-height:1;
+    }
+    .brand small{
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav{
+      display:flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .nav a{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      transition: all .15s ease;
+    }
+    .nav a:hover{
+      color: #fff;
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.14);
+    }
+    .nav a.active{
+      color: #0b0a12;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      border-color: rgba(255,255,255,.18);
+      font-weight: 700;
+    }
+
+    /* ===== FAB + MODAL ===== */
+    .fab{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      color: #0b0a12;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      z-index: 1000;
+    }
+    .modal{
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+    }
+    .modal.hidden{ display:none; }
+    .modalBox{
+      width: 100%;
+      max-width: 560px;
+      max-height: calc(100vh - 36px);
+      overflow-y: auto;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(12,10,24,.92);
+      box-shadow: 0 28px 90px rgba(0,0,0,.7);
+      padding: 16px;
+    }
+    .modalHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 12px;
+    }
+    .iconBtn{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .feedHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 12px 0 12px;
+      flex-wrap: wrap;
+    }
+
+    .ratingCard{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .ratingMeta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+
+    .badge{
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .scoreGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .scoreBox{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .scoreBox small{
+      display:block;
+      color: rgba(255,255,255,.68);
+      margin-bottom: 4px;
+    }
+
+    .scoreBox b{
+      font-size: 20px;
+      color: var(--pink);
+    }
+
+    .reasonBlock{
+      margin-top: 14px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .partsGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .partsGrid input{
+      text-align:center;
+    }
+
+    .avgBadge{
+      font-size: 12px;
+      color: #0b0a12;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      border: none;
+      font-weight: 700;
+    }
+
+    @media (max-width: 520px){
+      .scoreGrid,
+      .partsGrid{
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="headerInner">
+      <div class="brand">
+        <b>New Resident</b>
+        <small>Yogyakarta</small>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html">Beranda</a>
+        <a href="quotes.html">Quotes</a>
+        <a href="confession.html">Confession</a>
+        <a href="event.html">Event</a>
+        <a href="profiles.html">Profil</a>
+        <a href="games.html">Games</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
+        <h1 class="title">Rating AU</h1>
+        <p class="sub">Semua rating tampil di sini. Klik tombol ✏️ untuk nulis.</p>
+      </div>
+
+      <a class="btn secondary" href="index.html">← Beranda</a>
+    </div>
+
+    <div class="feedHeader">
+      <h2 style="margin:0;">📝 Semua Rating AU</h2>
+      <button id="refreshBtn" class="btn secondary">Refresh</button>
+    </div>
+
+    <div id="list" class="list"></div>
+
+    <div style="margin-top:14px;">
+      <small>Tips: kosongin nama kalau mau anonim. Nilai Part 1 sampai Part 7 wajib angka bulat 0 sampai 10.</small>
+    </div>
+  </div>
+
+  <button id="fab" class="fab" aria-label="Tulis rating">✏️</button>
+
+  <div id="ratingModal" class="modal hidden" aria-hidden="true">
+    <div class="modalBox">
+      <div class="modalHeader">
+        <h2 style="margin:0;">Tulis Rating AU</h2>
+        <button id="closeModal" class="iconBtn" aria-label="Tutup">✕</button>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Nama (opsional)</label>
+          <input id="name" placeholder="Anonim jika kosong" />
+        </div>
+
+        <div>
+          <label>Nilai per Part</label>
+          <div class="partsGrid">
+            <input id="part1" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 1 (0-10)" />
+            <input id="part2" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 2 (0-10)" />
+            <input id="part3" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 3 (0-10)" />
+            <input id="part4" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 4 (0-10)" />
+            <input id="part5" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 5 (0-10)" />
+            <input id="part6" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 6 (0-10)" />
+            <input id="part7" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 7 (0-10)" />
+          </div>
+        </div>
+
+        <div>
+          <label>Alasan</label>
+          <textarea id="reason" placeholder="Tulis alasan kamu..."></textarea>
+        </div>
+
+        <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
+        <small id="status"></small>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fab = document.getElementById("fab");
+    const modal = document.getElementById("ratingModal");
+    const closeModal = document.getElementById("closeModal");
+
+    fab.addEventListener("click", () => modal.classList.remove("hidden"));
+    closeModal.addEventListener("click", () => modal.classList.add("hidden"));
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.add("hidden");
+    });
+  </script>
+
+  <script type="module" src="rating.js"></script>
+</body>
+</html>
