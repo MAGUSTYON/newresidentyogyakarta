@@ -28,17 +28,21 @@ function escapeHtml(str = "") {
 
 function sanitizeScore(value) {
   if (value === "" || value === null || value === undefined) return null;
-  const num = Number(value);
-  if (!Number.isInteger(num)) return null;
+
+  const normalized = String(value).replace(",", ".").trim();
+  const num = Number(normalized);
+
+  if (!Number.isFinite(num)) return null;
   if (num < 0 || num > 10) return null;
-  return num;
+
+  return Math.round(num * 10) / 10;
 }
 
 function validateForm() {
   for (let i = 0; i < partInputs.length; i++) {
     const score = sanitizeScore(partInputs[i].value);
     if (score === null) {
-      setStatus(`Part ${i + 1} harus angka bulat 0 sampai 10.`);
+      setStatus(`Part ${i + 1} harus angka 0 sampai 10, boleh 1 angka di belakang koma.`);
       partInputs[i].focus();
       return false;
     }
@@ -58,10 +62,11 @@ function renderItem(item) {
   const avg = averageScore(item);
 
   const scoresHtml = partKeys.map((key, index) => {
+    const score = Number(item[key] || 0).toFixed(1);
     return `
       <div class="scoreBox">
         <small>Part ${index + 1}</small>
-        <b>${Number(item[key] || 0)}/10</b>
+        <b>${score}/10</b>
       </div>
     `;
   }).join("");
@@ -132,6 +137,7 @@ async function submitRating() {
 
   if (elName) elName.value = "";
   if (elReason) elReason.value = "";
+
   partInputs.forEach((input) => {
     if (input) input.value = "";
   });
@@ -143,20 +149,58 @@ async function submitRating() {
 
 partInputs.forEach((input) => {
   if (!input) return;
+
   input.addEventListener("input", (e) => {
-    const raw = e.target.value;
+    let raw = e.target.value;
+
     if (raw === "") return;
 
-    let num = Number(raw);
+    raw = raw.replace(",", ".");
+
+    const cleaned = raw.replace(/[^0-9.]/g, "");
+    const firstDotIndex = cleaned.indexOf(".");
+
+    let normalized = cleaned;
+
+    if (firstDotIndex !== -1) {
+      const beforeDot = cleaned.slice(0, firstDotIndex + 1);
+      const afterDot = cleaned
+        .slice(firstDotIndex + 1)
+        .replaceAll(".", "")
+        .slice(0, 1);
+
+      normalized = beforeDot + afterDot;
+    }
+
+    if (normalized === "." || normalized === "") {
+      e.target.value = "";
+      return;
+    }
+
+    let num = Number(normalized);
+
     if (!Number.isFinite(num)) {
       e.target.value = "";
       return;
     }
 
-    num = Math.round(num);
     if (num < 0) num = 0;
     if (num > 10) num = 10;
-    e.target.value = String(num);
+
+    if (normalized.includes(".")) {
+      e.target.value = num.toFixed(1);
+    } else {
+      e.target.value = String(num);
+    }
+  });
+
+  input.addEventListener("blur", (e) => {
+    const score = sanitizeScore(e.target.value);
+    if (score === null) {
+      e.target.value = "";
+      return;
+    }
+    e.target.value = score.toFixed(1);
   });
 });
 
