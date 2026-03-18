@@ -1,0 +1,619 @@
+<!doctype html>
+
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rating AU</title>  <style>
+    :root{
+      --bg:#0b0a12;
+      --panel:rgba(12,10,24,.92);
+      --panel-soft:rgba(255,255,255,.05);
+      --border:rgba(255,255,255,.14);
+      --text:#f6f2ff;
+      --muted:#b9b2cc;
+      --pink:#f2a3c7;
+      --pink-2:#d98ab7;
+      --shadow:0 28px 90px rgba(0,0,0,.45);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(242,163,199,.14), transparent 30%),
+        radial-gradient(circle at top right, rgba(217,138,183,.12), transparent 28%),
+        linear-gradient(180deg, #090811, #0f0d19 48%, #0a0912);
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font:inherit}
+
+    .header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(7,6,17,.82);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .headerInner{
+      max-width:1120px;
+      margin:0 auto;
+      padding:14px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand b{
+      font-size:22px;
+      color:var(--pink);
+      line-height:1;
+    }
+    .brand small{
+      color:var(--muted);
+      font-size:11px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .nav a{
+      padding:8px 12px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:13px;
+      border:1px solid transparent;
+    }
+    .nav a.active{
+      color:#0b0a12;
+      background:linear-gradient(180deg, var(--pink), var(--pink-2));
+      font-weight:700;
+    }
+
+    .container{
+      max-width:1120px;
+      margin:0 auto;
+      padding:28px 20px 80px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:22px;
+      align-items:start;
+      margin-bottom:26px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .heroCard{
+      padding:28px;
+    }
+    .kicker{
+      margin:0 0 8px;
+      color:var(--pink);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:12px;
+      font-weight:700;
+    }
+    .title{
+      margin:0;
+      font-size:clamp(30px, 5vw, 54px);
+      line-height:1.04;
+    }
+    .sub{
+      margin:14px 0 0;
+      max-width:58ch;
+      color:var(--muted);
+      line-height:1.65;
+    }
+
+    .statWrap{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:14px;
+      margin-top:22px;
+    }
+    .stat{
+      padding:18px;
+      border-radius:18px;
+      background:var(--panel-soft);
+      border:1px solid var(--border);
+    }
+    .stat b{
+      display:block;
+      font-size:28px;
+      margin-bottom:4px;
+    }
+    .stat span{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .panel{
+      padding:22px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    label{
+      display:block;
+      margin:0 0 8px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    input, textarea{
+      width:100%;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:14px 16px;
+      outline:none;
+      transition:border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+    input:focus, textarea:focus{
+      border-color:rgba(242,163,199,.8);
+      box-shadow:0 0 0 4px rgba(242,163,199,.12);
+    }
+    textarea{
+      min-height:170px;
+      resize:vertical;
+      line-height:1.6;
+    }
+
+    .parts{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .partField{
+      padding:14px;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+    }
+    .partField label{
+      margin-bottom:10px;
+    }
+    .partField input{
+      text-align:center;
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .hint{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:12px 18px;
+      font-weight:800;
+      cursor:pointer;
+      color:#0b0a12;
+      background:linear-gradient(180deg, var(--pink), var(--pink-2));
+      box-shadow:0 16px 40px rgba(0,0,0,.35);
+    }
+    .btn.secondary{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border:1px solid var(--border);
+      box-shadow:none;
+    }
+    .btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    #status{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .feedHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:28px 0 14px;
+    }
+
+    .list{
+      display:grid;
+      gap:16px;
+    }
+
+    .ratingCard{
+      padding:20px;
+    }
+    .ratingTop{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .nameRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .scores{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .scoreItem{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      text-align:center;
+    }
+    .scoreItem span{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+    .scoreItem b{
+      font-size:22px;
+    }
+
+    .reason{
+      white-space:pre-wrap;
+      color:#f4f0ff;
+      line-height:1.7;
+    }
+
+    .empty{
+      padding:24px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    @media (max-width: 920px){
+      .hero, .grid{grid-template-columns:1fr}
+      .scores{grid-template-columns:repeat(2, minmax(0,1fr))}
+    }
+
+    @media (max-width: 620px){
+      .container{padding:20px 14px 64px}
+      .headerInner{padding:12px 14px}
+      .heroCard,.panel,.ratingCard{padding:18px}
+      .parts,.scores,.statWrap{grid-template-columns:1fr}
+      .title{font-size:34px}
+    }
+  </style></head>
+<body>
+  <header class="header">
+    <div class="headerInner">
+      <div class="brand">
+        <b>Rating AU</b>
+        <small>Anonymous Review Board</small>
+      </div><nav class="nav">
+    <a href="#form" class="active">Isi Rating</a>
+    <a href="#list">Semua Rating</a>
+  </nav>
+</div>
+
+  </header>  <main class="container">
+    <section class="hero">
+      <div class="card heroCard">
+        <p class="kicker">FORM RATING AU</p>
+        <h1 class="title">Kasih nilai per part dengan format yang rapi dan gampang diisi.</h1>
+        <p class="sub">
+          Pengunjung bisa isi nama atau anonim, kasih nilai untuk Part 1 sampai Part 7,
+          lalu nulis alasan tanpa batas. Input nilai dibatasi hanya angka <b>0 sampai 10</b>.
+        </p><div class="statWrap">
+      <div class="stat">
+        <b>7 Part</b>
+        <span>Setiap part punya nilai sendiri</span>
+      </div>
+      <div class="stat">
+        <b>0–10</b>
+        <span>Validasi otomatis hanya menerima angka valid</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card panel" id="form">
+    <label for="name">Nama (bisa anonim)</label>
+    <input id="name" type="text" maxlength="80" placeholder="Kosongkan kalau mau anonim" />
+
+    <div class="parts" style="margin-top:18px;">
+      <div class="partField">
+        <label for="part1">Part 1</label>
+        <input id="part1" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+      <div class="partField">
+        <label for="part2">Part 2</label>
+        <input id="part2" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+      <div class="partField">
+        <label for="part3">Part 3</label>
+        <input id="part3" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+      <div class="partField">
+        <label for="part4">Part 4</label>
+        <input id="part4" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+      <div class="partField">
+        <label for="part5">Part 5</label>
+        <input id="part5" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+      <div class="partField">
+        <label for="part6">Part 6</label>
+        <input id="part6" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+      <div class="partField" style="grid-column:1 / -1;">
+        <label for="part7">Part 7</label>
+        <input id="part7" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="0 - 10" required />
+      </div>
+    </div>
+
+    <label for="reason">Alasan</label>
+    <textarea id="reason" placeholder="Tulis alasan kamu di sini... bebas sepanjang apa pun."></textarea>
+    <p class="hint">Semua nilai wajib diisi. Hanya angka bulat 0 sampai 10 yang akan diterima.</p>
+
+    <div class="actions">
+      <button id="submitBtn" class="btn">Kirim Rating</button>
+      <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
+      <small id="status"></small>
+    </div>
+  </div>
+</section>
+
+<div class="feedHeader">
+  <h2 style="margin:0;">📝 Semua Rating AU</h2>
+  <div class="badge" id="countBadge">0 rating</div>
+</div>
+
+<section id="list" class="list"></section>
+
+  </main>  <script type="module">
+    import { supabase } from "./supabaseClient.js";
+
+    const fields = {
+      name: document.getElementById("name"),
+      part1: document.getElementById("part1"),
+      part2: document.getElementById("part2"),
+      part3: document.getElementById("part3"),
+      part4: document.getElementById("part4"),
+      part5: document.getElementById("part5"),
+      part6: document.getElementById("part6"),
+      part7: document.getElementById("part7"),
+      reason: document.getElementById("reason"),
+      submitBtn: document.getElementById("submitBtn"),
+      refreshBtn: document.getElementById("refreshBtn"),
+      status: document.getElementById("status"),
+      list: document.getElementById("list"),
+      countBadge: document.getElementById("countBadge"),
+    };
+
+    const partKeys = ["part1", "part2", "part3", "part4", "part5", "part6", "part7"];
+
+    function setStatus(text) {
+      fields.status.textContent = text || "";
+    }
+
+    function escapeHtml(str = "") {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function sanitizeScore(value) {
+      if (value === "" || value === null || value === undefined) return null;
+      const num = Number(value);
+      if (!Number.isInteger(num)) return null;
+      if (num < 0 || num > 10) return null;
+      return num;
+    }
+
+    function validateForm() {
+      for (const key of partKeys) {
+        const score = sanitizeScore(fields[key].value);
+        if (score === null) {
+          fields[key].focus();
+          throw new Error(`Nilai ${key.replace("part", "Part ")} harus angka bulat 0 sampai 10.`);
+        }
+      }
+    }
+
+    function formatDate(dateString) {
+      try {
+        return new Date(dateString).toLocaleString("id-ID", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        });
+      } catch {
+        return dateString || "";
+      }
+    }
+
+    function averageScore(item) {
+      const total = partKeys.reduce((sum, key) => sum + Number(item[key] || 0), 0);
+      return (total / partKeys.length).toFixed(1);
+    }
+
+    function renderItem(item) {
+      const name = item.name?.trim() ? escapeHtml(item.name.trim()) : "Anonim";
+      const reason = escapeHtml(item.reason || "-");
+      const created = formatDate(item.created_at);
+
+      const scoresHtml = partKeys
+        .map((key, index) => `
+          <div class="scoreItem">
+            <span>Part ${index + 1}</span>
+            <b>${Number(item[key] || 0)}</b>
+          </div>
+        `)
+        .join("");
+
+      return `
+        <article class="card ratingCard">
+          <div class="ratingTop">
+            <div>
+              <div class="nameRow">
+                <b>${name}</b>
+                <span class="badge">${created}</span>
+              </div>
+            </div>
+            <div class="badge">Rata-rata ${averageScore(item)}/10</div>
+          </div>
+
+          <div class="scores">${scoresHtml}</div>
+
+          <div>
+            <b>Alasan:</b>
+            <p class="reason">${reason}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    async function loadRatings() {
+      fields.list.innerHTML = `<div class="card empty">Loading...</div>`;
+
+      const { data, error } = await supabase
+        .from("au_ratings")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) {
+        fields.list.innerHTML = `<div class="card empty">Gagal load data: ${escapeHtml(error.message)}</div>`;
+        fields.countBadge.textContent = "Error";
+        return;
+      }
+
+      const items = data || [];
+      fields.countBadge.textContent = `${items.length} rating`;
+      fields.list.innerHTML = items.length
+        ? items.map(renderItem).join("")
+        : `<div class="card empty">Belum ada rating yang masuk.</div>`;
+    }
+
+    async function submitRating() {
+      try {
+        validateForm();
+      } catch (err) {
+        setStatus(err.message);
+        return;
+      }
+
+      const payload = {
+        name: fields.name.value.trim() || null,
+        part1: sanitizeScore(fields.part1.value),
+        part2: sanitizeScore(fields.part2.value),
+        part3: sanitizeScore(fields.part3.value),
+        part4: sanitizeScore(fields.part4.value),
+        part5: sanitizeScore(fields.part5.value),
+        part6: sanitizeScore(fields.part6.value),
+        part7: sanitizeScore(fields.part7.value),
+        reason: fields.reason.value || "",
+      };
+
+      fields.submitBtn.disabled = true;
+      setStatus("Mengirim...");
+
+      const { error } = await supabase.from("au_ratings").insert(payload);
+
+      fields.submitBtn.disabled = false;
+
+      if (error) {
+        setStatus(`Gagal kirim: ${error.message}`);
+        return;
+      }
+
+      setStatus("Rating berhasil dikirim ✅");
+      fields.name.value = "";
+      fields.reason.value = "";
+      partKeys.forEach((key) => {
+        fields[key].value = "";
+      });
+
+      await loadRatings();
+    }
+
+    partKeys.forEach((key) => {
+      fields[key].addEventListener("input", (event) => {
+        const raw = event.target.value;
+        if (raw === "") return;
+        let num = Number(raw);
+        if (!Number.isFinite(num)) {
+          event.target.value = "";
+          return;
+        }
+        num = Math.round(num);
+        if (num < 0) num = 0;
+        if (num > 10) num = 10;
+        event.target.value = String(num);
+      });
+    });
+
+    fields.submitBtn.addEventListener("click", submitRating);
+    fields.refreshBtn.addEventListener("click", loadRatings);
+
+    loadRatings();
+  </script></body>
+</html>
