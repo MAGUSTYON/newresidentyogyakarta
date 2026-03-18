@@ -15,12 +15,16 @@ const logoutBtn    = document.getElementById("logoutBtn");
 const loginStatus  = document.getElementById("loginStatus");
 
 // Confessions
-const confList     = document.getElementById("confessionsList");
-const refreshConf  = document.getElementById("refreshConfBtn");
+const confList      = document.getElementById("confessionsList");
+const refreshConf   = document.getElementById("refreshConfBtn");
 
 // Quotes
-const quotesList   = document.getElementById("quotesList");
+const quotesList    = document.getElementById("quotesList");
 const refreshQuotes = document.getElementById("refreshQuotesBtn");
+
+// Ratings
+const ratingsList    = document.getElementById("ratingsList");
+const refreshRatings = document.getElementById("refreshRatingsBtn");
 
 // Events
 const eventTitle   = document.getElementById("eventTitle");
@@ -61,6 +65,29 @@ function setEventStatus(msg = "") {
 
 function safeName(filename = "file") {
   return filename.toLowerCase().replace(/[^a-z0-9.\-_]+/g, "-");
+}
+
+function scoreText(value) {
+  const num = Number(value ?? 0);
+  return Number.isFinite(num) ? num.toFixed(1) : "0.0";
+}
+
+function averageRating(row) {
+  const values = [
+    Number(row.part1 || 0),
+    Number(row.part2 || 0),
+    Number(row.part3 || 0),
+    Number(row.part4 || 0),
+    Number(row.part5 || 0),
+    Number(row.part6 || 0),
+    Number(row.part7 || 0),
+  ];
+  const total = values.reduce((sum, n) => sum + n, 0);
+  return (total / values.length).toFixed(1);
+}
+
+function getPartLabel(startPart, offset) {
+  return `Part ${Number(startPart || 1) + offset}`;
 }
 
 /* =========================
@@ -119,8 +146,6 @@ async function loadConfessions() {
     confList.innerHTML = `<small>Gagal load confessions: ${esc(error.message)}</small>`;
     return;
   }
-
-  console.log("Confessions loaded:", data?.length);
 
   if (!data || data.length === 0) {
     confList.innerHTML = "<small>Tidak ada confession.</small>";
@@ -229,10 +254,94 @@ async function loadQuotes() {
 }
 
 /* =========================
+   RATINGS
+========================= */
+async function loadRatings() {
+  if (!ratingsList) return;
+
+  ratingsList.innerHTML = "<small>Loading...</small>";
+
+  const { data, error } = await supabase
+    .from("au_ratings")
+    .select("id, name, reason, start_part, part1, part2, part3, part4, part5, part6, part7, created_at")
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.error("loadRatings error:", error);
+    ratingsList.innerHTML = `<small>Gagal load ratings: ${esc(error.message)}</small>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    ratingsList.innerHTML = "<small>Tidak ada rating.</small>";
+    return;
+  }
+
+  ratingsList.innerHTML = data
+    .map((r) => {
+      const name = r.name?.trim() ? esc(r.name) : "Anonim";
+      const reason = esc(r.reason || "-");
+      const time = r.created_at ? new Date(r.created_at).toLocaleString("id-ID") : "";
+      const startPart = Number(r.start_part || 1);
+      const avg = averageRating(r);
+
+      const partsHtml = [
+        r.part1, r.part2, r.part3, r.part4, r.part5, r.part6, r.part7
+      ].map((value, index) => {
+        return `
+          <div class="ratingItem">
+            <small>${getPartLabel(startPart, index)}</small>
+            <b>${scoreText(value)}/10</b>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap;">
+            <div>
+              <b>${name}</b>
+              <div><small>${esc(time)}</small></div>
+              <div style="margin-top:6px;">
+                <small>Range: Part ${startPart}-${startPart + 6}</small>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <span class="btn secondary" style="cursor:default;">Avg ${avg}</span>
+              <button class="btn secondary" data-del-rating="${r.id}">Delete</button>
+            </div>
+          </div>
+
+          <div class="ratingGrid">
+            ${partsHtml}
+          </div>
+
+          <p style="white-space:pre-wrap; margin:12px 0 0;"><b>Alasan:</b>\n${reason}</p>
+        </div>
+      `;
+    })
+    .join("");
+
+  ratingsList.querySelectorAll("[data-del-rating]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-del-rating");
+      if (!confirm("Yakin hapus rating ini?")) return;
+
+      const { error: delErr } = await supabase.from("au_ratings").delete().eq("id", id);
+      if (delErr) {
+        alert("Gagal delete rating: " + delErr.message);
+        return;
+      }
+      await loadRatings();
+    });
+  });
+}
+
+/* =========================
    EVENTS
 ========================= */
 async function uploadBanner(file) {
-  // bucket: event-banners (public)
   const safe = safeName(file.name || "banner.jpg");
   const path = `events/${Date.now()}-${safe}`;
 
@@ -290,8 +399,6 @@ async function loadEvents() {
     return;
   }
 
-  console.log("Events loaded:", data?.length);
-
   if (!data || data.length === 0) {
     eventsList.innerHTML = "<small>Belum ada event.</small>";
     return;
@@ -344,14 +451,11 @@ async function handleCreateEvent() {
     }
 
     const payload = { title, description, start_date, end_date, banner_url };
-    console.log("Insert event payload:", payload);
-
     const { error } = await supabase.from("events").insert(payload);
     if (error) throw new Error(error.message);
 
     setEventStatus("Event ditambahkan ✅");
 
-    // reset form
     if (eventTitle) eventTitle.value = "";
     if (eventDesc) eventDesc.value = "";
     if (eventStart) eventStart.value = "";
@@ -373,6 +477,7 @@ async function handleCreateEvent() {
 async function initAdmin() {
   await loadConfessions();
   await loadQuotes();
+  await loadRatings();
   await loadEvents();
 }
 
@@ -390,7 +495,6 @@ loginBtn?.addEventListener("click", async (e) => {
     return;
   }
 
-  // IMPORTANT: bersihin session lama biar password salah gak "tetap masuk"
   await supabase.auth.signOut();
 
   showLogin("Login...");
@@ -403,10 +507,8 @@ loginBtn?.addEventListener("click", async (e) => {
     return;
   }
 
-  // tampil panel langsung
   showPanelInstant();
 
-  // cek admin whitelist (silent)
   const ok = await verifyAdminOrKick();
   if (!ok) return;
 
@@ -420,9 +522,9 @@ logoutBtn?.addEventListener("click", async () => {
 
 refreshConf?.addEventListener("click", loadConfessions);
 refreshQuotes?.addEventListener("click", loadQuotes);
+refreshRatings?.addEventListener("click", loadRatings);
 createEvent?.addEventListener("click", handleCreateEvent);
 
-// auto-check kalau session masih ada
 (async () => {
   const ok = await verifyAdminOrKick();
   if (ok) {
