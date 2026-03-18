@@ -70,7 +70,77 @@
       font-weight: 700;
     }
 
-    /* ===== FAB + MODAL ===== */
+    /* ===== Feed Header ===== */
+    .feedHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin: 12px 0 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ===== Rating Card ===== */
+    .ratingCard{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .ratingMeta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .badge{
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .avgBadge{
+      font-size: 12px;
+      color: #0b0a12;
+      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
+      border: none;
+      font-weight: 700;
+    }
+    .scoreGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .scoreBox{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .scoreBox small{
+      display:block;
+      color: rgba(255,255,255,.68);
+      margin-bottom: 4px;
+    }
+    .scoreBox b{
+      font-size: 20px;
+      color: var(--pink);
+    }
+    .reasonBlock{
+      margin-top: 14px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    /* ===== FAB ===== */
     .fab{
       position: fixed;
       right: 18px;
@@ -84,32 +154,34 @@
       font-size: 22px;
       cursor: pointer;
       box-shadow: 0 16px 40px rgba(0,0,0,.55);
-      z-index: 1000;
+      z-index: 4000;
     }
+
+    /* ===== MODAL FIX: biar gak ketutup sticky header ===== */
     .modal{
       position: fixed;
       inset: 0;
       display: flex;
-      align-items: center;
-      padding-top: 60px;
+      align-items: flex-start;
       justify-content: center;
-      padding: 18px;
+      padding: 88px 18px 18px;
       background: rgba(0,0,0,.72);
       backdrop-filter: blur(8px);
-      z-index: 9999; /* ⬅️ ini penting */
+      z-index: 9999; /* lebih tinggi dari header */
     }
-    .modal.hidden{ display:none; }
+    .modal.hidden{
+      display:none;
+    }
     .modalBox{
       width: 100%;
       max-width: 560px;
-      max-height: calc(100vh - 36px);
+      max-height: calc(100vh - 106px);
       overflow-y: auto;
       border-radius: 22px;
       border: 1px solid rgba(255,255,255,.16);
-      background: rgba(12,10,24,.92);
+      background: rgba(12,10,24,.94);
       box-shadow: 0 28px 90px rgba(0,0,0,.7);
       padding: 16px;
-      margin-top: 40px;
     }
     .modalHeader{
       display:flex;
@@ -128,96 +200,90 @@
       cursor: pointer;
     }
 
-    .feedHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin: 12px 0 12px;
-      flex-wrap: wrap;
-    }
-
-    .ratingCard{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .ratingMeta{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom: 10px;
-    }
-
-    .badge{
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      font-size: 11px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-    }
-
-    .scoreGrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .scoreBox{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      border-radius: 14px;
-      padding: 12px;
-      text-align: center;
-    }
-
-    .scoreBox small{
-      display:block;
-      color: rgba(255,255,255,.68);
-      margin-bottom: 4px;
-    }
-
-    .scoreBox b{
-      font-size: 20px;
-      color: var(--pink);
-    }
-
-    .reasonBlock{
-      margin-top: 14px;
-      white-space: pre-wrap;
-      line-height: 1.7;
-    }
-
-    .partsGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
+    /* ===== Compact Form ===== */
+    .compactForm{
       gap: 12px;
     }
-
-    .partsGrid input{
-      text-align:center;
+    .compactForm label{
+      display:block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .compactForm input,
+    .compactForm textarea{
+      width: 100%;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 16px;
+      padding: 12px 14px;
+      color: var(--text);
+      outline: none;
+    }
+    .compactForm input::placeholder,
+    .compactForm textarea::placeholder{
+      color: rgba(167,167,192,.75);
+    }
+    .compactForm input:focus,
+    .compactForm textarea:focus{
+      border-color: rgba(242,161,179,.45);
+      box-shadow: 0 0 0 3px rgba(242,161,179,.10);
     }
 
-    .avgBadge{
-      font-size: 12px;
-      color: #0b0a12;
-      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
-      border: none;
-      font-weight: 700;
+    .partsCompact{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .partsCompact input{
+      text-align: center;
+      font-weight: 600;
+    }
+    .partsCompact .full{
+      grid-column: 1 / -1;
+    }
+
+    #reason{
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    #status{
+      display:inline-block;
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 13px;
     }
 
     @media (max-width: 520px){
-      .scoreGrid,
-      .partsGrid{
-        grid-template-columns: 1fr;
+      .scoreGrid{
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .modal{
+        padding: 82px 12px 12px;
+      }
+
+      .modalBox{
+        max-height: calc(100vh - 94px);
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      .partsCompact{
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .compactForm input,
+      .compactForm textarea{
+        padding: 11px 12px;
+        border-radius: 14px;
+      }
+
+      #reason{
+        min-height: 96px;
       }
     }
   </style>
@@ -274,7 +340,7 @@
         <button id="closeModal" class="iconBtn" aria-label="Tutup">✕</button>
       </div>
 
-      <div class="row">
+      <div class="row compactForm">
         <div>
           <label>Nama (opsional)</label>
           <input id="name" placeholder="Anonim jika kosong" />
@@ -282,14 +348,14 @@
 
         <div>
           <label>Nilai per Part</label>
-          <div class="partsGrid">
+          <div class="partsCompact">
             <input id="part1" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 1 (0-10)" />
             <input id="part2" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 2 (0-10)" />
             <input id="part3" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 3 (0-10)" />
             <input id="part4" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 4 (0-10)" />
             <input id="part5" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 5 (0-10)" />
             <input id="part6" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 6 (0-10)" />
-            <input id="part7" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 7 (0-10)" />
+            <input id="part7" class="full" type="number" min="0" max="10" step="1" inputmode="numeric" placeholder="Part 7 (0-10)" />
           </div>
         </div>
 
@@ -298,7 +364,7 @@
           <textarea id="reason" placeholder="Tulis alasan kamu..."></textarea>
         </div>
 
-        <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
+        <button id="submitBtn" class="btn primary" style="width:100%;">Kirim</button>
         <small id="status"></small>
       </div>
     </div>
