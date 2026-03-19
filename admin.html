@@ -9,118 +9,298 @@
 
   <style>
     .adminWrap{
-      max-width: 980px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 22px 18px 46px;
     }
+
     .logoutBtn{
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.14);
       color: #fff;
     }
-    .split{
+
+    .adminGrid{
       display:grid;
       grid-template-columns: 1fr;
+      gap:16px;
+    }
+
+    @media (min-width: 980px){
+      .adminGrid{
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .adminSection{
+      display:flex;
+      flex-direction:column;
+      min-height: 0;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: 0 10px 30px rgba(0,0,0,.30);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .adminSectionHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
       gap:12px;
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.02);
+      flex-wrap: wrap;
     }
-    @media (min-width:900px){
-      .split{ grid-template-columns: 1fr 1fr; }
+
+    .adminSectionHeader h3{
+      margin:0;
     }
+
+    .adminSectionBody{
+      padding: 14px;
+      min-height: 0;
+    }
+
+    .scrollBox{
+      height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.22) transparent;
+    }
+
+    .scrollBox::-webkit-scrollbar{
+      width: 8px;
+    }
+
+    .scrollBox::-webkit-scrollbar-track{
+      background: transparent;
+    }
+
+    .scrollBox::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.18);
+      border-radius: 999px;
+    }
+
+    .adminItem{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .adminItemTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 8px;
+    }
+
+    .adminMeta{
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
     .ratingGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:8px;
       margin-top:10px;
     }
+
     .ratingItem{
       padding:10px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
     }
+
     .ratingItem small{
       display:block;
       color: rgba(255,255,255,.7);
       margin-bottom:4px;
     }
+
+    .adminTopCard{
+      margin-bottom: 16px;
+    }
+
+    .adminTopBar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap: wrap;
+    }
+
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+
+    .eventSplit{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+    }
+
+    @media (min-width: 1100px){
+      .eventSplit{
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .eventFormBox,
+    .eventListBox{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .eventListScroll{
+      height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.22) transparent;
+    }
+
+    .eventListScroll::-webkit-scrollbar{
+      width:8px;
+    }
+
+    .eventListScroll::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.18);
+      border-radius:999px;
+    }
+
+    .mutedSmall{
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+    }
+
+    @media (max-width: 640px){
+      .adminWrap{
+        padding: 16px 14px 34px;
+      }
+
+      .scrollBox,
+      .eventListScroll{
+        height: 340px;
+      }
+
+      .ratingGrid{
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
-
   <div class="adminWrap">
 
-    <div id="loginSection" class="card">
+    <div id="loginSection" class="card adminTopCard">
       <h2>Admin Login</h2>
 
-      <div class="row">
+      <div class="row" style="margin-top:12px;">
         <input id="email" placeholder="Email admin" />
         <input id="password" type="password" placeholder="Password" />
-        <button id="loginBtn" class="btn">Login</button>
+        <button id="loginBtn" class="btn primary">Login</button>
         <small id="loginStatus"></small>
       </div>
     </div>
 
     <div id="adminPanel" style="display:none;">
-
-      <div class="card" style="margin-bottom:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h2 style="margin:0;">Admin Panel</h2>
+      <div class="card adminTopCard">
+        <div class="adminTopBar">
+          <div>
+            <h2 style="margin:0;">Admin Panel</h2>
+            <div class="mutedSmall" style="margin-top:4px;">Kelola confession, quotes, rating, dan event dari sini.</div>
+          </div>
           <button id="logoutBtn" class="btn logoutBtn">Logout</button>
         </div>
       </div>
 
-      <div class="split">
-
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="margin:0;">Confessions</h3>
+      <div class="adminGrid">
+        <section class="adminSection">
+          <div class="adminSectionHeader">
+            <h3>Confessions</h3>
             <button id="refreshConfBtn" class="btn secondary">Refresh</button>
           </div>
-          <div id="confessionsList" class="list" style="margin-top:12px;"></div>
-        </div>
+          <div class="adminSectionBody">
+            <div id="confessionsList" class="scrollBox"></div>
+          </div>
+        </section>
 
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="margin:0;">Quotes</h3>
+        <section class="adminSection">
+          <div class="adminSectionHeader">
+            <h3>Quotes</h3>
             <button id="refreshQuotesBtn" class="btn secondary">Refresh</button>
           </div>
-          <div id="quotesList" class="list" style="margin-top:12px;"></div>
-        </div>
+          <div class="adminSectionBody">
+            <div id="quotesList" class="scrollBox"></div>
+          </div>
+        </section>
 
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="margin:0;">Ratings</h3>
+        <section class="adminSection">
+          <div class="adminSectionHeader">
+            <h3>Ratings</h3>
             <button id="refreshRatingsBtn" class="btn secondary">Refresh</button>
           </div>
-          <div id="ratingsList" class="list" style="margin-top:12px;"></div>
-        </div>
-
-        <div class="card">
-          <h3>Tambah Event</h3>
-
-          <div class="row">
-            <input id="eventTitle" placeholder="Judul event" />
-
-            <div class="grid2">
-              <input id="eventStart" type="date" />
-              <input id="eventEnd" type="date" />
-            </div>
-
-            <textarea id="eventDesc" placeholder="Deskripsi event"></textarea>
-
-            <input id="eventBanner" type="file" accept="image/*" />
-
-            <button id="createEventBtn" class="btn">Tambah Event</button>
-            <small id="eventStatus"></small>
+          <div class="adminSectionBody">
+            <div id="ratingsList" class="scrollBox"></div>
           </div>
+        </section>
 
-          <hr/>
+        <section class="adminSection">
+          <div class="adminSectionHeader">
+            <h3>Events</h3>
+          </div>
+          <div class="adminSectionBody">
+            <div class="eventSplit">
+              <div class="eventFormBox">
+                <h3 style="margin-top:0;">Tambah Event</h3>
 
-          <h3>Daftar Event</h3>
-          <div id="eventsList" class="list"></div>
-        </div>
+                <div class="row" style="margin-top:12px;">
+                  <input id="eventTitle" placeholder="Judul event" />
 
+                  <div class="grid2">
+                    <input id="eventStart" type="date" />
+                    <input id="eventEnd" type="date" />
+                  </div>
+
+                  <textarea id="eventDesc" placeholder="Deskripsi event"></textarea>
+                  <input id="eventBanner" type="file" accept="image/*" />
+
+                  <button id="createEventBtn" class="btn primary">Tambah Event</button>
+                  <small id="eventStatus"></small>
+                </div>
+              </div>
+
+              <div class="eventListBox">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+                  <h3 style="margin:0;">Daftar Event</h3>
+                  <span class="mutedSmall">Scroll di box ini</span>
+                </div>
+                <div id="eventsList" class="eventListScroll"></div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
 
