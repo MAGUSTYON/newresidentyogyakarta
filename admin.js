@@ -1,10 +1,5 @@
 import { supabase } from "./supabaseClient.js";
 
-console.log("admin.js loaded ✅");
-
-/* =========================
-   ELEMENTS
-========================= */
 const loginSection = document.getElementById("loginSection");
 const adminPanel   = document.getElementById("adminPanel");
 
@@ -14,19 +9,15 @@ const loginBtn     = document.getElementById("loginBtn");
 const logoutBtn    = document.getElementById("logoutBtn");
 const loginStatus  = document.getElementById("loginStatus");
 
-// Confessions
 const confList      = document.getElementById("confessionsList");
 const refreshConf   = document.getElementById("refreshConfBtn");
 
-// Quotes
 const quotesList    = document.getElementById("quotesList");
 const refreshQuotes = document.getElementById("refreshQuotesBtn");
 
-// Ratings
 const ratingsList    = document.getElementById("ratingsList");
 const refreshRatings = document.getElementById("refreshRatingsBtn");
 
-// Events
 const eventTitle   = document.getElementById("eventTitle");
 const eventStart   = document.getElementById("eventStart");
 const eventEnd     = document.getElementById("eventEnd");
@@ -36,9 +27,6 @@ const createEvent  = document.getElementById("createEventBtn");
 const eventStatus  = document.getElementById("eventStatus");
 const eventsList   = document.getElementById("eventsList");
 
-/* =========================
-   HELPERS
-========================= */
 function esc(s = "") {
   return String(s)
     .replaceAll("&", "&amp;")
@@ -64,7 +52,7 @@ function setEventStatus(msg = "") {
 }
 
 function safeName(filename = "file") {
-  return filename.toLowerCase().replace(/[^a-z0-9.\-_]+/g, "-");
+  return filename.toLowerCase().replace(/[^a-z0-9._-]+/g, "-");
 }
 
 function scoreText(value) {
@@ -90,19 +78,18 @@ function getPartLabel(startPart, offset) {
   return `Part ${Number(startPart || 1) + offset}`;
 }
 
-/* =========================
-   AUTH (ADMIN ONLY)
-========================= */
+function emptyState(text) {
+  return `<div class="adminItem"><small>${esc(text)}</small></div>`;
+}
+
 async function verifyAdminOrKick() {
   const { data: sessRes, error: sessErr } = await supabase.auth.getSession();
   if (sessErr || !sessRes?.session) {
-    console.log("No session");
     showLogin("");
     return false;
   }
 
   const email = sessRes.session.user?.email;
-  console.log("Session email:", email);
 
   const { data: adminRow, error: adminErr } = await supabase
     .from("admins")
@@ -111,7 +98,6 @@ async function verifyAdminOrKick() {
     .maybeSingle();
 
   if (adminErr) {
-    console.error("admins check error:", adminErr);
     await supabase.auth.signOut();
     showLogin("Error cek admin: " + adminErr.message);
     return false;
@@ -123,17 +109,13 @@ async function verifyAdminOrKick() {
     return false;
   }
 
-  console.log("Admin verified ✅");
   return true;
 }
 
-/* =========================
-   CONFESSIONS
-========================= */
 async function loadConfessions() {
   if (!confList) return;
 
-  confList.innerHTML = "<small>Loading...</small>";
+  confList.innerHTML = emptyState("Loading...");
 
   const { data, error } = await supabase
     .from("confessions")
@@ -142,40 +124,41 @@ async function loadConfessions() {
     .limit(80);
 
   if (error) {
-    console.error("loadConfessions error:", error);
-    confList.innerHTML = `<small>Gagal load confessions: ${esc(error.message)}</small>`;
+    confList.innerHTML = emptyState("Gagal load confessions: " + error.message);
     return;
   }
 
   if (!data || data.length === 0) {
-    confList.innerHTML = "<small>Tidak ada confession.</small>";
+    confList.innerHTML = emptyState("Tidak ada confession.");
     return;
   }
 
-  confList.innerHTML = data
-    .map((c) => {
-      const name = c.name?.trim() ? esc(c.name) : "Anonim";
-      const msg = esc(c.message || "");
-      const imp = c.impression ? `<div style="margin-top:6px;"><small><b>Impression:</b> ${esc(c.impression)}</small></div>` : "";
-      const sp  = c.spotify_url ? `<div style="margin-top:8px;"><small><a href="${esc(c.spotify_url)}" target="_blank" rel="noreferrer">Spotify link</a></small></div>` : "";
-      const time = c.created_at ? new Date(c.created_at).toLocaleString("id-ID") : "";
+  confList.innerHTML = data.map((c) => {
+    const name = c.name?.trim() ? esc(c.name) : "Anonim";
+    const msg = esc(c.message || "");
+    const imp = c.impression
+      ? `<div style="margin-top:8px;"><small><b>Impression:</b> ${esc(c.impression)}</small></div>`
+      : "";
+    const sp = c.spotify_url
+      ? `<div style="margin-top:8px;"><small><a href="${esc(c.spotify_url)}" target="_blank" rel="noreferrer">Spotify link</a></small></div>`
+      : "";
+    const time = c.created_at ? new Date(c.created_at).toLocaleString("id-ID") : "";
 
-      return `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-            <div>
-              <b>${name}</b>
-              <div><small>${esc(time)}</small></div>
-            </div>
-            <button class="btn secondary" data-del-conf="${c.id}">Delete</button>
+    return `
+      <div class="adminItem">
+        <div class="adminItemTop">
+          <div>
+            <b>${name}</b>
+            <div class="adminMeta">${esc(time)}</div>
           </div>
-          <p style="white-space:pre-wrap; margin:10px 0 0;">${msg}</p>
-          ${imp}
-          ${sp}
+          <button class="btn secondary" data-del-conf="${c.id}">Delete</button>
         </div>
-      `;
-    })
-    .join("");
+        <p style="white-space:pre-wrap; margin:10px 0 0;">${msg}</p>
+        ${imp}
+        ${sp}
+      </div>
+    `;
+  }).join("");
 
   confList.querySelectorAll("[data-del-conf]").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -192,13 +175,10 @@ async function loadConfessions() {
   });
 }
 
-/* =========================
-   QUOTES
-========================= */
 async function loadQuotes() {
   if (!quotesList) return;
 
-  quotesList.innerHTML = "<small>Loading...</small>";
+  quotesList.innerHTML = emptyState("Loading...");
 
   const { data, error } = await supabase
     .from("quotes")
@@ -207,36 +187,33 @@ async function loadQuotes() {
     .limit(100);
 
   if (error) {
-    console.error("loadQuotes error:", error);
-    quotesList.innerHTML = `<small>Gagal load quotes: ${esc(error.message)}</small>`;
+    quotesList.innerHTML = emptyState("Gagal load quotes: " + error.message);
     return;
   }
 
   if (!data || data.length === 0) {
-    quotesList.innerHTML = "<small>Tidak ada quotes.</small>";
+    quotesList.innerHTML = emptyState("Tidak ada quotes.");
     return;
   }
 
-  quotesList.innerHTML = data
-    .map((q) => {
-      const name = q.name?.trim() ? esc(q.name) : "Anonim";
-      const quote = esc(q.quote || "");
-      const time = q.created_at ? new Date(q.created_at).toLocaleString("id-ID") : "";
+  quotesList.innerHTML = data.map((q) => {
+    const name = q.name?.trim() ? esc(q.name) : "Anonim";
+    const quote = esc(q.quote || "");
+    const time = q.created_at ? new Date(q.created_at).toLocaleString("id-ID") : "";
 
-      return `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-            <div>
-              <b>${name}</b>
-              <div><small>${esc(time)}</small></div>
-            </div>
-            <button class="btn secondary" data-del-quote="${q.id}">Delete</button>
+    return `
+      <div class="adminItem">
+        <div class="adminItemTop">
+          <div>
+            <b>${name}</b>
+            <div class="adminMeta">${esc(time)}</div>
           </div>
-          <p style="white-space:pre-wrap; margin:10px 0 0;">${quote}</p>
+          <button class="btn secondary" data-del-quote="${q.id}">Delete</button>
         </div>
-      `;
-    })
-    .join("");
+        <p style="white-space:pre-wrap; margin:10px 0 0;">${quote}</p>
+      </div>
+    `;
+  }).join("");
 
   quotesList.querySelectorAll("[data-del-quote]").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -253,13 +230,10 @@ async function loadQuotes() {
   });
 }
 
-/* =========================
-   RATINGS
-========================= */
 async function loadRatings() {
   if (!ratingsList) return;
 
-  ratingsList.innerHTML = "<small>Loading...</small>";
+  ratingsList.innerHTML = emptyState("Loading...");
 
   const { data, error } = await supabase
     .from("au_ratings")
@@ -268,60 +242,52 @@ async function loadRatings() {
     .limit(100);
 
   if (error) {
-    console.error("loadRatings error:", error);
-    ratingsList.innerHTML = `<small>Gagal load ratings: ${esc(error.message)}</small>`;
+    ratingsList.innerHTML = emptyState("Gagal load ratings: " + error.message);
     return;
   }
 
   if (!data || data.length === 0) {
-    ratingsList.innerHTML = "<small>Tidak ada rating.</small>";
+    ratingsList.innerHTML = emptyState("Tidak ada rating.");
     return;
   }
 
-  ratingsList.innerHTML = data
-    .map((r) => {
-      const name = r.name?.trim() ? esc(r.name) : "Anonim";
-      const reason = esc(r.reason || "-");
-      const time = r.created_at ? new Date(r.created_at).toLocaleString("id-ID") : "";
-      const startPart = Number(r.start_part || 1);
-      const avg = averageRating(r);
+  ratingsList.innerHTML = data.map((r) => {
+    const name = r.name?.trim() ? esc(r.name) : "Anonim";
+    const reason = esc(r.reason || "-");
+    const time = r.created_at ? new Date(r.created_at).toLocaleString("id-ID") : "";
+    const startPart = Number(r.start_part || 1);
+    const avg = averageRating(r);
 
-      const partsHtml = [
-        r.part1, r.part2, r.part3, r.part4, r.part5, r.part6, r.part7
-      ].map((value, index) => {
-        return `
-          <div class="ratingItem">
-            <small>${getPartLabel(startPart, index)}</small>
-            <b>${scoreText(value)}/10</b>
-          </div>
-        `;
-      }).join("");
-
-      return `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap;">
-            <div>
-              <b>${name}</b>
-              <div><small>${esc(time)}</small></div>
-              <div style="margin-top:6px;">
-                <small>Range: Part ${startPart}-${startPart + 6}</small>
-              </div>
-            </div>
-            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <span class="btn secondary" style="cursor:default;">Avg ${avg}</span>
-              <button class="btn secondary" data-del-rating="${r.id}">Delete</button>
-            </div>
-          </div>
-
-          <div class="ratingGrid">
-            ${partsHtml}
-          </div>
-
-          <p style="white-space:pre-wrap; margin:12px 0 0;"><b>Alasan:</b>\n${reason}</p>
+    const partsHtml = [r.part1, r.part2, r.part3, r.part4, r.part5, r.part6, r.part7]
+      .map((value, index) => `
+        <div class="ratingItem">
+          <small>${getPartLabel(startPart, index)}</small>
+          <b>${scoreText(value)}/10</b>
         </div>
-      `;
-    })
-    .join("");
+      `).join("");
+
+    return `
+      <div class="adminItem">
+        <div class="adminItemTop">
+          <div>
+            <b>${name}</b>
+            <div class="adminMeta">${esc(time)}</div>
+            <div class="adminMeta">Range: Part ${startPart}-${startPart + 6}</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span class="btn secondary" style="cursor:default;">Avg ${avg}</span>
+            <button class="btn secondary" data-del-rating="${r.id}">Delete</button>
+          </div>
+        </div>
+
+        <div class="ratingGrid">
+          ${partsHtml}
+        </div>
+
+        <p style="white-space:pre-wrap; margin:12px 0 0;"><b>Alasan:</b>\n${reason}</p>
+      </div>
+    `;
+  }).join("");
 
   ratingsList.querySelectorAll("[data-del-rating]").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -338,9 +304,6 @@ async function loadRatings() {
   });
 }
 
-/* =========================
-   EVENTS
-========================= */
 async function uploadBanner(file) {
   const safe = safeName(file.name || "banner.jpg");
   const path = `events/${Date.now()}-${safe}`;
@@ -357,9 +320,9 @@ async function uploadBanner(file) {
 
 function renderEventCard(e) {
   const title = esc(e.title || "");
-  const desc  = e.description ? esc(e.description) : "";
+  const desc = e.description ? esc(e.description) : "";
   const start = e.start_date ? new Date(e.start_date).toLocaleDateString("id-ID") : "-";
-  const end   = e.end_date ? new Date(e.end_date).toLocaleDateString("id-ID") : "-";
+  const end = e.end_date ? new Date(e.end_date).toLocaleDateString("id-ID") : "-";
   const banner = e.banner_url
     ? `<div style="margin-top:10px;">
          <img src="${e.banner_url}" alt="" style="width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.14);" />
@@ -367,11 +330,11 @@ function renderEventCard(e) {
     : "";
 
   return `
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+    <div class="adminItem">
+      <div class="adminItemTop">
         <div>
-          <b>${title}</b><br/>
-          <small>${start} → ${end}</small>
+          <b>${title}</b>
+          <div class="adminMeta">${start} → ${end}</div>
         </div>
         <button class="btn secondary" data-del-event="${e.id}">Delete</button>
       </div>
@@ -384,7 +347,7 @@ function renderEventCard(e) {
 async function loadEvents() {
   if (!eventsList) return;
 
-  eventsList.innerHTML = "<small>Loading...</small>";
+  eventsList.innerHTML = emptyState("Loading...");
 
   const { data, error } = await supabase
     .from("events")
@@ -394,13 +357,12 @@ async function loadEvents() {
     .limit(80);
 
   if (error) {
-    console.error("loadEvents error:", error);
-    eventsList.innerHTML = `<small>Gagal load events: ${esc(error.message)}</small>`;
+    eventsList.innerHTML = emptyState("Gagal load events: " + error.message);
     return;
   }
 
   if (!data || data.length === 0) {
-    eventsList.innerHTML = "<small>Belum ada event.</small>";
+    eventsList.innerHTML = emptyState("Belum ada event.");
     return;
   }
 
@@ -422,8 +384,6 @@ async function loadEvents() {
 }
 
 async function handleCreateEvent() {
-  if (!createEvent) return;
-
   setEventStatus("");
 
   const title = (eventTitle?.value || "").trim();
@@ -435,6 +395,7 @@ async function handleCreateEvent() {
     setEventStatus("Judul wajib diisi.");
     return;
   }
+
   if (start_date && end_date && end_date < start_date) {
     setEventStatus("End date tidak boleh lebih awal dari start date.");
     return;
@@ -446,6 +407,7 @@ async function handleCreateEvent() {
   try {
     let banner_url = null;
     const file = eventBanner?.files?.[0] || null;
+
     if (file) {
       banner_url = await uploadBanner(file);
     }
@@ -464,16 +426,12 @@ async function handleCreateEvent() {
 
     await loadEvents();
   } catch (e) {
-    console.error(e);
     setEventStatus("Gagal tambah event: " + (e?.message || "unknown"));
   } finally {
     createEvent.disabled = false;
   }
 }
 
-/* =========================
-   INIT
-========================= */
 async function initAdmin() {
   await loadConfessions();
   await loadQuotes();
@@ -481,9 +439,6 @@ async function initAdmin() {
   await loadEvents();
 }
 
-/* =========================
-   WIRING
-========================= */
 loginBtn?.addEventListener("click", async (e) => {
   e.preventDefault();
 
@@ -496,7 +451,6 @@ loginBtn?.addEventListener("click", async (e) => {
   }
 
   await supabase.auth.signOut();
-
   showLogin("Login...");
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
