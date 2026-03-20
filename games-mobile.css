@@ -8,7 +8,6 @@ html, body{
   min-height:100dvh;
 }
 
-/* top */
 .games-topbar{
   flex-direction:column !important;
   align-items:stretch !important;
@@ -29,7 +28,6 @@ html, body{
   padding:8px 12px !important;
 }
 
-/* join */
 .games-join{
   width:100% !important;
   padding:14px !important;
@@ -39,24 +37,52 @@ html, body{
   grid-template-columns:1fr !important;
 }
 
-/* game shell:
-   players kiri, main kanan */
+/* ===== LAYOUT HP YANG BENAR ===== */
 .game-shell{
   display:grid !important;
-  grid-template-columns: 110px minmax(0, 1fr) !important;
+  grid-template-columns: 108px minmax(0, 1fr) !important;
+  grid-template-rows: 330px 260px !important;
+  grid-template-areas:
+    "players board"
+    "players feeds";
   gap:10px !important;
-  align-items:stretch !important;
   width:100% !important;
+  align-items:stretch !important;
 }
 
-/* players panel */
+/* bikin anak main-panel ikut grid parent */
+.main-panel{
+  display: contents !important;
+}
+
 .players-panel{
-  min-height: 520px !important;
-  max-height: 520px !important;
+  grid-area: players !important;
+  min-height:600px !important;
+  max-height:none !important;
   overflow:hidden !important;
   border-radius:18px !important;
 }
 
+.board-panel{
+  grid-area: board !important;
+  min-height:330px !important;
+  border-radius:18px !important;
+  padding:12px 14px 14px !important;
+  overflow:hidden !important;
+}
+
+.feeds-panel{
+  grid-area: feeds !important;
+  min-height:260px !important;
+  border-radius:18px !important;
+  padding:12px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  overflow:hidden !important;
+}
+
+/* ===== PLAYERS ===== */
 .players-header{
   padding:10px 10px 8px !important;
 }
@@ -70,50 +96,29 @@ html, body{
   font-size:11px !important;
 }
 
-.player-list{
-  padding:6px 0 !important;
+.player-list,
+#lbList{
+  padding:6px !important;
   overflow:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
 }
 
 .player-row,
 .lb-item{
-  min-height:54px !important;
+  min-height:50px !important;
+  margin:0 !important;
   padding:8px !important;
   border-radius:10px !important;
-  margin:0 6px 8px !important;
   display:flex !important;
   flex-direction:column !important;
-  align-items:flex-start !important;
   justify-content:center !important;
   gap:2px !important;
   font-size:12px !important;
 }
 
-.player-name{
-  font-size:12px !important;
-  line-height:1.15 !important;
-}
-
-.player-score{
-  font-size:13px !important;
-  font-weight:900 !important;
-}
-
-/* right main */
-.main-panel{
-  display:grid !important;
-  grid-template-rows: 330px 220px !important;
-  gap:10px !important;
-  min-height:0 !important;
-}
-
-/* board */
-.board-panel{
-  min-height:330px !important;
-  border-radius:18px !important;
-  padding:12px 14px 14px !important;
-}
-
+/* ===== BOARD ===== */
 .board-top{
   gap:8px !important;
 }
@@ -136,7 +141,7 @@ html, body{
 }
 
 .board-center{
-  inset:54px 14px 102px !important;
+  inset:56px 14px 100px !important;
 }
 
 .board-question-label,
@@ -149,8 +154,8 @@ html, body{
 .board-question-text,
 .question-text,
 #qText{
-  font-size: clamp(16px, 4.6vw, 24px) !important;
-  line-height:1.14 !important;
+  font-size: clamp(15px, 4.2vw, 22px) !important;
+  line-height:1.12 !important;
   font-weight:900 !important;
   word-break:break-word !important;
   overflow-wrap:anywhere !important;
@@ -181,22 +186,11 @@ html, body{
   line-height:1.25 !important;
 }
 
-/* feeds panel: persis dua kolom seperti screenshot */
-.feeds-panel{
-  min-height:220px !important;
-  height:220px !important;
-  padding:10px 10px 10px !important;
-  border-radius:18px !important;
-  display:flex !important;
-  flex-direction:column !important;
-  gap:8px !important;
-  overflow:hidden !important;
-}
-
+/* ===== FEEDS HP ===== */
 .feeds-head{
   display:grid !important;
   grid-template-columns:1fr 1fr !important;
-  gap:10px !important;
+  gap:8px !important;
   flex:0 0 auto !important;
 }
 
@@ -206,11 +200,12 @@ html, body{
   border-radius:999px !important;
 }
 
+/* di HP: jawaban atas, chat bawah */
 .feeds-columns{
   flex:1 1 auto !important;
   min-height:0 !important;
-  display:grid !important;
-  grid-template-columns:1fr 1fr !important;
+  display:flex !important;
+  flex-direction:column !important;
   gap:10px !important;
 }
 
@@ -224,12 +219,14 @@ html, body{
 }
 
 .answers-panel{
-  padding-right:8px !important;
-  border-right:1px solid rgba(255,255,255,.08) !important;
+  border-right:none !important;
+  padding-right:0 !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  padding-bottom:10px !important;
 }
 
 .chat-panel{
-  padding-left:2px !important;
+  padding-left:0 !important;
 }
 
 .feed-status,
@@ -245,7 +242,7 @@ html, body{
 #feedList,
 #chatList{
   flex:1 1 auto !important;
-  min-height:0 !important;
+  min-height:50px !important;
   overflow:auto !important;
   display:flex !important;
   flex-direction:column !important;
@@ -266,7 +263,7 @@ html, body{
   margin-bottom:4px !important;
 }
 
-/* input answer/chat */
+/* ===== INPUT ===== */
 .input-wrap,
 #answerBox,
 #chatBox{
@@ -275,17 +272,24 @@ html, body{
   display:block !important;
 }
 
-.input-pill{
+.input-pill,
+.input-box,
+.chat-box{
   min-height:38px !important;
-  height:38px !important;
-  padding:0 8px !important;
+  height:auto !important;
+  padding:6px 8px !important;
   gap:6px !important;
   border-radius:10px !important;
   width:100% !important;
+  display:flex !important;
+  align-items:center !important;
 }
 
-.input-icon{
+.input-icon,
+.pencil,
+.search-icon{
   font-size:12px !important;
+  flex:0 0 auto !important;
 }
 
 #answerText,
@@ -295,6 +299,8 @@ html, body{
   max-height:28px !important;
   font-size:12px !important;
   padding:4px 0 !important;
+  flex:1 !important;
+  min-width:0 !important;
 }
 
 #sendAnswerBtn,
@@ -306,24 +312,15 @@ html, body{
   flex:0 0 auto !important;
 }
 
-/* overlay */
-.overlayBox{
-  width:min(92vw, 520px) !important;
-}
-
-/* kalau layar lebih kecil lagi */
+/* hp kecil */
 @media (max-width: 480px){
   .game-shell{
-    grid-template-columns: 96px minmax(0, 1fr) !important;
+    grid-template-columns: 92px minmax(0, 1fr) !important;
+    grid-template-rows: 300px 250px !important;
   }
 
   .players-panel{
-    min-height:500px !important;
-    max-height:500px !important;
-  }
-
-  .main-panel{
-    grid-template-rows: 300px 210px !important;
+    min-height:560px !important;
   }
 
   .board-panel{
@@ -331,19 +328,12 @@ html, body{
   }
 
   .feeds-panel{
-    min-height:210px !important;
-    height:210px !important;
-  }
-
-  .player-row,
-  .lb-item{
-    min-height:50px !important;
-    font-size:11px !important;
+    min-height:250px !important;
   }
 
   .board-question-text,
   .question-text,
   #qText{
-    font-size: clamp(15px, 4.4vw, 21px) !important;
+    font-size: clamp(14px, 4vw, 20px) !important;
   }
 }
