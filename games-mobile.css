@@ -18,16 +18,17 @@ html, body{
   justify-content:flex-start !important;
   overflow-x:auto !important;
   flex-wrap:nowrap !important;
-  padding-bottom:4px;
+  padding-bottom:4px !important;
 }
 
 .games-nav a{
-  flex:0 0 auto;
-  white-space:nowrap;
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
   font-size:12px !important;
   padding:8px 12px !important;
 }
 
+/* join */
 .games-join{
   width:100% !important;
   padding:14px !important;
@@ -37,11 +38,11 @@ html, body{
   grid-template-columns:1fr !important;
 }
 
-/* ===== LAYOUT HP YANG BENAR ===== */
+/* layout hp */
 .game-shell{
   display:grid !important;
-  grid-template-columns: 108px minmax(0, 1fr) !important;
-  grid-template-rows: 330px 260px !important;
+  grid-template-columns: 96px minmax(0, 1fr) !important;
+  grid-template-rows: 300px 260px !important;
   grid-template-areas:
     "players board"
     "players feeds";
@@ -50,29 +51,28 @@ html, body{
   align-items:stretch !important;
 }
 
-/* bikin anak main-panel ikut grid parent */
 .main-panel{
-  display: contents !important;
+  display:contents !important;
 }
 
 .players-panel{
-  grid-area: players !important;
-  min-height:600px !important;
+  grid-area:players !important;
+  min-height:570px !important;
   max-height:none !important;
   overflow:hidden !important;
   border-radius:18px !important;
 }
 
 .board-panel{
-  grid-area: board !important;
-  min-height:330px !important;
+  grid-area:board !important;
+  min-height:300px !important;
   border-radius:18px !important;
   padding:12px 14px 14px !important;
   overflow:hidden !important;
 }
 
 .feeds-panel{
-  grid-area: feeds !important;
+  grid-area:feeds !important;
   min-height:260px !important;
   border-radius:18px !important;
   padding:12px !important;
@@ -82,7 +82,7 @@ html, body{
   overflow:hidden !important;
 }
 
-/* ===== PLAYERS ===== */
+/* players */
 .players-header{
   padding:10px 10px 8px !important;
 }
@@ -118,7 +118,7 @@ html, body{
   font-size:12px !important;
 }
 
-/* ===== BOARD ===== */
+/* board */
 .board-top{
   gap:8px !important;
 }
@@ -154,7 +154,7 @@ html, body{
 .board-question-text,
 .question-text,
 #qText{
-  font-size: clamp(15px, 4.2vw, 22px) !important;
+  font-size: clamp(14px, 4vw, 20px) !important;
   line-height:1.12 !important;
   font-weight:900 !important;
   word-break:break-word !important;
@@ -186,47 +186,36 @@ html, body{
   line-height:1.25 !important;
 }
 
-/* ===== FEEDS HP ===== */
+/* feeds: 1 kotak dengan tab */
 .feeds-head{
-  display:grid !important;
-  grid-template-columns:1fr 1fr !important;
+  display:flex !important;
   gap:8px !important;
   flex:0 0 auto !important;
 }
 
 .feeds-chip{
-  height:28px !important;
+  flex:1 !important;
+  height:30px !important;
   font-size:11px !important;
   border-radius:999px !important;
 }
 
-/* di HP: jawaban atas, chat bawah */
-.feeds-columns{
+.feeds-body{
   flex:1 1 auto !important;
   min-height:0 !important;
   display:flex !important;
   flex-direction:column !important;
-  gap:10px !important;
 }
 
-.answers-panel,
-.chat-panel{
-  min-width:0 !important;
+.feed-page{
+  display:none !important;
+  flex:1 1 auto !important;
   min-height:0 !important;
-  display:flex !important;
   flex-direction:column !important;
-  overflow:hidden !important;
 }
 
-.answers-panel{
-  border-right:none !important;
-  padding-right:0 !important;
-  border-bottom:1px solid rgba(255,255,255,.08) !important;
-  padding-bottom:10px !important;
-}
-
-.chat-panel{
-  padding-left:0 !important;
+.feed-page.active{
+  display:flex !important;
 }
 
 .feed-status,
@@ -242,7 +231,7 @@ html, body{
 #feedList,
 #chatList{
   flex:1 1 auto !important;
-  min-height:50px !important;
+  min-height:0 !important;
   overflow:auto !important;
   display:flex !important;
   flex-direction:column !important;
@@ -263,7 +252,7 @@ html, body{
   margin-bottom:4px !important;
 }
 
-/* ===== INPUT ===== */
+/* input */
 .input-wrap,
 #answerBox,
 #chatBox{
@@ -312,28 +301,27 @@ html, body{
   flex:0 0 auto !important;
 }
 
-/* hp kecil */
 @media (max-width: 480px){
   .game-shell{
-    grid-template-columns: 92px minmax(0, 1fr) !important;
-    grid-template-rows: 300px 250px !important;
+    grid-template-columns: 88px minmax(0, 1fr) !important;
+    grid-template-rows: 285px 245px !important;
   }
 
   .players-panel{
-    min-height:560px !important;
+    min-height:540px !important;
   }
 
   .board-panel{
-    min-height:300px !important;
+    min-height:285px !important;
   }
 
   .feeds-panel{
-    min-height:250px !important;
+    min-height:245px !important;
   }
 
   .board-question-text,
   .question-text,
   #qText{
-    font-size: clamp(14px, 4vw, 20px) !important;
+    font-size: clamp(13px, 3.8vw, 18px) !important;
   }
 }
