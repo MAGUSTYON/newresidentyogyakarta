@@ -56,6 +56,24 @@ const chatList = document.getElementById("chatList");
 const chatText = document.getElementById("chatText");
 const sendChatBtn = document.getElementById("sendChatBtn");
 
+const tabAnswer = document.getElementById("tabAnswer");
+const tabChat = document.getElementById("tabChat");
+const answersPanel = document.getElementById("answersPanel");
+const chatPanel = document.getElementById("chatPanel");
+
+function setFeedTab(tab) {
+  const isAnswer = tab === "answer";
+
+  tabAnswer?.classList.toggle("active", isAnswer);
+  tabChat?.classList.toggle("active", !isAnswer);
+
+  answersPanel?.classList.toggle("active", isAnswer);
+  chatPanel?.classList.toggle("active", !isAnswer);
+}
+
+tabAnswer?.addEventListener("click", () => setFeedTab("answer"));
+tabChat?.addEventListener("click", () => setFeedTab("chat"));
+
 /* ===== STATE ===== */
 const LS_KEY = "cc_state_final_v5";
 
@@ -1087,4 +1105,6 @@ leaveBtn?.addEventListener("click", () => {
   } else {
     showJoin("");
   }
+
+  setFeedTab("answer");
 })();
