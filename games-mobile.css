@@ -589,3 +589,114 @@ body{
     color: #ececf3 !important;
   }
 }
+
+@media (max-width: 768px){
+  /* paksa semua panel utama ikut theme dark */
+  .players,
+  .players-panel,
+  .board,
+  .board-panel,
+  .bottom,
+  .feeds-panel,
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)) !important;
+    border: 1px solid rgba(255,182,193,.18) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.45) !important;
+    backdrop-filter: blur(14px) !important;
+  }
+
+  /* override warna putih/abu dari css lama */
+  .players,
+  .board,
+  .bottom{
+    color: #ececf3 !important;
+  }
+
+  .players-top,
+  .players-header,
+  .board-top{
+    border-color: rgba(255,255,255,.08) !important;
+  }
+
+  .players-title,
+  .player-name,
+  .player-name strong,
+  .player-score,
+  .board-left-meta,
+  .board-room-meta,
+  .question-text,
+  .board-question-text,
+  #qText{
+    color: #ececf3 !important;
+  }
+
+  .players-sub,
+  .players-me,
+  #lbStatus,
+  #meTag,
+  #gameStatus,
+  .question-label,
+  .board-question-label,
+  .buzz-info,
+  .buzz-owner,
+  .buzz-timer,
+  #feedStatus,
+  #answerStatus{
+    color: #a7a7c0 !important;
+  }
+
+  /* list players item */
+  .player,
+  .player-row,
+  .lb-item{
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    color: #ececf3 !important;
+  }
+
+  /* tab */
+  .feeds-chip{
+    background: rgba(255,255,255,.06) !important;
+    border: 1px solid rgba(255,255,255,.14) !important;
+    color: #ececf3 !important;
+  }
+
+  .feeds-chip.active{
+    background: linear-gradient(135deg, #f2a1b3, #d47aa0) !important;
+    color: #1b0b12 !important;
+    border: none !important;
+  }
+
+  /* buzz */
+  .buzz-btn,
+  #buzzBtn{
+    background: linear-gradient(135deg, #f2a1b3, #d47aa0) !important;
+    color: #1b0b12 !important;
+    box-shadow: 0 10px 28px rgba(242,161,179,.35) !important;
+  }
+
+  /* input */
+  .input-pill,
+  .input-box,
+  .chat-box{
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid rgba(255,255,255,.14) !important;
+  }
+
+  #answerText,
+  #chatText{
+    color: #ececf3 !important;
+  }
+
+  #answerText::placeholder,
+  #chatText::placeholder{
+    color: rgba(167,167,192,.75) !important;
+  }
+
+  #sendAnswerBtn,
+  #sendChatBtn{
+    background: linear-gradient(135deg, #f2a1b3, #d47aa0) !important;
+    color: #1b0b12 !important;
+    border: none !important;
+  }
+}
