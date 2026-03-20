@@ -700,3 +700,44 @@ body{
     border: none !important;
   }
 }
+
+.player-name{
+  display: block;
+  font-weight: 700;
+
+  /* auto kecil kalau kepanjangan */
+  font-size: clamp(12px, 2.5vw, 16px);
+
+  /* biar gak keluar box */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* kalau mau 2 baris (lebih bagus) */
+.player-name.wrap{
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.player-name{
+  font-weight: 700;
+  font-size: clamp(11px, 2.8vw, 15px);
+  line-height: 1.2;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.player-row{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
