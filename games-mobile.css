@@ -5,7 +5,7 @@
 
   .app,
   .games-app {
-    min-height: 100dvh;
+    min-height: 100dvh !important;
     padding: 10px !important;
     gap: 10px !important;
     align-items: stretch !important;
@@ -42,12 +42,12 @@
     grid-template-columns: 1fr !important;
   }
 
-  /* layout hp final */
+  /* layout hp */
   .game-shell {
     width: 100% !important;
     display: grid !important;
-    grid-template-columns: 96px minmax(0, 1fr) !important;
-    grid-template-rows: 300px 250px !important;
+    grid-template-columns: 88px minmax(0, 1fr) !important;
+    grid-template-rows: 290px 250px !important;
     grid-template-areas:
       "players board"
       "players feeds";
@@ -55,7 +55,6 @@
     align-items: stretch !important;
   }
 
-  /* penting: wrapper kanan jangan bikin grid baru */
   .main,
   .main-panel {
     display: contents !important;
@@ -64,9 +63,9 @@
   .players,
   .players-panel {
     grid-area: players !important;
-    min-height: 560px !important;
-    max-height: none !important;
-    height: auto !important;
+    min-height: 550px !important;
+    height: 550px !important;
+    max-height: 550px !important;
     overflow: hidden !important;
     border-radius: 18px !important;
   }
@@ -74,8 +73,8 @@
   .board,
   .board-panel {
     grid-area: board !important;
-    min-height: 300px !important;
-    height: 300px !important;
+    min-height: 290px !important;
+    height: 290px !important;
     padding: 12px 14px 14px !important;
     overflow: hidden !important;
     border-radius: 18px !important;
@@ -170,7 +169,7 @@
 
   .board-center {
     position: absolute !important;
-    inset: 54px 14px 100px !important;
+    inset: 54px 14px 96px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -193,7 +192,7 @@
   .question-text,
   .board-question-text,
   #qText {
-    font-size: clamp(14px, 4vw, 20px) !important;
+    font-size: clamp(13px, 3.8vw, 18px) !important;
     line-height: 1.12 !important;
     font-weight: 900 !important;
     word-break: break-word !important;
@@ -202,12 +201,12 @@
   }
 
   .ghost-logo {
-    font-size: 42px !important;
-    inset: auto 0 52px 0 !important;
+    font-size: 40px !important;
+    inset: auto 0 50px 0 !important;
   }
 
-  .board-bottom-ui,
-  .board-bottom {
+  .board-bottom,
+  .board-bottom-ui {
     position: absolute !important;
     left: 14px !important;
     right: 14px !important;
@@ -220,8 +219,8 @@
 
   .buzz-btn,
   #buzzBtn {
-    width: min(100%, 220px) !important;
-    height: 46px !important;
+    width: min(100%, 210px) !important;
+    height: 44px !important;
     font-size: 15px !important;
     border-radius: 999px !important;
   }
@@ -235,7 +234,7 @@
     text-align: center !important;
   }
 
-  /* feeds: 1 kotak, switch tab */
+  /* feeds */
   .feeds-head {
     display: flex !important;
     gap: 8px !important;
@@ -260,20 +259,32 @@
     min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
+    overflow: hidden !important;
   }
 
-  .feed-page {
+  /* INI KUNCI FIX-NYA */
+  .feed-page,
+  #answersPanel,
+  #chatPanel {
     display: none !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
     flex-direction: column !important;
+    overflow: hidden !important;
   }
 
-  .feed-page.active {
+  .feed-page.active,
+  #answersPanel.active,
+  #chatPanel.active {
     display: flex !important;
   }
 
-  /* buang layout desktop 2 kolom di hp */
+  /* paksa page lain tetap hidden */
+  #answersPanel:not(.active),
+  #chatPanel:not(.active) {
+    display: none !important;
+  }
+
   .answers,
   .chat,
   .answers-panel,
@@ -380,35 +391,5 @@
     font-size: 11px !important;
     border-radius: 6px !important;
     flex: 0 0 auto !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .game-shell {
-    grid-template-columns: 88px minmax(0, 1fr) !important;
-    grid-template-rows: 285px 235px !important;
-  }
-
-  .players,
-  .players-panel {
-    min-height: 530px !important;
-  }
-
-  .board,
-  .board-panel {
-    min-height: 285px !important;
-    height: 285px !important;
-  }
-
-  .bottom,
-  .feeds-panel {
-    min-height: 235px !important;
-    height: 235px !important;
-  }
-
-  .question-text,
-  .board-question-text,
-  #qText {
-    font-size: clamp(13px, 3.8vw, 18px) !important;
   }
 }
