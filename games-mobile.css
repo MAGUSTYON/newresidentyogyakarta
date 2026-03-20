@@ -486,3 +486,106 @@ body{
 .player-score{
   color: var(--pink);
 }
+
+@media (max-width: 768px){
+  body{
+    background:
+      radial-gradient(1100px 520px at 12% -12%, rgba(242,161,179,.09), transparent 42%),
+      radial-gradient(900px 520px at 88% 112%, rgba(242,161,179,.06), transparent 44%),
+      linear-gradient(180deg, #0b0c14 0%, #12132a 52%, #0b0c14 100%) !important;
+    color: #ececf3 !important;
+  }
+
+  .bg-pattern,
+  .games-page-bg{
+    opacity: .10 !important;
+    filter: none !important;
+  }
+
+  .players-panel,
+  .board-panel,
+  .feeds-panel{
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)) !important;
+    border: 1px solid rgba(255,182,193,.18) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.45) !important;
+    backdrop-filter: blur(14px) !important;
+  }
+
+  .players-title,
+  .board-room-meta,
+  .board-left-meta,
+  .board-question-text,
+  .question-text,
+  #qText,
+  .player-name,
+  .player-score{
+    color: #ececf3 !important;
+  }
+
+  .players-sub,
+  .players-me,
+  #lbStatus,
+  #meTag,
+  #gameStatus,
+  .board-question-label,
+  .question-label,
+  .buzz-info,
+  .buzz-owner,
+  .buzz-timer,
+  #feedStatus,
+  #answerStatus{
+    color: #a7a7c0 !important;
+  }
+
+  .feeds-chip{
+    background: rgba(255,255,255,.06) !important;
+    border: 1px solid rgba(255,255,255,.14) !important;
+    color: #ececf3 !important;
+  }
+
+  .feeds-chip.active{
+    background: linear-gradient(135deg, #f2a1b3, #d47aa0) !important;
+    color: #1b0b12 !important;
+    border: none !important;
+  }
+
+  #buzzBtn,
+  .buzz-btn{
+    background: linear-gradient(135deg, #f2a1b3, #d47aa0) !important;
+    color: #1b0b12 !important;
+    box-shadow: 0 10px 28px rgba(242,161,179,.35) !important;
+  }
+
+  .input-pill,
+  .input-box,
+  .chat-box{
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid rgba(255,255,255,.14) !important;
+  }
+
+  #answerText,
+  #chatText{
+    color: #ececf3 !important;
+  }
+
+  #answerText::placeholder,
+  #chatText::placeholder{
+    color: rgba(167,167,192,.75) !important;
+  }
+
+  #sendAnswerBtn,
+  #sendChatBtn{
+    background: linear-gradient(135deg, #f2a1b3, #d47aa0) !important;
+    color: #1b0b12 !important;
+    border: none !important;
+  }
+
+  .lb-item,
+  .player-row,
+  .ansItem,
+  .chat-item{
+    background: rgba(255,255,255,.05) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    color: #ececf3 !important;
+  }
+}
