@@ -4,7 +4,7 @@ import { supabase } from "./supabaseClient.js";
 // Minggu 1 = 1
 // Minggu 2 = 8
 // Minggu 3 = 15
-const START_PART = 38;
+const START_PART = 39;
 
 const elName = document.getElementById("name");
 const elReason = document.getElementById("reason");
