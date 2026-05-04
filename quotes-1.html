@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quotes NRY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-0: #0b0c14; --bg-1: #12132a;
+      --pink: #f2a1b3; --pink-2: #d47aa0;
+      --text: #ececf3; --muted: #a7a7c0;
+      --glass-1: rgba(255,255,255,.08); --glass-2: rgba(255,255,255,.03);
+      --border: rgba(255,182,193,.18); --border-2: rgba(255,255,255,.14);
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --green: #6ee7b7; --red: #f87171;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%; font-family: "Inter", system-ui, sans-serif;
+      color: var(--text); line-height: 1.65;
+      background:
+        radial-gradient(1100px 520px at 12% -12%, rgba(242,161,179,.09), transparent 42%),
+        radial-gradient(900px 520px at 88% 112%, rgba(242,161,179,.06), transparent 44%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 52%, var(--bg-0) 100%);
+      background-attachment: fixed;
+      overscroll-behavior: none;
+    }
+
+    /* ── HEADER ── */
+    .siteHeader {
+      position: sticky; top: 0; z-index: 999;
+      background: linear-gradient(180deg, rgba(11,12,20,.92), rgba(11,12,20,.55));
+      backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .headerWrap {
+      max-width: 700px; margin: 0 auto; height: 58px; padding: 0 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    }
+    .logoBlock { display: flex; flex-direction: column; line-height: 1.05; }
+    .logoTitle { font-weight: 800; font-size: 16px; color: var(--pink); letter-spacing: -.01em; }
+    .logoSub { font-size: 9px; letter-spacing: .3em; color: var(--muted); text-transform: uppercase; }
+
+    /* ── FOLDER VIEW ── */
+    #folderView { max-width: 700px; margin: 0 auto; padding: 20px 12px 100px; }
+    .sectionTitle { font-family: "Playfair Display", serif; color: var(--pink); font-size: 18px; margin-bottom: 14px; font-weight: 700; }
+
+    .folderGrid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .folderCard {
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border-radius: 20px; padding: 18px 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.3); backdrop-filter: blur(12px);
+      cursor: pointer; transition: .25s ease; display: flex; flex-direction: column; gap: 10px;
+    }
+    .folderCard:hover {
+      border-color: rgba(242,161,179,.35);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(242,161,179,.15);
+    }
+    .folderCardIcon { font-size: 34px; }
+    .folderCardName { font-family: "Playfair Display", serif; font-size: 17px; color: var(--pink); font-weight: 700; }
+    .folderCardDesc { font-size: 12px; color: var(--muted); }
+    .folderCardMeta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+    .metaBadge {
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: .03em;
+    }
+    .metaBadge.files { background: rgba(255,255,255,.08); color: var(--muted); border: 1px solid rgba(255,255,255,.12); }
+    .metaBadge.upload-on { background: rgba(110,231,183,.12); color: var(--green); border: 1px solid rgba(110,231,183,.25); }
+    .metaBadge.upload-off { background: rgba(248,113,113,.10); color: var(--red); border: 1px solid rgba(248,113,113,.2); }
+
+    /* ── QUOTES INNER VIEW ── */
+    #quotesView { display: none; max-width: 700px; margin: 0 auto; padding: 16px 12px 100px; }
+
+    /* BREADCRUMB */
+    .breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .breadcrumb span { color: var(--muted); font-size: 13px; cursor: pointer; }
+    .breadcrumb span:hover { color: var(--pink); }
+    .breadcrumb .sep { color: rgba(255,255,255,.25); }
+    .breadcrumb .current { color: var(--pink); font-weight: 700; cursor: default; }
+
+    .folderInnerHeader {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 14px; flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .folderInnerTitle { font-family: "Playfair Display", serif; font-size: 22px; color: var(--pink); }
+    .folderInnerSub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* SORT/VIEW CONTROLS */
+    .viewControls {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    }
+    .sortLabel { font-size: 12px; color: var(--muted); font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .sortArrow {
+      width: 28px; height: 28px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; transition: .2s; color: var(--text);
+    }
+    .sortArrow:hover { background: rgba(255,255,255,.13); }
+    .viewSpacer { flex: 1; }
+
+    /* ── PHOTO GRID ── */
+    .photoGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .photoCard {
+      border-radius: 16px; overflow: hidden;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 6px 20px rgba(0,0,0,.35);
+      transition: .22s ease;
+      cursor: pointer;
+      position: relative;
+      display: flex; flex-direction: column;
+    }
+    .photoCard:hover {
+      transform: translateY(-2px);
+      border-color: rgba(242,161,179,.25);
+      box-shadow: 0 12px 30px rgba(0,0,0,.45);
+    }
+
+    /* Card top row: icon + name + three-dot */
+    .photoCardHeader {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 10px 6px;
+      pointer-events: none;
+    }
+    .photoCardHeaderInner {
+      display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;
+      pointer-events: none;
+    }
+    .photoCardThumb {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(242,161,179,.15); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      overflow: hidden;
+    }
+    .photoCardThumb img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .photoCardName {
+      font-size: 12px; font-weight: 700; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .photoCardThreeDot {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--muted); cursor: pointer;
+      transition: .15s; pointer-events: all;
+      position: relative; z-index: 2;
+    }
+    .photoCardThreeDot:hover { background: rgba(255,255,255,.12); color: var(--text); }
+
+    /* Card image area */
+    .photoCardImg {
+      width: 100%; aspect-ratio: 1/1;
+      overflow: hidden; position: relative; background: rgba(0,0,0,.3);
+    }
+    .photoCardImg img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .3s ease;
+    }
+    .photoCard:hover .photoCardImg img { transform: scale(1.04); }
+
+    /* Non-image file card */
+    .photoCardFile {
+      width: 100%; aspect-ratio: 1/1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; color: var(--muted); font-size: 12px; text-align: center; padding: 10px;
+    }
+    .photoCardFile .bigIcon { font-size: 40px; }
+    .photoCardFile .fileName { font-weight: 600; color: var(--text); word-break: break-all; font-size: 11px; }
+    .photoCardFile .fileSize { font-size: 11px; }
+
+    /* ── THREE-DOT DROPDOWN ── */
+    .dropdown {
+      position: fixed; z-index: 10000;
+      background: #1e1f30; border: 1px solid rgba(255,255,255,.15);
+      border-radius: 14px; padding: 6px; min-width: 160px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.6);
+      animation: dropIn .15s ease;
+    }
+    @keyframes dropIn {
+      from { opacity: 0; transform: scale(.95) translateY(-4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .dropItem {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; cursor: pointer;
+      font-size: 13px; font-weight: 600; transition: .15s;
+    }
+    .dropItem:hover { background: rgba(255,255,255,.08); }
+    .dropItem.danger { color: var(--red); }
+
+    /* ── PREVIEW MODAL ── */
+    .previewOverlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,.88); backdrop-filter: blur(8px);
+      display: none; flex-direction: column;
+      animation: fadeIn .2s ease;
+    }
+    .previewOverlay.open { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .previewHeader {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      background: rgba(11,12,20,.7); flex-shrink: 0;
+    }
+    .previewClose {
+      width: 36px; height: 36px; border-radius: 99px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--text); transition: .15s; flex-shrink: 0;
+    }
+    .previewClose:hover { background: rgba(255,255,255,.18); }
+    .previewTitle { font-weight: 700; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .previewDownloadBtn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      border: none; color: #1b0b12; font-weight: 800; font-size: 12px;
+      cursor: pointer; transition: .2s; text-decoration: none; white-space: nowrap;
+    }
+    .previewDownloadBtn:hover { box-shadow: 0 6px 20px rgba(242,161,179,.4); }
+
+    .previewBody {
+      flex: 1; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .previewImg {
+      max-width: 100%; max-height: 100%;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.7);
+      object-fit: contain;
+    }
+    .previewFileBox {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; text-align: center; padding: 40px 24px;
+      border-radius: 24px; border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05); max-width: 320px; width: 100%;
+    }
+    .previewFileBigIcon { font-size: 64px; }
+    .previewFileName { font-size: 16px; font-weight: 700; word-break: break-all; }
+    .previewFileMeta { font-size: 13px; color: var(--muted); }
+    .previewNote { font-size: 13px; color: rgba(242,161,179,.8); font-style: italic; margin-top: 4px; }
+
+    /* ── EMPTY STATE ── */
+    .emptyState { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .emptyState .emptyIcon { font-size: 48px; margin-bottom: 14px; }
+    .emptyState p { font-size: 15px; }
+
+    /* ── FLOATING ACTION BUTTON ── */
+    .fabWrap {
+      position: fixed; bottom: 28px; right: 20px; z-index: 800;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+    }
+
+    /* Speed-dial mini buttons (hidden by default) */
+    .fabMenu {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+      pointer-events: none; opacity: 0; transform: translateY(12px);
+      transition: opacity .22s ease, transform .22s ease;
+    }
+    .fabMenu.open { pointer-events: all; opacity: 1; transform: translateY(0); }
+    .fabMenuItem {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+    }
+    .fabMenuLabel {
+      background: rgba(20,20,35,.95); border: 1px solid rgba(255,255,255,.14);
+      padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 700;
+      backdrop-filter: blur(10px); box-shadow: 0 4px 16px rgba(0,0,0,.4);
+      white-space: nowrap;
+    }
+    .fabMiniBtn {
+      width: 46px; height: 46px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; box-shadow: 0 6px 20px rgba(0,0,0,.4);
+      border: 1px solid rgba(255,255,255,.15);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .fabMiniBtn:hover { transform: scale(1.08); }
+    .fabMiniBtn.upload { background: linear-gradient(135deg, #6ee7b7, #3fc79a); }
+    .fabMiniBtn.camera { background: linear-gradient(135deg, #93c5fd, #60a5fa); }
+
+    /* Main FAB */
+    .fabMain {
+      width: 58px; height: 58px; border-radius: 18px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: #1b0b12;
+      box-shadow: 0 8px 28px rgba(242,161,179,.45);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .fabMain:hover { box-shadow: 0 12px 36px rgba(242,161,179,.55); transform: scale(1.05); }
+    .fabMain .fabIcon { transition: transform .25s ease; display: block; }
+    .fabMain.open .fabIcon { transform: rotate(45deg); }
+
+    /* ── UPLOAD MODAL ── */
+    .uploadOverlay {
+      position: fixed; inset: 0; z-index: 8500;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .uploadOverlay.open { display: flex; }
+
+    .uploadSheet {
+      width: 100%; max-width: 700px;
+      background: linear-gradient(180deg, #181928, #12132a);
+      border-top: 1px solid rgba(255,255,255,.12);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 40px;
+      animation: slideUp .28s ease;
+      max-height: 92vh; overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .sheetHandle {
+      width: 40px; height: 4px; border-radius: 99px;
+      background: rgba(255,255,255,.2); margin: 0 auto 18px;
+    }
+    .sheetTitle { font-family: "Playfair Display", serif; font-size: 20px; color: var(--pink); margin-bottom: 18px; font-weight: 700; }
+
+    /* Upload disabled notice */
+    .uploadDisabled {
+      border-radius: 16px; padding: 14px 16px; margin-bottom: 16px;
+      background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.2);
+      color: var(--red); font-size: 14px; font-weight: 600; text-align: center;
+    }
+
+    /* Drop zone */
+    .uploadBox {
+      border: 2px dashed rgba(242,161,179,.3); border-radius: 18px;
+      padding: 28px 20px; text-align: center; margin-bottom: 18px;
+      background: rgba(242,161,179,.03); transition: .2s ease; cursor: pointer;
+    }
+    .uploadBox:hover, .uploadBox.drag { border-color: rgba(242,161,179,.7); background: rgba(242,161,179,.07); }
+    .uploadBox.disabled { opacity: .5; cursor: not-allowed; pointer-events: none; }
+    .uploadBoxIcon { font-size: 38px; margin-bottom: 8px; }
+    .uploadBoxText { font-size: 14px; font-weight: 600; }
+    .uploadBoxSub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    #fileInput { display: none; }
+
+    /* Note input */
+    .noteInputWrap { margin-bottom: 14px; }
+    .noteInputWrap label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; font-weight: 600; }
+    .noteInputWrap input {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.14);
+      border-radius: 12px; padding: 10px 14px; color: var(--text);
+      outline: none; font-size: 14px; width: 100%; font-family: inherit;
+    }
+    .noteInputWrap input:focus { border-color: rgba(242,161,179,.4); }
+
+    /* Selected files */
+    .selectedFiles { margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .selectedFile {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      border-radius: 12px; border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04); font-size: 13px;
+    }
+    .selectedFile .fname { flex: 1; font-weight: 600; word-break: break-all; }
+    .selectedFile .fsize { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .removeFile { background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px; padding: 0 4px; }
+
+    /* Progress */
+    .progressWrap { margin-bottom: 14px; display: none; }
+    .progressBar { height: 6px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+    .progressFill { height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--pink), var(--pink-2)); transition: width .4s; }
+    .progressLabel { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* Alert */
+    .alert { padding: 12px 16px; border-radius: 12px; font-size: 14px; margin-top: 10px; font-weight: 600; }
+    .alert.success { background: rgba(110,231,183,.12); color: var(--green); border: 1px solid rgba(110,231,183,.25); }
+    .alert.error { background: rgba(248,113,113,.10); color: var(--red); border: 1px solid rgba(248,113,113,.22); }
+
+    /* Btn */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06); color: var(--text);
+      font-weight: 700; font-size: 13px; cursor: pointer; transition: .2s;
+      text-decoration: none; user-select: none; font-family: inherit;
+    }
+    .btn:hover { background: rgba(255,255,255,.11); transform: translateY(-1px); }
+    .btn.primary {
+      border: none; color: #1b0b12;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      box-shadow: 0 8px 24px rgba(242,161,179,.35);
+    }
+    .btn.primary:hover { box-shadow: 0 12px 32px rgba(242,161,179,.45); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .btn.sm { padding: 7px 14px; font-size: 12px; }
+
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 16px; margin-top: 20px; }
+
+    @media (max-width: 420px) {
+      .photoGrid { gap: 8px; }
+      .photoCardHeader { padding: 8px 8px 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="siteHeader">
+  <div class="headerWrap">
+    <div class="logoBlock">
+      <span class="logoTitle">New Resident Yogyakarta</span>
+      <span class="logoSub">Portal Dokumen</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── FOLDER VIEW ── -->
+<div id="folderView">
+  <div style="padding: 20px 12px 0; max-width:700px; margin:0 auto;">
+    <div class="sectionTitle">📁 Folder Tersedia</div>
+  </div>
+  <div style="max-width:700px; margin:0 auto; padding:0 12px;">
+    <div id="folderGrid" class="folderGrid">
+      <div class="emptyState"><div class="emptyIcon">📂</div><p>Belum ada folder tersedia.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── QUOTES INNER VIEW ── -->
+<div id="quotesView">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <span id="bcHome">🏠 Home</span>
+    <span class="sep">›</span>
+    <span class="current" id="bcFolder"></span>
+  </div>
+
+  <!-- Folder header -->
+  <div class="folderInnerHeader">
+    <div>
+      <div class="folderInnerTitle" id="folderInnerTitle">📁 Folder</div>
+      <div class="folderInnerSub" id="folderInnerSub"></div>
+    </div>
+    <button class="btn sm" id="backBtn">← Kembali</button>
+  </div>
+
+  <!-- View controls (sort by name) -->
+  <div class="viewControls">
+    <span class="sortLabel">
+      Nama
+      <button class="sortArrow" id="sortArrowBtn" title="Urutan">↑</button>
+    </span>
+    <div class="viewSpacer"></div>
+  </div>
+
+  <!-- Photo grid -->
+  <div id="photoGrid" class="photoGrid">
+    <div class="emptyState" style="grid-column:1/-1;">
+      <div class="emptyIcon">🖼️</div><p>Belum ada file di sini.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── THREE-DOT DROPDOWN ── -->
+<div id="dropdown" class="dropdown" style="display:none;"></div>
+
+<!-- ── PREVIEW MODAL ── -->
+<div class="previewOverlay" id="previewOverlay">
+  <div class="previewHeader">
+    <button class="previewClose" id="previewClose">✕</button>
+    <div class="previewTitle" id="previewTitle"></div>
+    <a class="previewDownloadBtn" id="previewDownload" href="#" download="">⬇ Unduh</a>
+  </div>
+  <div class="previewBody">
+    <img class="previewImg" id="previewImg" src="" alt="" style="display:none;" />
+    <div class="previewFileBox" id="previewFileBox" style="display:none;">
+      <div class="previewFileBigIcon" id="previewFileBigIcon"></div>
+      <div class="previewFileName" id="previewFileName"></div>
+      <div class="previewFileMeta" id="previewFileMeta"></div>
+      <div class="previewNote" id="previewNote" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── UPLOAD MODAL SHEET ── -->
+<div class="uploadOverlay" id="uploadOverlay">
+  <div class="uploadSheet" id="uploadSheet">
+    <div class="sheetHandle"></div>
+    <div class="sheetTitle">⬆️ Upload File</div>
+
+    <div id="uploadDisabledNotice" class="uploadDisabled" style="display:none;">
+      🚫 Upload sedang dinonaktifkan oleh admin.
+    </div>
+
+    <div id="uploadEnabledArea">
+      <div class="uploadBox" id="dropZone">
+        <div class="uploadBoxIcon">📤</div>
+        <div class="uploadBoxText">Klik atau drag file ke sini</div>
+        <div class="uploadBoxSub">Semua format file · Maks. 50 MB per file</div>
+        <input type="file" id="fileInput" multiple />
+      </div>
+
+      <div class="noteInputWrap">
+        <label for="noteInput">Keterangan (opsional)</label>
+        <input id="noteInput" type="text" placeholder="Contoh: Foto bukti transfer..." maxlength="200" />
+      </div>
+
+      <div class="selectedFiles" id="selectedFiles"></div>
+
+      <div class="progressWrap" id="progressWrap">
+        <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+        <div class="progressLabel" id="progressLabel">Mengupload...</div>
+      </div>
+
+      <button class="btn primary" id="uploadBtn" disabled style="width:100%;">Upload File</button>
+      <div id="uploadAlert"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FLOATING ACTION BUTTON ── -->
+<div class="fabWrap" id="fabWrap" style="display:none;">
+  <div class="fabMenu" id="fabMenu">
+    <div class="fabMenuItem" id="fabUploadItem">
+      <span class="fabMenuLabel">Upload file</span>
+      <div class="fabMiniBtn upload">📤</div>
+    </div>
+  </div>
+  <button class="fabMain" id="fabMain">
+    <span class="fabIcon">+</span>
+  </button>
+</div>
+
+<footer>&copy; 2025 New Resident Yogyakarta · Portal Dokumen Publik</footer>
+
+<script>
+// ── STORAGE KEYS ──
+const FOLDERS_KEY = 'nry_folders';
+const FILES_KEY   = 'nry_files';
+const GUPLOAD_KEY = 'nry_global_upload_enabled';
+
+// ── STATE ──
+let folders = [];
+let files = [];
+let globalUploadEnabled = true;
+let currentFolderId = null;
+let selectedFiles = [];
+let sortAsc = true;
+let activeDropdownFileId = null;
+
+// ── HELPERS ──
+function loadState() {
+  try { folders = JSON.parse(localStorage.getItem(FOLDERS_KEY)) || []; } catch { folders = []; }
+  try { files   = JSON.parse(localStorage.getItem(FILES_KEY))   || []; } catch { files = []; }
+  const g = localStorage.getItem(GUPLOAD_KEY);
+  globalUploadEnabled = g === null ? true : g === '1';
+}
+function saveState() {
+  localStorage.setItem(FOLDERS_KEY, JSON.stringify(folders));
+  localStorage.setItem(FILES_KEY,   JSON.stringify(files));
+}
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(s='') { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtSize(bytes) {
+  if (!bytes) return '0 B';
+  const k = 1024, m = k*k;
+  if (bytes >= m) return (bytes/m).toFixed(1)+' MB';
+  if (bytes >= k) return (bytes/k).toFixed(1)+' KB';
+  return bytes+' B';
+}
+function fmtDate(ts) {
+  if (!ts) return '-';
+  return new Date(ts).toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+}
+function getFileIcon(name='') {
+  const ext = (name.split('.').pop()||'').toLowerCase();
+  const map = {
+    pdf:'📄', doc:'📝', docx:'📝', xls:'📊', xlsx:'📊', ppt:'📋', pptx:'📋',
+    jpg:'🖼️', jpeg:'🖼️', png:'🖼️', gif:'🖼️', webp:'🖼️', svg:'🖼️',
+    mp4:'🎬', mov:'🎬', avi:'🎬', mkv:'🎬',
+    mp3:'🎵', wav:'🎵', ogg:'🎵',
+    zip:'📦', rar:'📦', '7z':'📦',
+    txt:'📃', csv:'📊', json:'⚙️', xml:'⚙️',
+  };
+  return map[ext] || '📁';
+}
+function isImage(name='') {
+  return /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(name);
+}
+
+// ── RENDER FOLDER GRID ──
+function renderFolderGrid() {
+  loadState();
+  const grid = document.getElementById('folderGrid');
+  document.getElementById('folderView').style.display = '';
+  document.getElementById('quotesView').style.display = 'none';
+  document.getElementById('fabWrap').style.display = 'none';
+
+  if (!folders.length) {
+    grid.innerHTML = `<div class="emptyState"><div class="emptyIcon">📂</div><p>Belum ada folder tersedia. Admin belum membuat folder.</p></div>`;
+    return;
+  }
+  grid.innerHTML = folders.map(f => {
+    const fFiles = files.filter(fi => fi.folderId === f.id);
+    const uploadOn = globalUploadEnabled && f.uploadEnabled !== false;
+    return `
+    <div class="folderCard" data-open-folder="${f.id}">
+      <div class="folderCardIcon">📁</div>
+      <div>
+        <div class="folderCardName">${esc(f.name)}</div>
+        ${f.desc ? `<div class="folderCardDesc">${esc(f.desc)}</div>` : ''}
+      </div>
+      <div class="folderCardMeta">
+        <span class="metaBadge files">${fFiles.length} file${fFiles.length !== 1 ? 's' : ''}</span>
+        <span class="metaBadge ${uploadOn ? 'upload-on' : 'upload-off'}">${uploadOn ? '⬆️ Upload aktif' : '🚫 Upload ditutup'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('[data-open-folder]').forEach(card => {
+    card.addEventListener('click', () => openFolder(card.dataset.openFolder));
+  });
+}
+
+// ── OPEN FOLDER ──
+function openFolder(folderId) {
+  loadState();
+  const folder = folders.find(f => f.id === folderId);
+  if (!folder) return;
+
+  currentFolderId = folderId;
+  selectedFiles = [];
+  closeDropdown();
+
+  document.getElementById('folderView').style.display = 'none';
+  document.getElementById('quotesView').style.display = '';
+  document.getElementById('fabWrap').style.display = '';
+
+  document.getElementById('bcFolder').textContent = folder.name;
+  document.getElementById('folderInnerTitle').textContent = '📁 ' + folder.name;
+  document.getElementById('folderInnerSub').textContent = folder.desc || '';
+
+  // Show/hide FAB based on upload enabled
+  const uploadOn = globalUploadEnabled && folder.uploadEnabled !== false;
+  document.getElementById('fabWrap').style.display = uploadOn ? '' : 'none';
+
+  renderPhotoGrid(folderId);
+}
+
+// ── RENDER PHOTO GRID ──
+function renderPhotoGrid(folderId) {
+  const grid = document.getElementById('photoGrid');
+  let fFiles = files.filter(f => f.folderId === folderId);
+  
+  // Sort
+  fFiles = fFiles.sort((a, b) => {
+    const na = a.name.toLowerCase(), nb = b.name.toLowerCase();
+    return sortAsc ? na.localeCompare(nb) : nb.localeCompare(na);
+  });
+
+  if (!fFiles.length) {
+    grid.innerHTML = `<div class="emptyState" style="grid-column:1/-1;"><div class="emptyIcon">🖼️</div><p>Belum ada file. Jadilah yang pertama upload!</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = fFiles.map(fi => {
+    const img = isImage(fi.name) && fi.dataUrl;
+    return `
+    <div class="photoCard" data-file-id="${fi.id}">
+      <div class="photoCardHeader">
+        <div class="photoCardHeaderInner">
+          <div class="photoCardThumb">
+            ${img ? `<img src="${fi.dataUrl}" alt="" />` : getFileIcon(fi.name)}
+          </div>
+          <div class="photoCardName">${esc(fi.name)}</div>
+        </div>
+        <div class="photoCardThreeDot" data-threedot="${fi.id}">⋮</div>
+      </div>
+      <div class="photoCardImg" data-preview="${fi.id}">
+        ${img
+          ? `<img src="${fi.dataUrl}" alt="${esc(fi.name)}" loading="lazy" />`
+          : `<div class="photoCardFile">
+               <div class="bigIcon">${getFileIcon(fi.name)}</div>
+               <div class="fileName">${esc(fi.name)}</div>
+               <div class="fileSize">${fmtSize(fi.size)}</div>
+             </div>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+
+  // Click on card image area → preview
+  grid.querySelectorAll('[data-preview]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const fid = el.dataset.preview;
+      openPreview(fid);
+    });
+  });
+
+  // Three-dot button
+  grid.querySelectorAll('[data-threedot]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const fid = btn.dataset.threedot;
+      toggleDropdown(fid, btn);
+    });
+  });
+}
+
+// ── SORT TOGGLE ──
+document.getElementById('sortArrowBtn').addEventListener('click', () => {
+  sortAsc = !sortAsc;
+  document.getElementById('sortArrowBtn').textContent = sortAsc ? '↑' : '↓';
+  if (currentFolderId) renderPhotoGrid(currentFolderId);
+});
+
+// ── THREE-DOT DROPDOWN ──
+function toggleDropdown(fileId, triggerEl) {
+  const dd = document.getElementById('dropdown');
+
+  if (activeDropdownFileId === fileId && dd.style.display !== 'none') {
+    closeDropdown(); return;
+  }
+
+  activeDropdownFileId = fileId;
+  const fi = files.find(f => f.id === fileId);
+  if (!fi) return;
+
+  dd.innerHTML = `
+    <div class="dropItem" data-action="preview">🔍 Lihat pratinjau</div>
+    ${fi.dataUrl
+      ? `<div class="dropItem" data-action="download">⬇️ Unduh file</div>`
+      : `<div class="dropItem" style="opacity:.5;cursor:default;">⬇️ Unduh (N/A)</div>`
+    }
+    <div class="dropItem danger" data-action="delete">🗑️ Hapus</div>
+  `;
+
+  // Position dropdown near trigger
+  const rect = triggerEl.getBoundingClientRect();
+  dd.style.display = 'block';
+  const ddW = 170;
+  let left = rect.right - ddW;
+  if (left < 8) left = 8;
+  let top = rect.bottom + 4;
+  if (top + 140 > window.innerHeight) top = rect.top - 144;
+  dd.style.left = left + 'px';
+  dd.style.top = top + 'px';
+
+  dd.querySelectorAll('[data-action]').forEach(item => {
+    item.addEventListener('click', () => {
+      const action = item.dataset.action;
+      closeDropdown();
+      if (action === 'preview') openPreview(fileId);
+      else if (action === 'download') downloadFile(fileId);
+      else if (action === 'delete') deleteFile(fileId);
+    });
+  });
+}
+
+function closeDropdown() {
+  document.getElementById('dropdown').style.display = 'none';
+  activeDropdownFileId = null;
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('[data-threedot]') && !e.target.closest('#dropdown')) {
+    closeDropdown();
+  }
+});
+
+// ── PREVIEW ──
+function openPreview(fileId) {
+  const fi = files.find(f => f.id === fileId);
+  if (!fi) return;
+
+  const overlay = document.getElementById('previewOverlay');
+  const imgEl = document.getElementById('previewImg');
+  const fileBox = document.getElementById('previewFileBox');
+  const titleEl = document.getElementById('previewTitle');
+  const dlBtn = document.getElementById('previewDownload');
+  const noteEl = document.getElementById('previewNote');
+
+  titleEl.textContent = fi.name;
+  
+  if (fi.dataUrl) {
+    dlBtn.href = fi.dataUrl;
+    dlBtn.download = fi.name;
+    dlBtn.style.display = '';
+  } else {
+    dlBtn.style.display = 'none';
+  }
+
+  if (isImage(fi.name) && fi.dataUrl) {
+    imgEl.src = fi.dataUrl;
+    imgEl.alt = fi.name;
+    imgEl.style.display = '';
+    fileBox.style.display = 'none';
+  } else {
+    imgEl.style.display = 'none';
+    fileBox.style.display = '';
+    document.getElementById('previewFileBigIcon').textContent = getFileIcon(fi.name);
+    document.getElementById('previewFileName').textContent = fi.name;
+    document.getElementById('previewFileMeta').textContent = fmtSize(fi.size) + ' · ' + fmtDate(fi.uploadedAt);
+    if (fi.uploaderNote) {
+      noteEl.textContent = '"' + fi.uploaderNote + '"';
+      noteEl.style.display = '';
+    } else {
+      noteEl.style.display = 'none';
+    }
+  }
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('previewClose').addEventListener('click', closePreview);
+document.getElementById('previewOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('previewOverlay')) closePreview();
+});
+function closePreview() {
+  document.getElementById('previewOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── DOWNLOAD ──
+function downloadFile(fileId) {
+  const fi = files.find(f => f.id === fileId);
+  if (!fi || !fi.dataUrl) return;
+  const a = document.createElement('a');
+  a.href = fi.dataUrl; a.download = fi.name; a.click();
+}
+
+// ── DELETE ──
+function deleteFile(fileId) {
+  if (!confirm('Hapus file ini?')) return;
+  files = files.filter(f => f.id !== fileId);
+  saveState();
+  if (currentFolderId) renderPhotoGrid(currentFolderId);
+}
+
+// ── GO HOME ──
+function goHome() {
+  currentFolderId = null;
+  selectedFiles = [];
+  closeDropdown();
+  closeUploadSheet();
+  renderFolderGrid();
+}
+
+document.getElementById('bcHome').addEventListener('click', goHome);
+document.getElementById('backBtn').addEventListener('click', goHome);
+
+// ── FLOATING ACTION BUTTON ──
+const fabMain = document.getElementById('fabMain');
+const fabMenu = document.getElementById('fabMenu');
+let fabOpen = false;
+
+fabMain.addEventListener('click', () => {
+  fabOpen = !fabOpen;
+  fabMain.classList.toggle('open', fabOpen);
+  fabMenu.classList.toggle('open', fabOpen);
+});
+
+document.getElementById('fabUploadItem').addEventListener('click', () => {
+  closeFab();
+  openUploadSheet();
+});
+
+function closeFab() {
+  fabOpen = false;
+  fabMain.classList.remove('open');
+  fabMenu.classList.remove('open');
+}
+
+// Close fab when clicking elsewhere
+document.addEventListener('click', (e) => {
+  if (fabOpen && !e.target.closest('#fabWrap')) closeFab();
+});
+
+// ── UPLOAD SHEET ──
+function openUploadSheet() {
+  loadState();
+  const folder = folders.find(f => f.id === currentFolderId);
+  if (!folder) return;
+  
+  const uploadOn = globalUploadEnabled && folder.uploadEnabled !== false;
+  document.getElementById('uploadDisabledNotice').style.display = uploadOn ? 'none' : '';
+  document.getElementById('uploadEnabledArea').style.display = uploadOn ? '' : 'none';
+
+  document.getElementById('uploadOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderSelectedFiles();
+}
+
+function closeUploadSheet() {
+  document.getElementById('uploadOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('uploadOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('uploadOverlay')) closeUploadSheet();
+});
+
+// ── DRAG & DROP ──
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+  addFiles(Array.from(fileInput.files));
+  fileInput.value = '';
+});
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  addFiles(Array.from(e.dataTransfer.files));
+});
+
+function addFiles(newFiles) {
+  const MAX = 50 * 1024 * 1024;
+  newFiles.forEach(f => {
+    if (f.size > MAX) { alert(`File "${f.name}" terlalu besar (maks 50 MB).`); return; }
+    if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) selectedFiles.push(f);
+  });
+  renderSelectedFiles();
+}
+
+function renderSelectedFiles() {
+  const container = document.getElementById('selectedFiles');
+  const btn = document.getElementById('uploadBtn');
+  if (!selectedFiles.length) { container.innerHTML = ''; btn.disabled = true; return; }
+  btn.disabled = false;
+  container.innerHTML = selectedFiles.map((f, i) => `
+    <div class="selectedFile">
+      <span>${getFileIcon(f.name)}</span>
+      <span class="fname">${esc(f.name)}</span>
+      <span class="fsize">${fmtSize(f.size)}</span>
+      <button class="removeFile" data-rm="${i}">✕</button>
+    </div>
+  `).join('');
+  container.querySelectorAll('[data-rm]').forEach(b => {
+    b.addEventListener('click', () => { selectedFiles.splice(Number(b.dataset.rm), 1); renderSelectedFiles(); });
+  });
+}
+
+// ── UPLOAD ──
+document.getElementById('uploadBtn').addEventListener('click', async () => {
+  if (!selectedFiles.length) return;
+  loadState();
+
+  const folder = folders.find(f => f.id === currentFolderId);
+  if (!folder) return;
+  const uploadOn = globalUploadEnabled && folder.uploadEnabled !== false;
+  if (!uploadOn) { openUploadSheet(); return; }
+
+  const note = document.getElementById('noteInput').value.trim();
+  const progressWrap = document.getElementById('progressWrap');
+  const progressFill = document.getElementById('progressFill');
+  const progressLabel = document.getElementById('progressLabel');
+  const alertEl = document.getElementById('uploadAlert');
+  const btn = document.getElementById('uploadBtn');
+
+  btn.disabled = true;
+  progressWrap.style.display = '';
+  alertEl.innerHTML = '';
+
+  let done = 0;
+  const total = selectedFiles.length;
+  const errors = [];
+
+  for (const file of selectedFiles) {
+    try {
+      let dataUrl = null;
+      if (file.size <= 5 * 1024 * 1024) {
+        dataUrl = await readFileAsDataUrl(file);
+      }
+      files.push({
+        id: genId(),
+        folderId: currentFolderId,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploaderNote: note,
+        uploadedAt: Date.now(),
+        dataUrl,
+      });
+    } catch { errors.push(file.name); }
+    done++;
+    progressFill.style.width = Math.round((done/total)*100) + '%';
+    progressLabel.textContent = `Mengupload ${done}/${total}...`;
+    await delay(200);
+  }
+
+  saveState();
+
+  if (errors.length) {
+    alertEl.innerHTML = `<div class="alert error">Gagal upload: ${errors.map(esc).join(', ')}</div>`;
+  } else {
+    alertEl.innerHTML = `<div class="alert success">✅ ${total} file berhasil diupload!</div>`;
+  }
+
+  selectedFiles = [];
+  renderSelectedFiles();
+  document.getElementById('noteInput').value = '';
+  progressWrap.style.display = 'none';
+  progressFill.style.width = '0';
+  btn.disabled = true;
+  renderPhotoGrid(currentFolderId);
+
+  setTimeout(() => {
+    alertEl.innerHTML = '';
+    closeUploadSheet();
+  }, 2000);
+});
+
+function readFileAsDataUrl(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(file);
+  });
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── STORAGE EVENTS (sync with admin) ──
+window.addEventListener('storage', e => {
+  if ([FOLDERS_KEY, FILES_KEY, GUPLOAD_KEY].includes(e.key)) {
+    loadState();
+    if (currentFolderId) {
+      const folder = folders.find(f => f.id === currentFolderId);
+      if (!folder) { goHome(); return; }
+      renderPhotoGrid(currentFolderId);
+    } else {
+      renderFolderGrid();
+    }
+  }
+});
+
+// ── INIT ──
+loadState();
+renderFolderGrid();
+</script>
+</body>
+</html>
