@@ -940,7 +940,7 @@
       <img class="lightboxImg" id="lightboxImg" src="" alt="" />
       <div class="lightboxName" id="lightboxName"></div>
       <div class="lightboxActions">
-        <a class="btn primary" id="lightboxDownload" download>⬇ Download</a>
+        <a class="btn primary" id="lightboxDownload">⬇ Download</a>
       </div>
     </div>
   </div>
@@ -1190,13 +1190,16 @@
 
     async function downloadFile(url, name) {
       try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url;
+        a.href = blobUrl;
         a.download = name;
-        a.target = "_blank";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
         showToast("Download dimulai ✓", "success");
       } catch { showToast("Gagal download", "error"); }
     }
@@ -1205,8 +1208,7 @@
     function openLightbox(url, name) {
       lightboxImg.src = url;
       lightboxName.textContent = name;
-      lightboxDownload.href = url;
-      lightboxDownload.download = name;
+      lightboxDownload.onclick = () => downloadFile(url, name);
       lightbox.classList.add("show");
     }
 
