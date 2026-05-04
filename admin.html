@@ -144,14 +144,13 @@
     /* ── FOLDER ITEMS ── */
     .folderItem {
       border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04);
-      border-radius: 16px; padding: 14px 16px;
-      display: flex; justify-content: space-between; align-items: center; gap: 12px;
-      flex-wrap: wrap;
+      border-radius: 16px; padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 10px;
     }
-    .folderItemLeft { display: flex; align-items: center; gap: 12px; }
-    .folderIcon { font-size: 28px; }
-    .folderName { font-weight: 700; font-size: 15px; }
-    .folderMeta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .folderItemTop { display: flex; align-items: center; gap: 10px; }
+    .folderIcon { font-size: 24px; flex-shrink: 0; }
+    .folderName { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .folderMeta { font-size: 11px; color: var(--muted); margin-top: 1px; }
     .folderActions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
     /* ── TOGGLE SWITCH ── */
@@ -264,14 +263,24 @@
     .statusMsg.success { color: var(--green); }
     .statusMsg.error { color: var(--red); }
 
-    /* ── UPLOAD SECTION ── */
-    .uploadToggleRow {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 14px 16px; flex-wrap: wrap;
+    /* ── PER-FOLDER TOGGLE ── */
+    .folderToggleWrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .folderToggleSmall {
+      width: 44px; height: 24px;
+      position: relative; border-radius: 999px;
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      cursor: pointer; transition: background .3s ease, border-color .3s ease;
+      flex-shrink: 0; display: inline-block;
     }
-    .uploadToggleInfo { flex: 1; }
-    .uploadToggleTitle { font-weight: 700; font-size: 15px; }
-    .uploadToggleDesc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .folderToggleSmall.on { background: linear-gradient(135deg, var(--green), #34d399); border-color: transparent; }
+    .folderToggleSmall::after {
+      content: ''; position: absolute;
+      top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%; background: #fff;
+      transition: left .3s ease; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    }
+    .folderToggleSmall.on::after { left: 22px; }
 
     /* ── TOAST ── */
     .toast {
@@ -363,8 +372,8 @@
           <div class="statLabel">TOTAL FILE</div>
         </div>
         <div class="statCard">
-          <div class="statNum" id="statUpload">—</div>
-          <div class="statLabel">STATUS UPLOAD</div>
+          <div class="statNum" id="statEnabled">—</div>
+          <div class="statLabel">FOLDER AKTIF UPLOAD</div>
         </div>
       </div>
 
@@ -373,23 +382,6 @@
 
         <!-- LEFT: Upload Toggle + Create Folder -->
         <div style="display:flex;flex-direction:column;gap:18px;">
-
-          <!-- Upload Toggle -->
-          <div class="adminSection">
-            <div class="adminSectionHead">
-              <h3>Pengaturan Upload</h3>
-              <span class="badge" id="uploadBadge">—</span>
-            </div>
-            <div class="adminSectionBody">
-              <div class="uploadToggleRow" style="padding:0;">
-                <div class="uploadToggleInfo">
-                  <div class="uploadToggleTitle">Izinkan publik upload foto</div>
-                  <div class="uploadToggleDesc">Jika dimatikan, tombol upload di halaman publik tidak aktif</div>
-                </div>
-                <div class="toggle" id="uploadToggleDiv"></div>
-              </div>
-            </div>
-          </div>
 
           <!-- Create Folder -->
           <div class="adminSection">
@@ -460,20 +452,16 @@
   <div class="toast" id="toast"></div>
 
   <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    import { supabase } from "./js/supabaseClient.js";
 
-    const SUPABASE_URL  = "https://pxjnrkkkaznebjtxmuqp.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4am5ya2trYXpuZWJqdHhtdXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1MjIyNDcsImV4cCI6MjA4NjA5ODI0N30.w88N_rvPaLT7Eii0JC8AvgOlDNt-X8HjqCP6bq4w44o";
     const BUCKET = "quotes-files";
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     // ── STATE ──
-    let uploadEnabled = true;
     let currentFolderId = null;
     let currentFolderName = null;
     let folderCount = 0;
     let fileCount = 0;
+    let enabledCount = 0;
 
     // ── TOAST ──
     let toastTimer;
@@ -585,40 +573,8 @@
     function renderStats() {
       document.getElementById("statFolders").textContent = folderCount;
       document.getElementById("statFiles").textContent   = fileCount > 0 ? fileCount : "—";
-      document.getElementById("statUpload").textContent  = uploadEnabled ? "ON" : "OFF";
+      document.getElementById("statEnabled").textContent = enabledCount + "/" + folderCount;
     }
-
-    // ── UPLOAD TOGGLE ──
-    async function loadSettings() {
-      try {
-        const { data } = await supabase.from("quotes_settings").select("upload_enabled").eq("id", 1).maybeSingle();
-        uploadEnabled = data?.upload_enabled !== false;
-      } catch { uploadEnabled = true; }
-      renderUploadToggle();
-    }
-
-    function renderUploadToggle() {
-      const tog = document.getElementById("uploadToggleDiv");
-      tog.className = "toggle" + (uploadEnabled ? " on" : "");
-      const badge = document.getElementById("uploadBadge");
-      badge.className = "badge " + (uploadEnabled ? "enabled" : "disabled");
-      badge.textContent = uploadEnabled ? "ENABLED" : "DISABLED";
-      renderStats();
-    }
-
-    document.getElementById("uploadToggleDiv").addEventListener("click", async () => {
-      uploadEnabled = !uploadEnabled;
-      renderUploadToggle();
-      try {
-        const { error } = await supabase.from("quotes_settings").upsert({ id: 1, upload_enabled: uploadEnabled });
-        if (error) throw error;
-        showToast(uploadEnabled ? "Upload diaktifkan ✓" : "Upload dinonaktifkan 🔒", uploadEnabled ? "success" : "");
-      } catch (e) {
-        showToast("Gagal simpan: " + e.message, "error");
-        uploadEnabled = !uploadEnabled;
-        renderUploadToggle();
-      }
-    });
 
     // ── FOLDERS ──
     async function loadFolders() {
@@ -632,6 +588,7 @@
       }
       const folders = data || [];
       folderCount = folders.length;
+      enabledCount = folders.filter(f => f.upload_enabled !== false).length;
       renderStats();
 
       if (!folders.length) {
@@ -641,22 +598,55 @@
 
       list.innerHTML = "";
       folders.forEach(f => {
+        const isEnabled = f.upload_enabled !== false;
         const item = document.createElement("div");
         item.className = "folderItem";
         item.innerHTML = `
-          <div class="folderItemLeft">
+          <div class="folderItemTop">
             <div class="folderIcon">🗂️</div>
-            <div>
+            <div style="flex:1;min-width:0;">
               <div class="folderName">${esc(f.name)}</div>
               <div class="folderMeta">${fmtDate(f.created_at)}</div>
             </div>
           </div>
           <div class="folderActions">
+            <div class="folderToggleWrap" title="Toggle izin upload publik">
+              <div class="folderToggleSmall ${isEnabled ? 'on' : ''}" data-toggle-folder="${esc(f.id)}"></div>
+              <span class="badge ${isEnabled ? 'enabled' : 'disabled'}" data-toggle-badge="${esc(f.id)}">${isEnabled ? 'UPLOAD ON' : 'UPLOAD OFF'}</span>
+            </div>
             <button class="btn success" style="font-size:12px;padding:7px 13px;" data-browse="${esc(f.id)}" data-bname="${esc(f.name)}">📂 Browse</button>
             <button class="btn danger"  style="font-size:12px;padding:7px 13px;" data-del-folder="${esc(f.id)}" data-dname="${esc(f.name)}">🗑 Hapus</button>
           </div>
         `;
         list.appendChild(item);
+      });
+
+      // bind toggle per folder
+      list.querySelectorAll("[data-toggle-folder]").forEach(tog => {
+        tog.addEventListener("click", async () => {
+          const folderId = tog.dataset.toggleFolder;
+          const isOn = tog.classList.contains("on");
+          const newVal = !isOn;
+          tog.classList.toggle("on", newVal);
+          const badge = list.querySelector(`[data-toggle-badge="${folderId}"]`);
+          if (badge) {
+            badge.textContent = newVal ? "UPLOAD ON" : "UPLOAD OFF";
+            badge.className = "badge " + (newVal ? "enabled" : "disabled");
+          }
+          enabledCount += newVal ? 1 : -1;
+          renderStats();
+          const { error } = await supabase.from("quotes_folders").update({ upload_enabled: newVal }).eq("id", folderId);
+          if (error) {
+            showToast("Gagal simpan: " + error.message, "error");
+            // revert
+            tog.classList.toggle("on", isOn);
+            if (badge) { badge.textContent = isOn ? "UPLOAD ON" : "UPLOAD OFF"; badge.className = "badge " + (isOn ? "enabled" : "disabled"); }
+            enabledCount += isOn ? 1 : -1;
+            renderStats();
+          } else {
+            showToast(newVal ? "Upload folder diaktifkan ✓" : "Upload folder dinonaktifkan 🔒", newVal ? "success" : "");
+          }
+        });
       });
 
       list.querySelectorAll("[data-browse]").forEach(btn => {
@@ -807,7 +797,7 @@
 
     // ── INIT ──
     async function initPanel() {
-      await Promise.all([loadSettings(), loadFolders()]);
+      await loadFolders();
     }
 
     (async () => {
