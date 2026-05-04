@@ -1,201 +1,179 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quotes NRY</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    /* ... (Style tetap sama seperti sebelumnya, tidak ada perubahan di CSS) ... */
-    :root {
-      --bg-0: #0b0c14; --bg-1: #12132a;
-      --pink: #f2a1b3; --pink-2: #d47aa0;
-      --text: #ececf3; --muted: #a7a7c0;
-      --glass-1: rgba(255,255,255,.08); --glass-2: rgba(255,255,255,.03);
-      --border: rgba(255,182,193,.18); --border-2: rgba(255,255,255,.14);
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --green: #6ee7b7; --red: #f87171;
+<script type="module">
+  import { supabase } from "./supabaseClient.js";
+
+  // --- STATE ---
+  let folders = [];
+  let currentFolderId = null;
+  let selectedFiles = [];
+  let isAscending = false;
+
+  const esc = (s = "") => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // --- INITIALIZATION ---
+  async function init() {
+    await loadFolders();
+    renderFolders();
+  }
+
+  // --- AMBIL DATA ---
+  async function loadFolders() {
+    const { data, error } = await supabase
+      .from('folders') // Pastikan tabel 'folders' ada di Supabase
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error) folders = data || [];
+  }
+
+  async function loadFiles(folderId) {
+    const { data, error } = await supabase
+      .from('files') // Pastikan tabel 'files' ada di Supabase
+      .select('*')
+      .eq('folder_id', folderId)
+      .order('created_at', { ascending: isAscending });
+    return error ? [] : data;
+  }
+
+  // --- RENDER UI ---
+  function renderFolders() {
+    const grid = document.getElementById('folderGrid');
+    if(!grid) return;
+    grid.innerHTML = folders.map(f => `
+      <div class="folderCard" onclick="openFolder('${f.id}')">
+        <div class="folderCardIcon">${f.icon || '📁'}</div>
+        <div class="folderCardName">${esc(f.name)}</div>
+        <div class="folderCardDesc">${esc(f.description || '')}</div>
+        <div class="folderCardMeta">
+          <span class="metaBadge upload-${f.upload_enabled ? 'on' : 'off'}">
+            Upload ${f.upload_enabled ? 'On' : 'Off'}
+          </span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.openFolder = async function(id) {
+    currentFolderId = id;
+    const folder = folders.find(f => f.id === id);
+    if (!folder) return;
+
+    document.getElementById('folderView').style.display = 'none';
+    document.getElementById('quotesView').style.display = 'block';
+    document.getElementById('folderNameText').textContent = folder.name;
+    
+    const openUploadBtn = document.getElementById('openUploadBtn');
+    if(openUploadBtn) openUploadBtn.style.display = folder.upload_enabled ? 'flex' : 'none';
+    
+    renderPhotoGrid(id);
+  };
+
+  async function renderPhotoGrid(folderId) {
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Memuat file...</div>';
+    
+    const files = await loadFiles(folderId);
+    if (files.length === 0) {
+      grid.innerHTML = '<div class="emptyState" style="grid-column: 1/-1;"><p>Belum ada kiriman di sini.</p></div>';
+      return;
     }
-    /* ... (Sisanya tetap sama) ... */
-  </style>
-</head>
-<body>
 
-  <script type="module">
-    import { supabase } from "./supabaseClient.js";
-
-    // Variabel Global
-    let folders = [];
-    let currentFolderId = null;
-    let selectedFiles = [];
-    let isAscending = false;
-
-    // Inisialisasi
-    async function init() {
-      await loadFolders();
-      renderFolders();
-    }
-
-    // ── DATA FETCHING (SUPABASE) ──
-    async function loadFolders() {
-      const { data, error } = await supabase
-        .from('folders')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (!error) folders = data || [];
-    }
-
-    async function loadFiles(folderId) {
-      const { data, error } = await supabase
-        .from('files')
-        .select('*')
-        .eq('folder_id', folderId)
-        .order('created_at', { ascending: isAscending });
-      
-      return error ? [] : data;
-    }
-
-    // ── RENDER LOGIC ──
-    function renderFolders() {
-      const grid = document.getElementById('folderGrid');
-      grid.innerHTML = folders.map(f => `
-        <div class="folderCard" onclick="openFolder('${f.id}')">
-          <div class="folderCardIcon">${f.icon || '📁'}</div>
-          <div class="folderCardName">${f.name}</div>
-          <div class="folderCardDesc">${f.description || ''}</div>
-          <div class="folderCardMeta">
-            <span class="metaBadge upload-${f.upload_enabled ? 'on' : 'off'}">
-              Upload ${f.upload_enabled ? 'On' : 'Off'}
-            </span>
+    grid.innerHTML = files.map(file => {
+      const isImg = file.type && file.type.startsWith('image/');
+      return `
+        <div class="photoCard" onclick="openPreview('${file.file_url}', '${esc(file.note)}')">
+          ${isImg ? 
+            `<div class="photoCardImg"><img src="${file.file_url}" loading="lazy"></div>` : 
+            `<div class="photoCardFile"><div class="bigIcon">📄</div><div class="fileName">${esc(file.file_name)}</div></div>`
+          }
+          <div class="photoCardHeader">
+            <div class="photoCardName">${esc(file.file_name)}</div>
+            ${file.note ? `<div class="photoCardNote">${esc(file.note)}</div>` : ''}
           </div>
         </div>
-      `).join('');
+      `;
+    }).join('');
+  }
+
+  // --- LOGIKA UPLOAD (KE BUCKET public-uploads) ---
+  const btnUpload = document.getElementById('btnUpload');
+  btnUpload.addEventListener('click', async () => {
+    if (!selectedFiles.length || !currentFolderId) return;
+
+    const progressWrap = document.getElementById('progressWrap');
+    const progressFill = document.getElementById('progressFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const alertEl = document.getElementById('uploadAlert');
+
+    btnUpload.disabled = true;
+    progressWrap.style.display = 'block';
+    
+    let done = 0;
+    let total = selectedFiles.length;
+    let errors = [];
+
+    for (const file of selectedFiles) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        // Path simpan: folderId/namafile.ext
+        const filePath = `${currentFolderId}/${fileName}`;
+
+        // 1. Upload ke Storage Bucket "public-uploads"
+        const { data: sData, error: sErr } = await supabase.storage
+          .from('public-uploads')
+          .upload(filePath, file);
+
+        if (sErr) throw sErr;
+
+        // 2. Ambil Public URL
+        const { data: urlData } = supabase.storage
+          .from('public-uploads')
+          .getPublicUrl(filePath);
+
+        // 3. Simpan Metadata ke Tabel "files"
+        const { error: dbErr } = await supabase
+          .from('files')
+          .insert([{
+            folder_id: currentFolderId,
+            file_url: urlData.publicUrl,
+            file_name: file.name,
+            type: file.type,
+            note: document.getElementById('noteInput').value
+          }]);
+
+        if (dbErr) throw dbErr;
+
+      } catch (err) {
+        console.error("Gagal upload:", err);
+        errors.push(file.name);
+      }
+      
+      done++;
+      progressFill.style.width = (done / total * 100) + '%';
+      progressLabel.textContent = `Mengupload ${done}/${total}...`;
     }
 
-    window.openFolder = async function(id) {
-      currentFolderId = id;
-      const folder = folders.find(f => f.id === id);
-      if (!folder) return;
-
-      document.getElementById('folderView').style.display = 'none';
-      document.getElementById('quotesView').style.display = 'block';
-      document.getElementById('folderNameText').textContent = folder.name;
-      
-      renderPhotoGrid(id);
-    };
-
-    async function renderPhotoGrid(folderId) {
-      const grid = document.getElementById('photoGrid');
-      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--muted);">Memuat file...</p>';
-      
-      const files = await loadFiles(folderId);
-      
-      if (files.length === 0) {
-        grid.innerHTML = '<div class="emptyState" style="grid-column: 1/-1;"><p>Belum ada file di sini.</p></div>';
-        return;
-      }
-
-      grid.innerHTML = files.map(file => {
-        const isImg = file.type.startsWith('image/');
-        return `
-          <div class="photoCard" onclick="openPreview('${file.id}')">
-            ${isImg ? `
-              <div class="photoCardImg">
-                <img src="${file.file_url}" loading="lazy">
-              </div>
-            ` : `
-              <div class="photoCardFile">
-                <div class="bigIcon">📄</div>
-                <div class="fileName">${file.file_name}</div>
-              </div>
-            `}
-            <div class="photoCardHeader">
-               <div class="photoCardName">${file.file_name}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
+    if (errors.length) {
+      alertEl.innerHTML = `<div class="alert error">Gagal: ${errors.join(', ')}</div>`;
+    } else {
+      alertEl.innerHTML = `<div class="alert success">✅ Berhasil mengupload ${total} file!</div>`;
+      selectedFiles = [];
+      renderSelectedFiles();
+      document.getElementById('noteInput').value = '';
+      setTimeout(() => {
+        closeUploadSheet();
+        renderPhotoGrid(currentFolderId);
+        progressWrap.style.display = 'none';
+      }, 1500);
     }
+    btnUpload.disabled = false;
+  });
 
-    // ── UPLOAD LOGIC (SUPABASE STORAGE) ──
-    const btnUpload = document.getElementById('btnUpload');
-    btnUpload.addEventListener('click', async () => {
-      if (!selectedFiles.length || !currentFolderId) return;
+  // Fungsi navigasi standar
+  window.goHome = () => {
+    document.getElementById('folderView').style.display = 'block';
+    document.getElementById('quotesView').style.display = 'none';
+    currentFolderId = null;
+  };
 
-      const btn = btnUpload;
-      const progressWrap = document.getElementById('progressWrap');
-      const progressFill = document.getElementById('progressFill');
-      const progressLabel = document.getElementById('progressLabel');
-      const alertEl = document.getElementById('uploadAlert');
-
-      btn.disabled = true;
-      progressWrap.style.display = 'block';
-      let done = 0;
-      let total = selectedFiles.length;
-      let errors = [];
-
-      for (const file of selectedFiles) {
-        try {
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`;
-          const filePath = `${currentFolderId}/${fileName}`;
-
-          // 1. Upload ke Storage (Bucket: 'photos')
-          const { error: storageError } = await supabase.storage
-            .from('photos')
-            .upload(filePath, file);
-
-          if (storageError) throw storageError;
-
-          // 2. Dapatkan URL
-          const { data: urlData } = supabase.storage
-            .from('photos')
-            .getPublicUrl(filePath);
-
-          // 3. Simpan ke Database
-          const { error: dbError } = await supabase
-            .from('files')
-            .insert([{
-              folder_id: currentFolderId,
-              file_url: urlData.publicUrl,
-              file_name: file.name,
-              type: file.type,
-              note: document.getElementById('noteInput').value
-            }]);
-
-          if (dbError) throw dbError;
-
-        } catch (err) {
-          errors.push(`${file.name}: ${err.message}`);
-        }
-        
-        done++;
-        progressFill.style.width = Math.round((done / total) * 100) + '%';
-        progressLabel.textContent = `Mengupload ${done}/${total}...`;
-      }
-
-      // Finish
-      if (errors.length) {
-        alertEl.innerHTML = `<div class="alert error">Gagal: ${errors.join(', ')}</div>`;
-      } else {
-        alertEl.innerHTML = `<div class="alert success">✅ Berhasil mengupload ${total} file!</div>`;
-        selectedFiles = [];
-        renderSelectedFiles();
-        document.getElementById('noteInput').value = '';
-        setTimeout(() => {
-          closeUploadSheet();
-          renderPhotoGrid(currentFolderId);
-        }, 1500);
-      }
-      btn.disabled = false;
-    });
-
-    // Jalankan init saat halaman dimuat
-    init();
-
-    // Fungsi helper lainnya (goHome, renderSelectedFiles, dll) tetap dipertahankan
-  </script>
-</body>
-</html>
+  init();
+</script>
