@@ -452,8 +452,11 @@
     /* LIGHTBOX */
     .lightbox {
       position: fixed;
-      inset: 0;
-      z-index: 999;
+      top: 57px; /* below sticky header */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2999;
       background: rgba(5,5,15,.92);
       backdrop-filter: blur(20px);
       display: flex;
