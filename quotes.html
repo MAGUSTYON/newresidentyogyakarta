@@ -1,204 +1,1365 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quotes NRY</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
   <style>
-    /* ... (Style tetap sama seperti sebelumnya, tidak ada perubahan di CSS) ... */
+    /* ===== QUOTES PAGE SPECIFIC ===== */
     :root {
-      --bg-0: #0b0c14; --bg-1: #12132a;
-      --pink: #f2a1b3; --pink-2: #d47aa0;
-      --text: #ececf3; --muted: #a7a7c0;
-      --glass-1: rgba(255,255,255,.08); --glass-2: rgba(255,255,255,.03);
-      --border: rgba(255,182,193,.18); --border-2: rgba(255,255,255,.14);
+      --bg-0: #0b0c14;
+      --bg-1: #12132a;
+      --pink: #f2a1b3;
+      --pink-2: #d47aa0;
+      --text: #ececf3;
+      --muted: #a7a7c0;
+      --glass-1: rgba(255,255,255,.08);
+      --glass-2: rgba(255,255,255,.03);
+      --border: rgba(255,182,193,.18);
+      --border-2: rgba(255,255,255,.14);
       --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --green: #6ee7b7; --red: #f87171;
     }
-    /* ... (Sisanya tetap sama) ... */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--text);
+      line-height: 1.65;
+      background:
+        radial-gradient(1100px 520px at 12% -12%, rgba(242,161,179,.09), transparent 42%),
+        radial-gradient(900px 520px at 88% 112%, rgba(242,161,179,.06), transparent 44%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 52%, var(--bg-0) 100%);
+      background-attachment: fixed;
+    }
+
+    /* HEADER */
+    .siteHeader {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(11,12,20,.92), rgba(11,12,20,.55));
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .headerWrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      height: 68px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .logoBlock { display: flex; flex-direction: column; line-height: 1.05; }
+    .logoTitle { font-family: "Pacifico", cursive; font-size: 20px; color: var(--pink); }
+    .logoSub { font-size: 11px; letter-spacing: .26em; color: var(--muted); margin-top: 2px; }
+
+    .pillNav { display: flex; align-items: center; gap: 8px; }
+
+    .pill {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: .2s ease;
+      white-space: nowrap;
+    }
+    .pill:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+
+    /* MAIN CONTENT */
+    .mainContent {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 22px 18px 100px;
+    }
+
+    /* TOPBAR */
+    .pageTopbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .pageTitle {
+      font-family: "Pacifico", cursive;
+      font-size: 32px;
+      color: var(--pink);
+      text-shadow: 0 0 18px rgba(242,161,179,.25);
+    }
+
+    .pageSub {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb span, .breadcrumb a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .breadcrumb a:hover { color: var(--pink); }
+    .breadcrumb .sep { opacity: .5; }
+    .breadcrumb .current { color: var(--text); font-weight: 600; }
+
+    /* SORT BAR */
+    .sortBar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sortLabel {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .sortBtn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,182,193,.3);
+      background: rgba(242,161,179,.1);
+      color: var(--pink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: .2s;
+    }
+    .sortBtn:hover { background: rgba(242,161,179,.2); }
+
+    .viewToggle {
+      display: flex;
+      gap: 6px;
+    }
+
+    .viewBtn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: .2s;
+    }
+
+    .viewBtn.active {
+      background: rgba(242,161,179,.15);
+      border-color: rgba(242,161,179,.4);
+      color: var(--pink);
+    }
+
+    /* GRID */
+    .folderGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    @media (min-width: 600px) { .folderGrid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) { .folderGrid { grid-template-columns: repeat(4, 1fr); } }
+
+    /* LIST VIEW */
+    .folderGrid.listView {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    /* FOLDER CARD */
+    .folderCard {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      position: relative;
+    }
+
+    .folderCard:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.5);
+      border-color: rgba(242,161,179,.3);
+    }
+
+    .folderCard .cardTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 10px 8px;
+    }
+
+    .folderCard .cardIcon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(255,100,100,.3), rgba(255,60,60,.15));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .folderCard .cardName {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .folderCard .cardMenu {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      letter-spacing: .05em;
+      transition: .15s;
+      flex-shrink: 0;
+    }
+
+    .folderCard .cardMenu:hover { background: rgba(255,255,255,.1); color: var(--text); }
+
+    /* Dropdown menu */
+    .dropMenu {
+      position: absolute;
+      top: 44px;
+      right: 8px;
+      z-index: 50;
+      background: #1c1d2e;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 14px;
+      padding: 6px;
+      min-width: 140px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.6);
+      display: none;
+    }
+
+    .dropMenu.show { display: block; animation: fadeDown .15s ease; }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropItem {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      transition: .15s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .dropItem:hover { background: rgba(255,255,255,.1); }
+
+    /* Preview image inside folder card */
+    .folderCard .cardPreview {
+      width: 100%;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .folderCard .cardPreview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .folderCard .cardPreview .previewPlaceholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.2);
+      font-size: 28px;
+    }
+
+    .folderCard .ownerBadge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(20,20,40,.8);
+      border: 1.5px solid rgba(255,255,255,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* LIST VIEW CARD */
+    .folderGrid.listView .folderCard .cardPreview { display: none; }
+
+    .folderGrid.listView .folderCard {
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+
+    .folderGrid.listView .folderCard .cardTop {
+      flex: 1;
+      padding: 12px 14px;
+    }
+
+    /* IMAGE GRID (inside folder) */
+    .imageGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 600px) { .imageGrid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) { .imageGrid { grid-template-columns: repeat(4, 1fr); } }
+
+    .imageCard {
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      position: relative;
+    }
+
+    .imageCard:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.55); }
+
+    .imageCard img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .imageCard .imgBottom {
+      padding: 8px 8px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .imageCard .imgName {
+      font-size: 11px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .imageCard .imgMenuBtn {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: .15s;
+    }
+    .imageCard .imgMenuBtn:hover { background: rgba(255,255,255,.1); color: var(--text); }
+
+    .imageCard .imgDropMenu {
+      position: absolute;
+      bottom: 36px;
+      right: 6px;
+      z-index: 50;
+      background: #1c1d2e;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 14px;
+      padding: 6px;
+      min-width: 130px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.6);
+      display: none;
+    }
+
+    .imageCard .imgDropMenu.show { display: block; animation: fadeDown .15s ease; }
+
+    /* LIGHTBOX */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(5,5,15,.92);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+
+    .lightbox.show { opacity: 1; pointer-events: all; }
+
+    .lightboxInner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lightboxImg {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.7);
+      object-fit: contain;
+    }
+
+    .lightboxClose {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(20,20,40,.9);
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .15s;
+    }
+    .lightboxClose:hover { background: rgba(242,161,179,.2); }
+
+    .lightboxName {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .lightboxActions { display: flex; gap: 10px; }
+
+    /* FLOATING UPLOAD BUTTON */
+    .fabWrap {
+      position: fixed;
+      bottom: 28px;
+      right: 22px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .fabMenu {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px) scale(.96);
+      transition: opacity .2s, transform .2s;
+    }
+
+    .fabMenu.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0) scale(1);
+    }
+
+    .fabMenuItem {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .fabMenuLabel {
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(20,20,40,.95);
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .fabMenuIcon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .fabMenuIcon.blue { background: #3b82f6; color: #fff; }
+    .fabMenuIcon.blue:hover { background: #2563eb; }
+    .fabMenuIcon.purple { background: #8b5cf6; color: #fff; }
+    .fabMenuIcon.purple:hover { background: #7c3aed; }
+
+    .fabMain {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 28px rgba(242,161,179,.45);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .fabMain:hover { transform: scale(1.08); box-shadow: 0 12px 36px rgba(242,161,179,.55); }
+    .fabMain.open { transform: rotate(45deg); }
+
+    /* UPLOAD SHEET */
+    .uploadSheet {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(5,5,15,.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    .uploadSheet.show { opacity: 1; pointer-events: all; }
+
+    .uploadSheetInner {
+      background: #13142a;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px 32px;
+      width: 100%;
+      max-width: 520px;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .uploadSheet.show .uploadSheetInner { transform: translateY(0); }
+
+    .sheetHandle {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.2);
+      margin: 0 auto 16px;
+    }
+
+    .sheetTitle {
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      color: var(--pink);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .dropZone {
+      border: 2px dashed rgba(242,161,179,.35);
+      border-radius: 18px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: .2s;
+      margin-bottom: 14px;
+    }
+
+    .dropZone:hover, .dropZone.drag { border-color: var(--pink); background: rgba(242,161,179,.05); }
+
+    .dropZoneIcon { font-size: 32px; margin-bottom: 8px; }
+    .dropZoneText { font-size: 13px; color: var(--muted); }
+    .dropZoneText strong { color: var(--pink); }
+
+    input[type="file"] { display: none; }
+
+    .filePreviewList {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .filePreviewItem {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .filePreviewThumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .filePreviewName {
+      font-size: 12px;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .filePreviewRemove {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(255,80,80,.15);
+      color: #ff8080;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .uploadProgress {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.08);
+      margin-bottom: 14px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .uploadProgressBar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--pink), var(--pink-2));
+      border-radius: 2px;
+      width: 0%;
+      transition: width .2s;
+    }
+
+    .uploadStatus { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 10px; min-height: 18px; }
+
+    /* BTN */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s ease;
+      text-decoration: none;
+      user-select: none;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+    }
+
+    .btn:hover { background: rgba(255,255,255,.10); transform: translateY(-1px); }
+
+    .btn.primary {
+      border: none;
+      color: #1b0b12;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      box-shadow: 0 10px 28px rgba(242,161,179,.35);
+    }
+
+    .btn.primary:hover { box-shadow: 0 14px 36px rgba(242,161,179,.45); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* UPLOAD DISABLED NOTICE */
+    .uploadDisabledNotice {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(255,180,50,.08);
+      border: 1px solid rgba(255,180,50,.25);
+      color: #ffcc66;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    /* EMPTY */
+    .emptyState {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .emptyState .emptyIcon { font-size: 48px; margin-bottom: 12px; opacity: .4; }
+    .emptyState p { font-size: 14px; }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.05) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1c1d30;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      opacity: 0;
+      transition: opacity .2s, transform .2s;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(100,220,130,.3); }
+    .toast.error { border-color: rgba(255,80,80,.3); }
+
+    @media (max-width: 480px) {
+      .pageTitle { font-size: 26px; }
+      .mainContent { padding: 18px 14px 100px; }
+    }
   </style>
 </head>
-<body>                
-<script type="module">
-  import { supabase } from "./supabaseClient.js";
 
-  // --- STATE ---
-  let folders = [];
-  let currentFolderId = null;
-  let selectedFiles = [];
-  let isAscending = false;
+<body>
 
-  const esc = (s = "") => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  <!-- HEADER -->
+  <header class="siteHeader">
+    <div class="headerWrap">
+      <div class="logoBlock">
+        <div class="logoTitle">Quotes NRY</div>
+        <div class="logoSub">NEW RESIDENT YOGYAKARTA</div>
+      </div>
+      <nav class="pillNav">
+        <a href="index.html" class="pill">Beranda</a>
+        <a href="quotes.html" class="pill" style="background:linear-gradient(135deg,var(--pink),var(--pink-2));color:#1b0b12;border:none;">Quotes</a>
+      </nav>
+    </div>
+  </header>
 
-  // --- INITIALIZATION ---
-  async function init() {
-    await loadFolders();
-    renderFolders();
-  }
+  <!-- MAIN -->
+  <main class="mainContent" id="mainContent">
 
-  // --- AMBIL DATA ---
-  async function loadFolders() {
-    const { data, error } = await supabase
-      .from('folders') // Pastikan tabel 'folders' ada di Supabase
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (!error) folders = data || [];
-  }
-
-  async function loadFiles(folderId) {
-    const { data, error } = await supabase
-      .from('files') // Pastikan tabel 'files' ada di Supabase
-      .select('*')
-      .eq('folder_id', folderId)
-      .order('created_at', { ascending: isAscending });
-    return error ? [] : data;
-  }
-
-  // --- RENDER UI ---
-  function renderFolders() {
-    const grid = document.getElementById('folderGrid');
-    if(!grid) return;
-    grid.innerHTML = folders.map(f => `
-      <div class="folderCard" onclick="openFolder('${f.id}')">
-        <div class="folderCardIcon">${f.icon || '📁'}</div>
-        <div class="folderCardName">${esc(f.name)}</div>
-        <div class="folderCardDesc">${esc(f.description || '')}</div>
-        <div class="folderCardMeta">
-          <span class="metaBadge upload-${f.upload_enabled ? 'on' : 'off'}">
-            Upload ${f.upload_enabled ? 'On' : 'Off'}
-          </span>
+    <!-- FOLDER VIEW -->
+    <div id="folderView">
+      <div class="pageTopbar">
+        <div>
+          <div class="pageTitle">Quotes NRY</div>
+          <div class="pageSub" id="folderCount">Memuat folder...</div>
         </div>
       </div>
-    `).join('');
-  }
 
-  window.openFolder = async function(id) {
-    currentFolderId = id;
-    const folder = folders.find(f => f.id === id);
-    if (!folder) return;
+      <div class="sortBar">
+        <div class="sortLabel">
+          <span id="sortLabel">Nama</span>
+          <button class="sortBtn" id="sortToggle" title="Urutkan">↑</button>
+        </div>
+        <div class="viewToggle">
+          <button class="viewBtn active" id="viewGrid" title="Grid">⊞</button>
+          <button class="viewBtn" id="viewList" title="List">☰</button>
+        </div>
+      </div>
 
-    document.getElementById('folderView').style.display = 'none';
-    document.getElementById('quotesView').style.display = 'block';
-    document.getElementById('folderNameText').textContent = folder.name;
-    
-    const openUploadBtn = document.getElementById('openUploadBtn');
-    if(openUploadBtn) openUploadBtn.style.display = folder.upload_enabled ? 'flex' : 'none';
-    
-    renderPhotoGrid(id);
-  };
+      <div class="folderGrid" id="folderGrid">
+        <!-- folders rendered here -->
+      </div>
+    </div>
 
-  async function renderPhotoGrid(folderId) {
-    const grid = document.getElementById('photoGrid');
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;">Memuat file...</div>';
-    
-    const files = await loadFiles(folderId);
-    if (files.length === 0) {
-      grid.innerHTML = '<div class="emptyState" style="grid-column: 1/-1;"><p>Belum ada kiriman di sini.</p></div>';
-      return;
+    <!-- FILES VIEW (inside folder) -->
+    <div id="filesView" style="display:none;">
+      <div class="breadcrumb" id="breadcrumb"></div>
+
+      <div class="pageTopbar">
+        <div>
+          <div class="pageTitle" id="currentFolderTitle">Folder</div>
+          <div class="pageSub" id="fileCount">Memuat file...</div>
+        </div>
+      </div>
+
+      <div class="imageGrid" id="imageGrid">
+        <!-- files rendered here -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FLOATING ACTION BUTTON -->
+  <div class="fabWrap" id="fabWrap" style="display:none;">
+    <div class="fabMenu" id="fabMenu">
+      <div class="fabMenuItem" id="fabUploadItem">
+        <span class="fabMenuLabel">Upload foto</span>
+        <button class="fabMenuIcon blue">📷</button>
+      </div>
+    </div>
+    <button class="fabMain" id="fabMain">+</button>
+  </div>
+
+  <!-- UPLOAD SHEET -->
+  <div class="uploadSheet" id="uploadSheet">
+    <div class="uploadSheetInner">
+      <div class="sheetHandle"></div>
+      <div class="sheetTitle">Upload Foto</div>
+      <div class="uploadDisabledNotice" id="uploadDisabledNotice">
+        🔒 Upload sedang dinonaktifkan oleh admin
+      </div>
+      <div id="uploadForm">
+        <div class="dropZone" id="dropZone">
+          <div class="dropZoneIcon">🖼️</div>
+          <div class="dropZoneText">Tap untuk pilih foto atau<br><strong>drag & drop</strong> di sini</div>
+          <input type="file" id="fileInput" accept="image/*" multiple />
+        </div>
+        <div class="filePreviewList" id="filePreviewList" style="display:none;"></div>
+        <div class="uploadProgress" id="uploadProgress"><div class="uploadProgressBar" id="uploadProgressBar"></div></div>
+        <div class="uploadStatus" id="uploadStatus"></div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" style="flex:1;" id="cancelUpload">Batal</button>
+          <button class="btn primary" style="flex:1;" id="doUpload" disabled>Upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightboxInner">
+      <button class="lightboxClose" id="lightboxClose">✕</button>
+      <img class="lightboxImg" id="lightboxImg" src="" alt="" />
+      <div class="lightboxName" id="lightboxName"></div>
+      <div class="lightboxActions">
+        <a class="btn primary" id="lightboxDownload" download>⬇ Download</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://pxjnrkkkaznebjtxmuqp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4am5ya2trYXpuZWJqdHhtdXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1MjIyNDcsImV4cCI6MjA4NjA5ODI0N30.w88N_rvPaLT7Eii0JC8AvgOlDNt-X8HjqCP6bq4w44o";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const BUCKET = "quotes-files";
+
+    // STATE
+    let folders = [];
+    let currentFolder = null;
+    let sortAsc = true;
+    let isGridView = true;
+    let selectedFiles = [];
+    let uploadEnabled = true;
+    let fabOpen = false;
+
+    // ELEMENTS
+    const folderView   = document.getElementById("folderView");
+    const filesView    = document.getElementById("filesView");
+    const folderGrid   = document.getElementById("folderGrid");
+    const imageGrid    = document.getElementById("imageGrid");
+    const folderCount  = document.getElementById("folderCount");
+    const fileCount    = document.getElementById("fileCount");
+    const breadcrumb   = document.getElementById("breadcrumb");
+    const currentFolderTitle = document.getElementById("currentFolderTitle");
+    const fabWrap      = document.getElementById("fabWrap");
+    const fabMain      = document.getElementById("fabMain");
+    const fabMenu      = document.getElementById("fabMenu");
+    const fabUploadItem = document.getElementById("fabUploadItem");
+    const uploadSheet  = document.getElementById("uploadSheet");
+    const dropZone     = document.getElementById("dropZone");
+    const fileInput    = document.getElementById("fileInput");
+    const filePreviewList = document.getElementById("filePreviewList");
+    const doUpload     = document.getElementById("doUpload");
+    const cancelUpload = document.getElementById("cancelUpload");
+    const uploadProgress = document.getElementById("uploadProgress");
+    const uploadProgressBar = document.getElementById("uploadProgressBar");
+    const uploadStatus = document.getElementById("uploadStatus");
+    const uploadDisabledNotice = document.getElementById("uploadDisabledNotice");
+    const uploadForm   = document.getElementById("uploadForm");
+    const lightbox     = document.getElementById("lightbox");
+    const lightboxImg  = document.getElementById("lightboxImg");
+    const lightboxName = document.getElementById("lightboxName");
+    const lightboxClose = document.getElementById("lightboxClose");
+    const lightboxDownload = document.getElementById("lightboxDownload");
+    const toast        = document.getElementById("toast");
+    const sortToggle   = document.getElementById("sortToggle");
+    const sortLabel    = document.getElementById("sortLabel");
+    const viewGrid     = document.getElementById("viewGrid");
+    const viewList     = document.getElementById("viewList");
+
+    // TOAST
+    let toastTimer;
+    function showToast(msg, type = "") {
+      toast.textContent = msg;
+      toast.className = "toast show " + type;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.className = "toast", 2600);
     }
 
-    grid.innerHTML = files.map(file => {
-      const isImg = file.type && file.type.startsWith('image/');
+    // LOAD SETTINGS (upload enabled?)
+    async function loadSettings() {
+      try {
+        const { data } = await supabase.from("quotes_settings").select("upload_enabled").eq("id", 1).maybeSingle();
+        uploadEnabled = data?.upload_enabled !== false;
+      } catch { uploadEnabled = true; }
+    }
+
+    // LOAD FOLDERS
+    async function loadFolders() {
+      folderGrid.innerHTML = skeletonFolders();
+      const { data, error } = await supabase.from("quotes_folders").select("*").order("name", { ascending: sortAsc });
+      if (error) { folderGrid.innerHTML = `<div style="color:var(--muted);padding:20px;">Gagal load: ${error.message}</div>`; return; }
+      folders = data || [];
+      folderCount.textContent = `${folders.length} folder`;
+      renderFolders();
+    }
+
+    function skeletonFolders() {
+      return Array(6).fill(0).map(() => `
+        <div style="border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px;">
+            <div class="skeleton" style="width:30px;height:30px;border-radius:8px;flex-shrink:0;"></div>
+            <div class="skeleton" style="height:14px;flex:1;border-radius:6px;"></div>
+          </div>
+          <div class="skeleton" style="width:100%;aspect-ratio:16/10;border-radius:0;"></div>
+        </div>
+      `).join("");
+    }
+
+    function renderFolders() {
+      if (!folders.length) {
+        folderGrid.innerHTML = `
+          <div class="emptyState" style="grid-column:1/-1;">
+            <div class="emptyIcon">📂</div>
+            <p>Belum ada folder</p>
+          </div>`;
+        return;
+      }
+      folderGrid.innerHTML = folders.map(f => folderCardHTML(f)).join("");
+      folderGrid.querySelectorAll(".folderCard[data-id]").forEach(el => {
+        el.addEventListener("click", e => {
+          if (e.target.closest(".cardMenu, .dropMenu")) return;
+          openFolder(el.dataset.id, el.dataset.name);
+        });
+      });
+      folderGrid.querySelectorAll(".cardMenu").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          const drop = btn.nextElementSibling;
+          const isOpen = drop.classList.contains("show");
+          closeAllDrops();
+          if (!isOpen) drop.classList.add("show");
+        });
+      });
+    }
+
+    function folderCardHTML(f) {
+      const preview = f.preview_url
+        ? `<img src="${esc(f.preview_url)}" alt="" loading="lazy" />`
+        : `<div class="previewPlaceholder">🖼️</div>`;
       return `
-        <div class="photoCard" onclick="openPreview('${file.file_url}', '${esc(file.note)}')">
-          ${isImg ? 
-            `<div class="photoCardImg"><img src="${file.file_url}" loading="lazy"></div>` : 
-            `<div class="photoCardFile"><div class="bigIcon">📄</div><div class="fileName">${esc(file.file_name)}</div></div>`
-          }
-          <div class="photoCardHeader">
-            <div class="photoCardName">${esc(file.file_name)}</div>
-            ${file.note ? `<div class="photoCardNote">${esc(file.note)}</div>` : ''}
+        <div class="folderCard" data-id="${esc(f.id)}" data-name="${esc(f.name)}">
+          <div class="cardTop">
+            <div class="cardIcon">🗂️</div>
+            <div class="cardName">${esc(f.name)}</div>
+            <button class="cardMenu" aria-label="menu">⋮</button>
+            <div class="dropMenu">
+              <button class="dropItem" data-action="open" data-id="${esc(f.id)}" data-name="${esc(f.name)}">📂 Buka</button>
+            </div>
+          </div>
+          <div class="cardPreview">
+            ${preview}
+            <div class="ownerBadge">👤</div>
           </div>
         </div>
       `;
-    }).join('');
-  }
+    }
 
-  // --- LOGIKA UPLOAD (KE BUCKET public-uploads) ---
-  const btnUpload = document.getElementById('btnUpload');
-  btnUpload.addEventListener('click', async () => {
-    if (!selectedFiles.length || !currentFolderId) return;
+    function closeAllDrops() {
+      document.querySelectorAll(".dropMenu.show, .imgDropMenu.show").forEach(d => d.classList.remove("show"));
+    }
 
-    const progressWrap = document.getElementById('progressWrap');
-    const progressFill = document.getElementById('progressFill');
-    const progressLabel = document.getElementById('progressLabel');
-    const alertEl = document.getElementById('uploadAlert');
-
-    btnUpload.disabled = true;
-    progressWrap.style.display = 'block';
-    
-    let done = 0;
-    let total = selectedFiles.length;
-    let errors = [];
-
-    for (const file of selectedFiles) {
-      try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        // Path simpan: folderId/namafile.ext
-        const filePath = `${currentFolderId}/${fileName}`;
-
-        // 1. Upload ke Storage Bucket "public-uploads"
-        const { data: sData, error: sErr } = await supabase.storage
-          .from('public-uploads')
-          .upload(filePath, file);
-
-        if (sErr) throw sErr;
-
-        // 2. Ambil Public URL
-        const { data: urlData } = supabase.storage
-          .from('public-uploads')
-          .getPublicUrl(filePath);
-
-        // 3. Simpan Metadata ke Tabel "files"
-        const { error: dbErr } = await supabase
-          .from('files')
-          .insert([{
-            folder_id: currentFolderId,
-            file_url: urlData.publicUrl,
-            file_name: file.name,
-            type: file.type,
-            note: document.getElementById('noteInput').value
-          }]);
-
-        if (dbErr) throw dbErr;
-
-      } catch (err) {
-        console.error("Gagal upload:", err);
-        errors.push(file.name);
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".cardMenu") && !e.target.closest(".dropMenu") &&
+          !e.target.closest(".imgMenuBtn") && !e.target.closest(".imgDropMenu")) {
+        closeAllDrops();
       }
-      
-      done++;
-      progressFill.style.width = (done / total * 100) + '%';
-      progressLabel.textContent = `Mengupload ${done}/${total}...`;
+    });
+
+    // OPEN FOLDER
+    async function openFolder(folderId, folderName) {
+      currentFolder = { id: folderId, name: folderName };
+      folderView.style.display = "none";
+      filesView.style.display = "block";
+      currentFolderTitle.textContent = folderName;
+      fileCount.textContent = "Memuat...";
+      fabWrap.style.display = "flex";
+      updateBreadcrumb(folderName);
+      await loadFiles(folderId);
     }
 
-    if (errors.length) {
-      alertEl.innerHTML = `<div class="alert error">Gagal: ${errors.join(', ')}</div>`;
-    } else {
-      alertEl.innerHTML = `<div class="alert success">✅ Berhasil mengupload ${total} file!</div>`;
+    function updateBreadcrumb(folderName) {
+      breadcrumb.innerHTML = `
+        <a onclick="goHome()">🏠 Semua Folder</a>
+        <span class="sep">›</span>
+        <span class="current">${esc(folderName)}</span>
+      `;
+    }
+
+    window.goHome = function() {
+      currentFolder = null;
+      filesView.style.display = "none";
+      folderView.style.display = "block";
+      fabWrap.style.display = "none";
+      fabClose();
+    };
+
+    // LOAD FILES
+    async function loadFiles(folderId) {
+      imageGrid.innerHTML = skeletonImages();
+      const { data, error } = await supabase.storage.from(BUCKET).list(folderId + "/", { sortBy: { column: "created_at", order: "desc" } });
+      if (error) { imageGrid.innerHTML = `<div style="color:var(--muted);">Gagal: ${error.message}</div>`; return; }
+      const files = (data || []).filter(f => f.name !== ".keep" && f.id);
+      fileCount.textContent = `${files.length} foto`;
+      if (!files.length) {
+        imageGrid.innerHTML = `<div class="emptyState" style="grid-column:1/-1;"><div class="emptyIcon">📷</div><p>Belum ada foto di folder ini</p></div>`;
+        return;
+      }
+      imageGrid.innerHTML = files.map(f => imageCardHTML(folderId, f)).join("");
+      imageGrid.querySelectorAll(".imageCard[data-url]").forEach(el => {
+        el.addEventListener("click", e => {
+          if (e.target.closest(".imgMenuBtn, .imgDropMenu")) return;
+          openLightbox(el.dataset.url, el.dataset.name);
+        });
+      });
+      imageGrid.querySelectorAll(".imgMenuBtn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          const drop = btn.nextElementSibling;
+          const isOpen = drop.classList.contains("show");
+          closeAllDrops();
+          if (!isOpen) drop.classList.add("show");
+        });
+      });
+      imageGrid.querySelectorAll("[data-dl]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          downloadFile(btn.dataset.dl, btn.dataset.name);
+        });
+      });
+    }
+
+    function skeletonImages() {
+      return Array(8).fill(0).map(() => `
+        <div style="border-radius:16px;overflow:hidden;">
+          <div class="skeleton" style="width:100%;aspect-ratio:1;"></div>
+          <div style="padding:8px;"><div class="skeleton" style="height:11px;border-radius:4px;width:70%;"></div></div>
+        </div>
+      `).join("");
+    }
+
+    function imageCardHTML(folderId, f) {
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(`${folderId}/${f.name}`);
+      const url = data.publicUrl;
+      const shortName = f.name.replace(/\.[^.]+$/, "").slice(0, 20);
+      return `
+        <div class="imageCard" data-url="${esc(url)}" data-name="${esc(f.name)}">
+          <img src="${esc(url)}" alt="${esc(f.name)}" loading="lazy" />
+          <div class="imgBottom">
+            <span class="imgName">${esc(shortName)}</span>
+            <button class="imgMenuBtn" aria-label="menu">⋮</button>
+            <div class="imgDropMenu">
+              <button class="dropItem" data-dl="${esc(url)}" data-name="${esc(f.name)}">⬇ Download</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function downloadFile(url, name) {
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        a.target = "_blank";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast("Download dimulai ✓", "success");
+      } catch { showToast("Gagal download", "error"); }
+    }
+
+    // LIGHTBOX
+    function openLightbox(url, name) {
+      lightboxImg.src = url;
+      lightboxName.textContent = name;
+      lightboxDownload.href = url;
+      lightboxDownload.download = name;
+      lightbox.classList.add("show");
+    }
+
+    lightboxClose.addEventListener("click", () => lightbox.classList.remove("show"));
+    lightbox.addEventListener("click", e => { if (e.target === lightbox) lightbox.classList.remove("show"); });
+
+    // SORT
+    sortToggle.addEventListener("click", () => {
+      sortAsc = !sortAsc;
+      sortToggle.textContent = sortAsc ? "↑" : "↓";
+      folders.sort((a, b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+      renderFolders();
+    });
+
+    // VIEW TOGGLE
+    viewGrid.addEventListener("click", () => {
+      isGridView = true;
+      folderGrid.classList.remove("listView");
+      viewGrid.classList.add("active");
+      viewList.classList.remove("active");
+    });
+
+    viewList.addEventListener("click", () => {
+      isGridView = false;
+      folderGrid.classList.add("listView");
+      viewList.classList.add("active");
+      viewGrid.classList.remove("active");
+    });
+
+    // FAB
+    fabMain.addEventListener("click", () => {
+      fabOpen = !fabOpen;
+      fabMain.classList.toggle("open", fabOpen);
+      fabMenu.classList.toggle("open", fabOpen);
+    });
+
+    function fabClose() {
+      fabOpen = false;
+      fabMain.classList.remove("open");
+      fabMenu.classList.remove("open");
+    }
+
+    fabUploadItem.addEventListener("click", () => {
+      fabClose();
+      openUploadSheet();
+    });
+
+    // UPLOAD SHEET
+    function openUploadSheet() {
+      if (!currentFolder) return;
       selectedFiles = [];
-      renderSelectedFiles();
-      document.getElementById('noteInput').value = '';
-      setTimeout(() => {
-        closeUploadSheet();
-        renderPhotoGrid(currentFolderId);
-        progressWrap.style.display = 'none';
-      }, 1500);
+      renderFilePreview();
+      uploadStatus.textContent = "";
+      uploadProgress.style.display = "none";
+      uploadProgressBar.style.width = "0%";
+      doUpload.disabled = true;
+
+      if (!uploadEnabled) {
+        uploadDisabledNotice.style.display = "block";
+        uploadForm.querySelector(".dropZone").style.display = "none";
+        doUpload.style.display = "none";
+      } else {
+        uploadDisabledNotice.style.display = "none";
+        uploadForm.querySelector(".dropZone").style.display = "block";
+        doUpload.style.display = "inline-flex";
+      }
+
+      uploadSheet.classList.add("show");
     }
-    btnUpload.disabled = false;
-  });
 
-  // Fungsi navigasi standar
-  window.goHome = () => {
-    document.getElementById('folderView').style.display = 'block';
-    document.getElementById('quotesView').style.display = 'none';
-    currentFolderId = null;
-  };
+    function closeUploadSheet() {
+      uploadSheet.classList.remove("show");
+      selectedFiles = [];
+      renderFilePreview();
+    }
 
-  init();
-</script>
+    cancelUpload.addEventListener("click", closeUploadSheet);
+    uploadSheet.addEventListener("click", e => { if (e.target === uploadSheet) closeUploadSheet(); });
+
+    dropZone.addEventListener("click", () => uploadEnabled && fileInput.click());
+    fileInput.addEventListener("change", () => addFiles(Array.from(fileInput.files)));
+
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.classList.remove("drag");
+      if (uploadEnabled) addFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/")));
+    });
+
+    function addFiles(files) {
+      files.forEach(f => { if (!selectedFiles.find(x => x.name === f.name)) selectedFiles.push(f); });
+      renderFilePreview();
+      doUpload.disabled = selectedFiles.length === 0;
+    }
+
+    function renderFilePreview() {
+      if (!selectedFiles.length) { filePreviewList.style.display = "none"; return; }
+      filePreviewList.style.display = "flex";
+      filePreviewList.innerHTML = selectedFiles.map((f, i) => {
+        const url = URL.createObjectURL(f);
+        return `
+          <div class="filePreviewItem">
+            <img class="filePreviewThumb" src="${url}" />
+            <span class="filePreviewName">${esc(f.name)}</span>
+            <button class="filePreviewRemove" data-i="${i}">✕</button>
+          </div>
+        `;
+      }).join("");
+      filePreviewList.querySelectorAll(".filePreviewRemove").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedFiles.splice(Number(btn.dataset.i), 1);
+          renderFilePreview();
+          doUpload.disabled = selectedFiles.length === 0;
+        });
+      });
+    }
+
+    doUpload.addEventListener("click", async () => {
+      if (!selectedFiles.length || !currentFolder || !uploadEnabled) return;
+      doUpload.disabled = true;
+      uploadProgress.style.display = "block";
+      let done = 0;
+      const total = selectedFiles.length;
+
+      for (const file of selectedFiles) {
+        uploadStatus.textContent = `Mengupload ${done + 1}/${total}: ${file.name}`;
+        const safeName = `${Date.now()}-${file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-")}`;
+        const path = `${currentFolder.id}/${safeName}`;
+        const { error } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: false, contentType: file.type });
+        if (error) { showToast(`Gagal upload ${file.name}: ${error.message}`, "error"); }
+        done++;
+        uploadProgressBar.style.width = `${Math.round(done / total * 100)}%`;
+      }
+
+      uploadStatus.textContent = `${done} foto berhasil diupload ✓`;
+      showToast(`${done} foto diupload! ✓`, "success");
+      setTimeout(() => { closeUploadSheet(); loadFiles(currentFolder.id); }, 900);
+    });
+
+    // ESC key
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        lightbox.classList.remove("show");
+        closeAllDrops();
+        closeUploadSheet();
+      }
+    });
+
+    function esc(s = "") {
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+    }
+
+    // INIT
+    (async () => {
+      await loadSettings();
+      await loadFolders();
+    })();
+  </script>
 </body>
 </html>
