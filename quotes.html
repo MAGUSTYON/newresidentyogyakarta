@@ -74,20 +74,6 @@
     }
     
     /* ===== QUOTES PAGE SPECIFIC ===== */
-    :root {
-      --bg-0: #0b0c14;
-      --bg-1: #12132a;
-      --pink: #f2a1b3;
-      --pink-2: #d47aa0;
-      --text: #ececf3;
-      --muted: #a7a7c0;
-      --glass-1: rgba(255,255,255,.08);
-      --glass-2: rgba(255,255,255,.03);
-      --border: rgba(255,182,193,.18);
-      --border-2: rgba(255,255,255,.14);
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { min-height: 100%; }
 
@@ -101,49 +87,6 @@
         linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 52%, var(--bg-0) 100%);
       background-attachment: fixed;
     }
-
-    /* HEADER */
-    .siteHeader {
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      width: 100%;
-      background: linear-gradient(180deg, rgba(11,12,20,.92), rgba(11,12,20,.55));
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .headerWrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      height: 68px;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .logoBlock { display: flex; flex-direction: column; line-height: 1.05; }
-    .logoTitle { font-family: "Pacifico", cursive; font-size: 20px; color: var(--pink); }
-    .logoSub { font-size: 11px; letter-spacing: .26em; color: var(--muted); margin-top: 2px; }
-
-    .pillNav { display: flex; align-items: center; gap: 8px; }
-
-    .pill {
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 600;
-      font-size: 13px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.14);
-      transition: .2s ease;
-      white-space: nowrap;
-    }
-    .pill:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
-
     /* MAIN CONTENT */
     .mainContent {
       max-width: 1100px;
