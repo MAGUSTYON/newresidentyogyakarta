@@ -942,7 +942,11 @@
   <div class="toast" id="toast"></div>
 
   <script type="module">
-    import { supabase } from "./supabaseClient.js";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://pxjnrkkkaznebjtxmuqp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4am5ya2trYXpuZWJqdHhtdXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1MjIyNDcsImV4cCI6MjA4NjA5ODI0N30.w88N_rvPaLT7Eii0JC8AvgOlDNt-X8HjqCP6bq4w44o";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const BUCKET = "quotes-files";
 
@@ -952,6 +956,7 @@
     let sortAsc = true;
     let isGridView = true;
     let selectedFiles = [];
+    let uploadEnabled = true;
     let fabOpen = false;
 
     // ELEMENTS
@@ -997,6 +1002,8 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => toast.className = "toast", 2600);
     }
+
+    // upload_enabled sekarang per-folder, dibaca dari data folder saat openFolder()
 
     // LOAD FOLDERS
     async function loadFolders() {
@@ -1082,9 +1089,11 @@
 
     // OPEN FOLDER
     async function openFolder(folderId, folderName) {
-      const folder = folders.find(f => f.id === folderId);
-      const uploadEnabled = folder?.upload_enabled !== false;
-      currentFolder = { id: folderId, name: folderName, uploadEnabled };
+      // Ambil upload_enabled dari data folder yang sudah di-load
+      const folderData = folders.find(f => f.id === folderId);
+      uploadEnabled = folderData ? folderData.upload_enabled !== false : true;
+
+      currentFolder = { id: folderId, name: folderName };
       folderView.style.display = "none";
       filesView.style.display = "block";
       currentFolderTitle.textContent = folderName;
@@ -1241,7 +1250,6 @@
     // UPLOAD SHEET
     function openUploadSheet() {
       if (!currentFolder) return;
-      const uploadEnabled = currentFolder.uploadEnabled;
       selectedFiles = [];
       renderFilePreview();
       uploadStatus.textContent = "";
@@ -1271,7 +1279,7 @@
     cancelUpload.addEventListener("click", closeUploadSheet);
     uploadSheet.addEventListener("click", e => { if (e.target === uploadSheet) closeUploadSheet(); });
 
-    dropZone.addEventListener("click", () => currentFolder?.uploadEnabled && fileInput.click());
+    dropZone.addEventListener("click", () => uploadEnabled && fileInput.click());
     fileInput.addEventListener("change", () => addFiles(Array.from(fileInput.files)));
 
     dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag"); });
@@ -1279,7 +1287,7 @@
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
       dropZone.classList.remove("drag");
-      if (currentFolder?.uploadEnabled) addFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/")));
+      if (uploadEnabled) addFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/")));
     });
 
     function addFiles(files) {
@@ -1311,7 +1319,7 @@
     }
 
     doUpload.addEventListener("click", async () => {
-      if (!selectedFiles.length || !currentFolder || !currentFolder.uploadEnabled) return;
+      if (!selectedFiles.length || !currentFolder || !uploadEnabled) return;
       doUpload.disabled = true;
       uploadProgress.style.display = "block";
       let done = 0;
