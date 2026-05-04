@@ -1,11 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Panel • New Resident Yogyakarta</title>
+  <title>Admin Panel • Quotes NRY</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
   <style>
     :root {
       --bg-0: #0b0c14;
@@ -19,16 +23,15 @@
       --border: rgba(255,182,193,.18);
       --border-2: rgba(255,255,255,.14);
       --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --green: #6ee7b7;
-      --red: #f87171;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
 
-    html, body {
-      min-height: 100%;
+    body {
       font-family: "Inter", system-ui, sans-serif;
       color: var(--text);
+      line-height: 1.65;
       background:
         radial-gradient(1100px 520px at 12% -12%, rgba(242,161,179,.09), transparent 42%),
         radial-gradient(900px 520px at 88% 112%, rgba(242,161,179,.06), transparent 44%),
@@ -36,622 +39,565 @@
       background-attachment: fixed;
     }
 
-    /* ── HEADER ── */
+    /* HEADER */
     .siteHeader {
-      position: sticky; top: 0; z-index: 999;
+      position: sticky; top: 0; z-index: 200; width: 100%;
       background: linear-gradient(180deg, rgba(11,12,20,.92), rgba(11,12,20,.55));
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(18px);
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
+
     .headerWrap {
-      max-width: 1200px; margin: 0 auto;
-      height: 68px; padding: 0 20px;
+      max-width: 1200px; margin: 0 auto; height: 68px; padding: 0 18px;
       display: flex; align-items: center; justify-content: space-between; gap: 14px;
     }
+
     .logoBlock { display: flex; flex-direction: column; line-height: 1.05; }
-    .logoTitle { font-weight: 800; font-size: 16px; color: var(--pink); }
-    .logoSub { font-size: 10px; letter-spacing: .28em; color: var(--muted); }
-    .pill {
-      text-decoration: none; color: var(--text); font-weight: 700;
-      padding: 8px 14px; border-radius: 999px;
-      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
-      transition: .2s ease; font-size: 13px; cursor: pointer;
-    }
-    .pill:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
-    .pill.danger { border-color: rgba(248,113,113,.3); color: var(--red); }
+    .logoTitle { font-family: "Pacifico", cursive; font-size: 20px; color: var(--pink); }
+    .logoSub { font-size: 11px; letter-spacing: .26em; color: var(--muted); margin-top: 2px; }
 
-    /* ── LAYOUT ── */
-    .adminWrap { max-width: 1200px; margin: 0 auto; padding: 24px 18px 60px; }
+    /* ADMIN WRAP */
+    .adminWrap { max-width: 1200px; margin: 0 auto; padding: 22px 18px 60px; }
 
-    /* ── CARD ── */
+    /* CARDS */
     .card {
       background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
       border: 1px solid var(--border);
-      border-radius: 22px; padding: 20px;
-      box-shadow: var(--shadow); backdrop-filter: blur(14px);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
     }
 
-    /* ── BUTTONS ── */
+    /* BUTTONS */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 9px 16px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 18px; border-radius: 999px;
       border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
-      color: var(--text); font-weight: 700; font-size: 13px;
-      cursor: pointer; transition: .2s ease; text-decoration: none; user-select: none;
+      color: var(--text); font-weight: 600; cursor: pointer;
+      transition: .2s ease; font-family: "Inter", sans-serif; font-size: 14px;
     }
-    .btn:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+
+    .btn:hover { background: rgba(255,255,255,.10); transform: translateY(-1px); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
     .btn.primary {
       border: none; color: #1b0b12;
       background: linear-gradient(135deg, var(--pink), var(--pink-2));
-      box-shadow: 0 8px 24px rgba(242,161,179,.35);
+      box-shadow: 0 10px 28px rgba(242,161,179,.35);
     }
-    .btn.primary:hover { box-shadow: 0 12px 32px rgba(242,161,179,.45); }
-    .btn.danger { border-color: rgba(248,113,113,.3); color: var(--red); }
-    .btn.danger:hover { background: rgba(248,113,113,.12); }
-    .btn.success { border-color: rgba(110,231,183,.3); color: var(--green); }
-    .btn.success:hover { background: rgba(110,231,183,.1); }
-    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .btn.primary:hover { box-shadow: 0 14px 36px rgba(242,161,179,.45); }
 
-    /* ── INPUTS ── */
+    .btn.danger {
+      border-color: rgba(255,80,80,.3);
+      background: rgba(255,80,80,.1);
+      color: #ff8080;
+    }
+    .btn.danger:hover { background: rgba(255,80,80,.2); }
+
+    /* FORMS */
     input, textarea, select {
-      width: 100%; background: rgba(255,255,255,.05);
-      border: 1px solid var(--border-2); border-radius: 14px;
-      padding: 11px 14px; color: var(--text); outline: none; font-size: 14px;
-      font-family: inherit;
+      width: 100%;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border-2);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--text);
+      outline: none;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
     }
-    input::placeholder, textarea::placeholder { color: rgba(167,167,192,.7); }
+    input::placeholder, textarea::placeholder { color: rgba(167,167,192,.75); }
     textarea { min-height: 100px; resize: vertical; }
-    input:focus, textarea:focus { border-color: rgba(242,161,179,.4); }
 
-    /* ── LOGIN ── */
-    #loginSection { max-width: 420px; margin: 80px auto; }
-    #loginSection h2 { font-family: "Playfair Display", serif; color: var(--pink); font-size: 28px; margin-bottom: 20px; }
-    .formRow { display: flex; flex-direction: column; gap: 10px; }
+    h2, h3 { font-family: "Playfair Display", serif; color: var(--pink); font-weight: 700; }
+    h2 { font-size: 22px; }
+    h3 { font-size: 18px; }
 
-    /* ── ADMIN GRID ── */
-    .adminGrid { display: grid; gap: 18px; grid-template-columns: 1fr; }
-    @media (min-width: 900px) { .adminGrid { grid-template-columns: 1fr 1fr; } }
-
+    /* SECTION */
     .adminSection {
-      border-radius: 22px; border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      box-shadow: 0 10px 30px rgba(0,0,0,.28); backdrop-filter: blur(14px);
-      overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,.30);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+      margin-bottom: 20px;
     }
-    .adminSectionHead {
+
+    .sectionHeader {
       display: flex; justify-content: space-between; align-items: center;
-      gap: 10px; padding: 14px 16px; flex-wrap: wrap;
+      gap: 12px; padding: 16px 18px 14px;
       border-bottom: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.025);
-    }
-    .adminSectionHead h3 {
-      font-family: "Playfair Display", serif; color: var(--pink);
-      font-size: 17px; font-weight: 700;
-    }
-    .adminSectionBody { padding: 14px; }
-
-    /* ── SCROLLBOX ── */
-    .scrollBox {
-      height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-      padding-right: 4px; scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,.2) transparent;
-    }
-    .scrollBox::-webkit-scrollbar { width: 6px; }
-    .scrollBox::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 99px; }
-
-    /* ── FOLDER ITEMS ── */
-    .folderItem {
-      border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04);
-      border-radius: 16px; padding: 14px 16px;
-      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      background: rgba(255,255,255,.02);
       flex-wrap: wrap;
     }
-    .folderItemLeft { display: flex; align-items: center; gap: 12px; }
-    .folderIcon { font-size: 28px; }
-    .folderName { font-weight: 700; font-size: 15px; }
-    .folderMeta { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .folderActions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-    /* ── TOGGLE SWITCH ── */
-    .toggleWrap { display: flex; align-items: center; gap: 10px; }
-    .toggleLabel { font-size: 13px; font-weight: 600; }
+    .sectionBody { padding: 16px; }
+
+    /* TOGGLE SWITCH */
+    .toggleRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      flex-wrap: wrap;
+    }
+
+    .toggleInfo { flex: 1; }
+    .toggleTitle { font-weight: 700; font-size: 15px; }
+    .toggleDesc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
     .toggle {
-      position: relative; width: 48px; height: 26px;
-      background: rgba(255,255,255,.12); border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.2); cursor: pointer;
-      transition: .3s ease;
+      position: relative;
+      width: 54px; height: 30px;
+      flex-shrink: 0;
+      cursor: pointer;
     }
-    .toggle.on { background: linear-gradient(135deg, var(--green), #34d399); border-color: transparent; }
-    .toggle::after {
-      content: ''; position: absolute; top: 3px; left: 3px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; transition: .3s ease;
+
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .toggleSlider {
+      position: absolute; inset: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.2);
+      transition: .25s;
+    }
+
+    .toggleSlider::before {
+      content: "";
+      position: absolute;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      left: 3px; top: 3px;
+      background: #fff;
       box-shadow: 0 2px 6px rgba(0,0,0,.3);
+      transition: .25s;
     }
-    .toggle.on::after { left: 25px; }
 
-    /* ── STATUS BADGE ── */
-    .badge {
-      padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
-      letter-spacing: .04em;
+    .toggle input:checked + .toggleSlider {
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      border-color: transparent;
     }
-    .badge.enabled { background: rgba(110,231,183,.15); color: var(--green); border: 1px solid rgba(110,231,183,.3); }
-    .badge.disabled { background: rgba(248,113,113,.12); color: var(--red); border: 1px solid rgba(248,113,113,.25); }
 
-    /* ── STATS ROW ── */
-    .statsRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-    @media (max-width: 600px) { .statsRow { grid-template-columns: 1fr 1fr; } }
-    .statCard {
-      border-radius: 18px; padding: 14px 16px;
-      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.10);
+    .toggle input:checked + .toggleSlider::before { transform: translateX(24px); }
+
+    .toggleStatus {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: .05em;
     }
-    .statNum { font-size: 28px; font-weight: 800; color: var(--pink); }
-    .statLabel { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: .04em; }
 
-    /* ── FILE LIST ── */
-    .fileItem {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03);
+    .toggleStatus.on { background: rgba(100,220,130,.15); color: #6ddc82; border: 1px solid rgba(100,220,130,.3); }
+    .toggleStatus.off { background: rgba(255,80,80,.12); color: #ff8080; border: 1px solid rgba(255,80,80,.25); }
+
+    /* FOLDER LIST */
+    .folderList { display: flex; flex-direction: column; gap: 10px; }
+
+    .folderItem {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
     }
-    .fileItemName { font-size: 13px; font-weight: 600; word-break: break-all; }
-    .fileItemMeta { font-size: 11px; color: var(--muted); }
 
-    /* ── EMPTY ── */
-    .empty { text-align: center; padding: 32px; color: var(--muted); font-size: 14px; }
-    .emptyIcon { font-size: 36px; margin-bottom: 10px; }
+    .folderItemIcon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255,100,100,.25), rgba(255,60,60,.1));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
 
-    /* ── TOP BAR ── */
-    .topBarRow {
+    .folderItemName { flex: 1; font-weight: 700; font-size: 14px; }
+    .folderItemMeta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .folderItemBadge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(242,161,179,.3);
+      color: var(--pink);
+      background: rgba(242,161,179,.08);
+      white-space: nowrap;
+    }
+
+    /* SCROLLBOX */
+    .scrollBox {
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.22) transparent;
+    }
+    .scrollBox::-webkit-scrollbar { width: 6px; }
+    .scrollBox::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 999px; }
+
+    /* LOGIN */
+    .loginCard { max-width: 420px; margin: 80px auto; }
+    .row { display: flex; flex-direction: column; gap: 10px; }
+
+    /* MUTED */
+    .muted { color: var(--muted); font-size: 13px; }
+
+    /* STATUS MESSAGE */
+    .statusMsg { font-size: 13px; min-height: 18px; }
+    .statusMsg.success { color: #6ddc82; }
+    .statusMsg.error { color: #ff8080; }
+
+    /* TOP BAR */
+    .topBar {
       display: flex; justify-content: space-between; align-items: center;
       gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
     }
-    .topBarRow h2 { font-family: "Playfair Display", serif; color: var(--pink); font-size: 24px; }
 
-    /* ── ALERT ── */
-    .alert {
-      padding: 10px 14px; border-radius: 14px; font-size: 13px; margin-top: 8px;
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1c1d30; border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px; padding: 10px 20px;
+      font-size: 13px; font-weight: 600; color: var(--text);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      opacity: 0; transition: opacity .2s, transform .2s;
+      z-index: 9999; pointer-events: none; white-space: nowrap;
     }
-    .alert.success { background: rgba(110,231,183,.12); color: var(--green); border: 1px solid rgba(110,231,183,.25); }
-    .alert.error { background: rgba(248,113,113,.12); color: var(--red); border: 1px solid rgba(248,113,113,.25); }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(100,220,130,.3); }
+    .toast.error { border-color: rgba(255,80,80,.3); }
 
-    /* ── MODAL ── */
-    .modalOverlay {
-      display: none; position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
-      align-items: center; justify-content: center;
+    @media (max-width: 640px) {
+      .adminWrap { padding: 16px 14px 40px; }
     }
-    .modalOverlay.open { display: flex; }
-    .modalBox {
-      width: 90%; max-width: 440px; border-radius: 24px;
-      background: linear-gradient(180deg, #181928, #0f1020);
-      border: 1px solid rgba(255,255,255,.14); padding: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.6);
-    }
-    .modalBox h3 { font-family: "Playfair Display", serif; color: var(--pink); margin-bottom: 16px; }
-    .modalActions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
-
-    /* ── SECTION FULL ── */
-    .sectionFull { grid-column: 1 / -1; }
   </style>
 </head>
+
 <body>
 
-<header class="siteHeader">
-  <div class="headerWrap">
-    <div class="logoBlock">
-      <span class="logoTitle">New Resident Yogyakarta</span>
-      <span class="logoSub">ADMIN PANEL</span>
+  <header class="siteHeader">
+    <div class="headerWrap">
+      <div class="logoBlock">
+        <div class="logoTitle">Admin Panel</div>
+        <div class="logoSub">QUOTES NRY</div>
+      </div>
+      <div id="headerRight">
+        <button class="btn" id="logoutBtn" style="display:none;">Logout</button>
+      </div>
     </div>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <a href="public.html" class="pill" target="_blank">🌐 Lihat Website Publik</a>
-      <button id="logoutBtn" class="pill danger" style="display:none;">Logout</button>
-    </div>
-  </div>
-</header>
+  </header>
 
-<!-- LOGIN -->
-<div class="adminWrap">
-  <div id="loginSection">
-    <div class="card">
-      <h2>Admin Login</h2>
-      <div class="formRow" style="margin-top:16px;">
+  <div class="adminWrap">
+
+    <!-- LOGIN -->
+    <div id="loginSection" class="card loginCard">
+      <h2 style="margin-bottom:4px;">Admin Login</h2>
+      <p class="muted" style="margin-bottom:16px;">Masuk dengan akun admin kamu</p>
+      <div class="row">
         <input id="emailInput" type="email" placeholder="Email admin" />
         <input id="passInput" type="password" placeholder="Password" />
-        <button id="loginBtn" class="btn primary">Login →</button>
-        <div id="loginAlert"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel" style="display:none;">
-
-    <!-- TOP BAR -->
-    <div class="topBarRow">
-      <div>
-        <h2>Panel Admin</h2>
-        <div style="color:var(--muted); font-size:13px; margin-top:4px;">Kelola folder publik, upload file, dan pengaturan sistem.</div>
+        <button class="btn primary" id="loginBtn">Login</button>
+        <div class="statusMsg" id="loginStatus"></div>
       </div>
     </div>
 
-    <!-- STATS -->
-    <div class="statsRow">
-      <div class="statCard">
-        <div class="statNum" id="statFolders">0</div>
-        <div class="statLabel">TOTAL FOLDER</div>
-      </div>
-      <div class="statCard">
-        <div class="statNum" id="statFiles">0</div>
-        <div class="statLabel">TOTAL FILE</div>
-      </div>
-      <div class="statCard">
-        <div class="statNum" id="statUploadStatus">ON</div>
-        <div class="statLabel">STATUS UPLOAD</div>
-      </div>
-    </div>
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" style="display:none;">
 
-    <div class="adminGrid">
-
-      <!-- FOLDER MANAGER -->
-      <section class="adminSection sectionFull">
-        <div class="adminSectionHead">
-          <h3>📁 Manajemen Folder</h3>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <!-- GLOBAL UPLOAD TOGGLE -->
-            <div class="toggleWrap">
-              <span class="toggleLabel">Upload Publik:</span>
-              <div class="toggle" id="globalToggle" title="Klik untuk enable/disable upload publik"></div>
-              <span id="globalToggleLabel" class="badge enabled">ENABLED</span>
-            </div>
-            <button class="btn primary" id="newFolderBtn">+ Buat Folder</button>
-          </div>
-        </div>
-        <div class="adminSectionBody">
-          <div class="scrollBox" id="folderList">
-            <div class="empty"><div class="emptyIcon">📂</div>Belum ada folder. Buat folder baru di atas.</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- FILE VIEWER -->
-      <section class="adminSection sectionFull" id="fileViewerSection" style="display:none;">
-        <div class="adminSectionHead">
-          <h3 id="fileViewerTitle">📄 File di Folder</h3>
-          <button class="btn" id="closeFileViewer">✕ Tutup</button>
-        </div>
-        <div class="adminSectionBody">
-          <div class="scrollBox" id="fileList">
-            <div class="empty"><div class="emptyIcon">📄</div>Belum ada file di folder ini.</div>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Buat Folder -->
-<div class="modalOverlay" id="folderModal">
-  <div class="modalBox">
-    <h3>Buat Folder Baru</h3>
-    <div class="formRow">
-      <input id="folderNameInput" placeholder="Nama folder (contoh: Dokumen KK)" maxlength="60" />
-      <input id="folderDescInput" placeholder="Deskripsi singkat (opsional)" maxlength="120" />
-      <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
-        <span style="font-size:13px; font-weight:600;">Upload publik untuk folder ini:</span>
-        <div class="toggle on" id="folderUploadToggle"></div>
-        <span id="folderUploadLabel" class="badge enabled">ENABLED</span>
-      </div>
-      <div id="folderModalAlert"></div>
-    </div>
-    <div class="modalActions">
-      <button class="btn" id="cancelFolderBtn">Batal</button>
-      <button class="btn primary" id="saveFolderBtn">Buat Folder</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── STORAGE KEYS ──
-const ADMIN_CRED = { email: 'admin@newresidentyk.com', password: 'admin123' };
-const FOLDERS_KEY = 'nry_folders';
-const FILES_KEY   = 'nry_files';
-const GUPLOAD_KEY = 'nry_global_upload_enabled';
-const SESSION_KEY = 'nry_admin_session';
-
-// ── STATE ──
-let folders = [];
-let files = [];
-let globalUploadEnabled = true;
-let openFolderId = null;
-let folderUploadOn = true;
-
-// ── HELPERS ──
-function loadState() {
-  try { folders = JSON.parse(localStorage.getItem(FOLDERS_KEY)) || []; } catch { folders = []; }
-  try { files   = JSON.parse(localStorage.getItem(FILES_KEY))   || []; } catch { files = []; }
-  const g = localStorage.getItem(GUPLOAD_KEY);
-  globalUploadEnabled = g === null ? true : g === '1';
-}
-function saveState() {
-  localStorage.setItem(FOLDERS_KEY, JSON.stringify(folders));
-  localStorage.setItem(FILES_KEY,   JSON.stringify(files));
-  localStorage.setItem(GUPLOAD_KEY, globalUploadEnabled ? '1' : '0');
-}
-function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function esc(s='') { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmtSize(bytes) {
-  if (!bytes) return '0 B';
-  const k = 1024, m = k*k;
-  if (bytes >= m) return (bytes/m).toFixed(1)+' MB';
-  if (bytes >= k) return (bytes/k).toFixed(1)+' KB';
-  return bytes+' B';
-}
-function fmtDate(ts) { return ts ? new Date(ts).toLocaleString('id-ID') : '-'; }
-
-// ── AUTH ──
-function isLoggedIn() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
-function doLogin(email, pass) {
-  return email === ADMIN_CRED.email && pass === ADMIN_CRED.password;
-}
-
-// ── RENDER STATS ──
-function renderStats() {
-  document.getElementById('statFolders').textContent = folders.length;
-  const totalFiles = files.length;
-  document.getElementById('statFiles').textContent = totalFiles;
-  const el = document.getElementById('statUploadStatus');
-  el.textContent = globalUploadEnabled ? 'ON' : 'OFF';
-  el.style.color = globalUploadEnabled ? 'var(--green)' : 'var(--red)';
-}
-
-// ── RENDER GLOBAL TOGGLE ──
-function renderGlobalToggle() {
-  const tog = document.getElementById('globalToggle');
-  const lbl = document.getElementById('globalToggleLabel');
-  tog.className = 'toggle' + (globalUploadEnabled ? ' on' : '');
-  lbl.className = 'badge' + (globalUploadEnabled ? ' enabled' : ' disabled');
-  lbl.textContent = globalUploadEnabled ? 'ENABLED' : 'DISABLED';
-}
-
-// ── RENDER FOLDERS ──
-function renderFolders() {
-  const list = document.getElementById('folderList');
-  if (folders.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="emptyIcon">📂</div>Belum ada folder. Buat folder baru.</div>`;
-    return;
-  }
-  list.innerHTML = folders.map(f => {
-    const fFiles = files.filter(fi => fi.folderId === f.id);
-    const uploadOn = f.uploadEnabled !== false;
-    return `
-    <div class="folderItem" data-folder-id="${f.id}">
-      <div class="folderItemLeft">
-        <div class="folderIcon">📁</div>
+      <div class="topBar">
         <div>
-          <div class="folderName">${esc(f.name)}</div>
-          <div class="folderMeta">${fFiles.length} file${fFiles.length !== 1 ? 's' : ''} &nbsp;·&nbsp; Dibuat ${fmtDate(f.createdAt)}</div>
-          ${f.desc ? `<div class="folderMeta">${esc(f.desc)}</div>` : ''}
+          <h2 style="margin:0;">Admin Panel</h2>
+          <p class="muted" style="margin-top:4px;">Kelola folder dan pengaturan upload Quotes NRY</p>
+        </div>
+        <a href="quotes.html" class="btn" target="_blank">🔗 Lihat Publik</a>
+      </div>
+
+      <!-- UPLOAD TOGGLE -->
+      <div class="adminSection" style="margin-bottom:20px;">
+        <div class="sectionHeader">
+          <h3 style="margin:0;">Pengaturan Upload</h3>
+          <span class="toggleStatus" id="uploadStatusBadge">—</span>
+        </div>
+        <div class="toggleRow">
+          <div class="toggleInfo">
+            <div class="toggleTitle">Izinkan publik upload foto</div>
+            <div class="toggleDesc">Jika dimatikan, tombol upload di halaman publik tidak bisa digunakan</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="uploadToggle" />
+            <span class="toggleSlider"></span>
+          </label>
         </div>
       </div>
-      <div class="folderActions">
-        <div class="toggleWrap">
-          <span style="font-size:12px; color:var(--muted);">Upload:</span>
-          <div class="toggle ${uploadOn ? 'on' : ''}" data-folder-toggle="${f.id}"></div>
-          <span class="badge ${uploadOn ? 'enabled' : 'disabled'}" id="ftlbl-${f.id}">${uploadOn ? 'ON' : 'OFF'}</span>
+
+      <!-- FOLDER MANAGEMENT -->
+      <div class="adminSection">
+        <div class="sectionHeader">
+          <h3 style="margin:0;">Kelola Folder</h3>
+          <button class="btn" id="refreshFoldersBtn">🔄 Refresh</button>
         </div>
-        <button class="btn" data-view-folder="${f.id}">📄 Lihat File</button>
-        <button class="btn danger" data-del-folder="${f.id}" title="Hapus folder & semua isinya">🗑</button>
+        <div class="sectionBody">
+
+          <!-- Create Folder Form -->
+          <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-bottom:16px;">
+            <h3 style="margin-bottom:12px;font-size:15px;">Buat Folder Baru</h3>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <input id="folderNameInput" placeholder="Nama folder (misal: ara bf keonho)" style="flex:1;min-width:200px;" />
+              <button class="btn primary" id="createFolderBtn">+ Buat Folder</button>
+            </div>
+            <div class="statusMsg" id="folderStatus" style="margin-top:10px;"></div>
+          </div>
+
+          <!-- Folder List -->
+          <div class="scrollBox folderList" id="folderList">
+            <div class="muted" style="text-align:center;padding:20px;">Memuat folder...</div>
+          </div>
+
+        </div>
       </div>
-    </div>`;
-  }).join('');
 
-  // bind toggle
-  list.querySelectorAll('[data-folder-toggle]').forEach(tog => {
-    tog.addEventListener('click', () => {
-      const id = tog.dataset.folderToggle;
-      const f = folders.find(x => x.id === id);
-      if (!f) return;
-      f.uploadEnabled = !(f.uploadEnabled !== false);
-      saveState();
-      renderFolders();
-      renderStats();
+      <!-- FILES IN FOLDER (preview admin) -->
+      <div class="adminSection" id="filesSection" style="display:none;">
+        <div class="sectionHeader">
+          <div>
+            <h3 style="margin:0;" id="filesSectionTitle">File di Folder</h3>
+            <div class="muted" id="filesSectionMeta"></div>
+          </div>
+          <button class="btn" id="closeFilesSection">✕ Tutup</button>
+        </div>
+        <div class="sectionBody">
+          <div class="scrollBox" id="adminFileGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;max-height:380px;"></div>
+        </div>
+      </div>
+
+    </div><!-- end adminPanel -->
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://pxjnrkkkaznebjtxmuqp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4am5ya2trYXpuZWJqdHhtdXFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1MjIyNDcsImV4cCI6MjA4NjA5ODI0N30.w88N_rvPaLT7Eii0JC8AvgOlDNt-X8HjqCP6bq4w44o";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const BUCKET = "quotes-files";
+
+    // ELEMENTS
+    const loginSection  = document.getElementById("loginSection");
+    const adminPanel    = document.getElementById("adminPanel");
+    const emailInput    = document.getElementById("emailInput");
+    const passInput     = document.getElementById("passInput");
+    const loginBtn      = document.getElementById("loginBtn");
+    const loginStatus   = document.getElementById("loginStatus");
+    const logoutBtn     = document.getElementById("logoutBtn");
+    const uploadToggle  = document.getElementById("uploadToggle");
+    const uploadStatusBadge = document.getElementById("uploadStatusBadge");
+    const folderNameInput = document.getElementById("folderNameInput");
+    const createFolderBtn = document.getElementById("createFolderBtn");
+    const folderStatus  = document.getElementById("folderStatus");
+    const folderList    = document.getElementById("folderList");
+    const refreshFoldersBtn = document.getElementById("refreshFoldersBtn");
+    const filesSection  = document.getElementById("filesSection");
+    const filesSectionTitle = document.getElementById("filesSectionTitle");
+    const filesSectionMeta = document.getElementById("filesSectionMeta");
+    const adminFileGrid = document.getElementById("adminFileGrid");
+    const closeFilesSection = document.getElementById("closeFilesSection");
+    const toast         = document.getElementById("toast");
+
+    // TOAST
+    let toastTimer;
+    function showToast(msg, type = "") {
+      toast.textContent = msg;
+      toast.className = "toast show " + type;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.className = "toast", 2800);
+    }
+
+    function setStatus(el, msg, type = "") {
+      el.textContent = msg;
+      el.className = "statusMsg " + type;
+    }
+
+    function esc(s = "") {
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+    }
+
+    // AUTH
+    function showLogin(msg = "", type = "") {
+      loginSection.style.display = "block";
+      adminPanel.style.display = "none";
+      logoutBtn.style.display = "none";
+      setStatus(loginStatus, msg, type);
+    }
+
+    function showPanel() {
+      loginSection.style.display = "none";
+      adminPanel.style.display = "block";
+      logoutBtn.style.display = "inline-flex";
+    }
+
+    async function verifyAdmin() {
+      const { data: sess } = await supabase.auth.getSession();
+      if (!sess?.session) return false;
+      const email = sess.session.user?.email;
+      const { data } = await supabase.from("admins").select("email").eq("email", email).maybeSingle();
+      if (!data) { await supabase.auth.signOut(); return false; }
+      return true;
+    }
+
+    loginBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const pass = passInput.value;
+      if (!email || !pass) { setStatus(loginStatus, "Email & password wajib diisi.", "error"); return; }
+      loginBtn.disabled = true;
+      setStatus(loginStatus, "Login...");
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+      loginBtn.disabled = false;
+      if (error || !data?.session) { setStatus(loginStatus, "Login gagal: " + (error?.message || "unknown"), "error"); return; }
+      const ok = await verifyAdmin();
+      if (!ok) { setStatus(loginStatus, "Akun ini bukan admin.", "error"); return; }
+      showPanel();
+      await initPanel();
     });
-  });
 
-  // bind view
-  list.querySelectorAll('[data-view-folder]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.viewFolder;
-      openFolderFiles(id);
+    logoutBtn.addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      showLogin();
     });
-  });
 
-  // bind delete
-  list.querySelectorAll('[data-del-folder]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.delFolder;
-      const f = folders.find(x => x.id === id);
-      if (!f) return;
-      if (!confirm(`Hapus folder "${f.name}" beserta semua file di dalamnya?`)) return;
-      folders = folders.filter(x => x.id !== id);
-      files = files.filter(x => x.folderId !== id);
-      saveState();
-      renderFolders();
-      renderStats();
-      if (openFolderId === id) {
-        document.getElementById('fileViewerSection').style.display = 'none';
-        openFolderId = null;
+    // SETTINGS (upload toggle)
+    async function loadSettings() {
+      try {
+        const { data } = await supabase.from("quotes_settings").select("upload_enabled").eq("id", 1).maybeSingle();
+        const enabled = data?.upload_enabled !== false;
+        uploadToggle.checked = enabled;
+        updateBadge(enabled);
+      } catch { uploadToggle.checked = true; updateBadge(true); }
+    }
+
+    function updateBadge(enabled) {
+      uploadStatusBadge.textContent = enabled ? "✅ Aktif" : "🔒 Dinonaktifkan";
+      uploadStatusBadge.className = "toggleStatus " + (enabled ? "on" : "off");
+    }
+
+    uploadToggle.addEventListener("change", async () => {
+      const enabled = uploadToggle.checked;
+      updateBadge(enabled);
+      try {
+        // upsert row id=1 in quotes_settings
+        const { error } = await supabase.from("quotes_settings").upsert({ id: 1, upload_enabled: enabled });
+        if (error) throw error;
+        showToast(enabled ? "Upload diaktifkan ✓" : "Upload dinonaktifkan 🔒", enabled ? "success" : "");
+      } catch (e) {
+        showToast("Gagal simpan: " + e.message, "error");
+        uploadToggle.checked = !enabled;
+        updateBadge(!enabled);
       }
     });
-  });
-}
 
-// ── OPEN FOLDER FILES ──
-function openFolderFiles(folderId) {
-  openFolderId = folderId;
-  const f = folders.find(x => x.id === folderId);
-  if (!f) return;
-  document.getElementById('fileViewerSection').style.display = '';
-  document.getElementById('fileViewerTitle').textContent = `📄 File di "${f.name}"`;
-  renderFileList(folderId);
-  // scroll to viewer
-  document.getElementById('fileViewerSection').scrollIntoView({ behavior: 'smooth' });
-}
+    // FOLDERS
+    async function loadFolders() {
+      folderList.innerHTML = `<div class="muted" style="text-align:center;padding:20px;">Memuat...</div>`;
+      const { data, error } = await supabase.from("quotes_folders").select("*").order("name");
+      if (error) { folderList.innerHTML = `<div style="color:#ff8080;">Gagal: ${error.message}</div>`; return; }
+      const folders = data || [];
+      if (!folders.length) {
+        folderList.innerHTML = `<div class="muted" style="text-align:center;padding:30px;">Belum ada folder. Buat folder pertamamu!</div>`;
+        return;
+      }
+      folderList.innerHTML = folders.map(f => `
+        <div class="folderItem">
+          <div class="folderItemIcon">🗂️</div>
+          <div style="flex:1;min-width:0;">
+            <div class="folderItemName">${esc(f.name)}</div>
+            <div class="folderItemMeta">${f.created_at ? new Date(f.created_at).toLocaleDateString("id-ID") : ""}</div>
+          </div>
+          <span class="folderItemBadge">Tidak bisa dihapus publik</span>
+          <button class="btn" style="font-size:12px;padding:7px 12px;" data-browse="${esc(f.id)}" data-bname="${esc(f.name)}">📂 Browse</button>
+        </div>
+      `).join("");
 
-function renderFileList(folderId) {
-  const list = document.getElementById('fileList');
-  const fFiles = files.filter(fi => fi.folderId === folderId);
-  if (fFiles.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="emptyIcon">📄</div>Belum ada file di folder ini.</div>`;
-    return;
-  }
-  list.innerHTML = fFiles.map(fi => `
-    <div class="fileItem" data-file-id="${fi.id}">
-      <div>
-        <div class="fileItemName">${esc(fi.name)}</div>
-        <div class="fileItemMeta">${fmtSize(fi.size)} &nbsp;·&nbsp; ${fmtDate(fi.uploadedAt)} &nbsp;·&nbsp; ${esc(fi.uploaderNote || 'Tanpa keterangan')}</div>
-      </div>
-      <button class="btn danger btn-sm" data-del-file="${fi.id}" style="padding:6px 12px; font-size:12px;">🗑</button>
-    </div>
-  `).join('');
+      folderList.querySelectorAll("[data-browse]").forEach(btn => {
+        btn.addEventListener("click", () => loadAdminFiles(btn.dataset.browse, btn.dataset.bname));
+      });
+    }
 
-  list.querySelectorAll('[data-del-file]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.delFile;
-      if (!confirm('Hapus file ini?')) return;
-      files = files.filter(x => x.id !== id);
-      saveState();
-      renderFileList(folderId);
-      renderStats();
+    createFolderBtn.addEventListener("click", async () => {
+      const name = folderNameInput.value.trim();
+      if (!name) { setStatus(folderStatus, "Nama folder wajib diisi.", "error"); return; }
+      createFolderBtn.disabled = true;
+      setStatus(folderStatus, "Membuat folder...");
+
+      // Insert to DB
+      const { error } = await supabase.from("quotes_folders").insert({ name });
+      createFolderBtn.disabled = false;
+
+      if (error) {
+        setStatus(folderStatus, "Gagal: " + error.message, "error");
+        return;
+      }
+
+      setStatus(folderStatus, `Folder "${name}" berhasil dibuat ✓`, "success");
+      folderNameInput.value = "";
+      showToast(`Folder "${name}" dibuat! ✓`, "success");
+      setTimeout(() => setStatus(folderStatus, ""), 3000);
+      await loadFolders();
     });
-  });
-}
 
-// ── FOLDER MODAL ──
-let folderUploadToggleState = true;
+    folderNameInput.addEventListener("keydown", e => { if (e.key === "Enter") createFolderBtn.click(); });
+    refreshFoldersBtn.addEventListener("click", loadFolders);
 
-function openFolderModal() {
-  document.getElementById('folderNameInput').value = '';
-  document.getElementById('folderDescInput').value = '';
-  document.getElementById('folderModalAlert').innerHTML = '';
-  folderUploadToggleState = true;
-  updateFolderModalToggle();
-  document.getElementById('folderModal').classList.add('open');
-  document.getElementById('folderNameInput').focus();
-}
-function closeFolderModal() {
-  document.getElementById('folderModal').classList.remove('open');
-}
-function updateFolderModalToggle() {
-  const tog = document.getElementById('folderUploadToggle');
-  const lbl = document.getElementById('folderUploadLabel');
-  tog.className = 'toggle' + (folderUploadToggleState ? ' on' : '');
-  lbl.className = 'badge ' + (folderUploadToggleState ? 'enabled' : 'disabled');
-  lbl.textContent = folderUploadToggleState ? 'ENABLED' : 'DISABLED';
-}
+    // BROWSE FILES (admin)
+    async function loadAdminFiles(folderId, folderName) {
+      filesSection.style.display = "block";
+      filesSectionTitle.textContent = `📂 ${folderName}`;
+      filesSectionMeta.textContent = "Memuat...";
+      adminFileGrid.innerHTML = "";
+      filesSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
-document.getElementById('folderUploadToggle').addEventListener('click', () => {
-  folderUploadToggleState = !folderUploadToggleState;
-  updateFolderModalToggle();
-});
+      const { data, error } = await supabase.storage.from(BUCKET).list(folderId + "/", { sortBy: { column: "created_at", order: "desc" } });
+      if (error) { adminFileGrid.innerHTML = `<div style="color:#ff8080;">Gagal: ${error.message}</div>`; return; }
+      const files = (data || []).filter(f => f.name !== ".keep" && f.id);
+      filesSectionMeta.textContent = `${files.length} foto`;
 
-document.getElementById('newFolderBtn').addEventListener('click', openFolderModal);
-document.getElementById('cancelFolderBtn').addEventListener('click', closeFolderModal);
-document.getElementById('folderModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('folderModal')) closeFolderModal();
-});
+      if (!files.length) {
+        adminFileGrid.innerHTML = `<div class="muted" style="grid-column:1/-1;text-align:center;padding:30px;">Belum ada foto</div>`;
+        return;
+      }
 
-document.getElementById('saveFolderBtn').addEventListener('click', () => {
-  const name = document.getElementById('folderNameInput').value.trim();
-  const desc = document.getElementById('folderDescInput').value.trim();
-  const alertEl = document.getElementById('folderModalAlert');
-  if (!name) {
-    alertEl.innerHTML = `<div class="alert error">Nama folder wajib diisi.</div>`;
-    return;
-  }
-  const newFolder = {
-    id: genId(), name, desc,
-    uploadEnabled: folderUploadToggleState,
-    createdAt: Date.now()
-  };
-  folders.unshift(newFolder);
-  saveState();
-  renderFolders();
-  renderStats();
-  closeFolderModal();
-});
+      adminFileGrid.innerHTML = files.map(f => {
+        const { data: ud } = supabase.storage.from(BUCKET).getPublicUrl(`${folderId}/${f.name}`);
+        return `
+          <div style="border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);cursor:pointer;" title="${esc(f.name)}">
+            <img src="${esc(ud.publicUrl)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" loading="lazy" />
+          </div>
+        `;
+      }).join("");
+    }
 
-// ── GLOBAL UPLOAD TOGGLE ──
-document.getElementById('globalToggle').addEventListener('click', () => {
-  globalUploadEnabled = !globalUploadEnabled;
-  saveState();
-  renderGlobalToggle();
-  renderStats();
-});
+    closeFilesSection.addEventListener("click", () => { filesSection.style.display = "none"; });
 
-// ── CLOSE FILE VIEWER ──
-document.getElementById('closeFileViewer').addEventListener('click', () => {
-  document.getElementById('fileViewerSection').style.display = 'none';
-  openFolderId = null;
-});
+    // INIT
+    async function initPanel() {
+      await Promise.all([loadSettings(), loadFolders()]);
+    }
 
-// ── LOGIN ──
-document.getElementById('loginBtn').addEventListener('click', () => {
-  const email = document.getElementById('emailInput').value.trim();
-  const pass  = document.getElementById('passInput').value;
-  const alertEl = document.getElementById('loginAlert');
-  if (!email || !pass) {
-    alertEl.innerHTML = `<div class="alert error">Email & password wajib diisi.</div>`; return;
-  }
-  if (doLogin(email, pass)) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    showAdmin();
-  } else {
-    alertEl.innerHTML = `<div class="alert error">Email atau password salah.</div>`;
-  }
-});
-document.getElementById('passInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('loginBtn').click();
-});
-
-// ── LOGOUT ──
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem(SESSION_KEY);
-  document.getElementById('loginSection').style.display = '';
-  document.getElementById('adminPanel').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'none';
-});
-
-// ── SHOW ADMIN ──
-function showAdmin() {
-  document.getElementById('loginSection').style.display = 'none';
-  document.getElementById('adminPanel').style.display = '';
-  document.getElementById('logoutBtn').style.display = '';
-  loadState();
-  renderGlobalToggle();
-  renderFolders();
-  renderStats();
-}
-
-// ── INIT ──
-if (isLoggedIn()) {
-  showAdmin();
-}
-
-// ── STORAGE LISTENER (sync across tabs) ──
-window.addEventListener('storage', e => {
-  if ([FOLDERS_KEY, FILES_KEY, GUPLOAD_KEY].includes(e.key) && isLoggedIn()) {
-    loadState();
-    renderGlobalToggle();
-    renderFolders();
-    renderStats();
-    if (openFolderId) renderFileList(openFolderId);
-  }
-});
-</script>
-  <script type="module" src="./admin.js"></script>
+    // CHECK SESSION ON LOAD
+    (async () => {
+      const ok = await verifyAdmin();
+      if (ok) { showPanel(); await initPanel(); }
+      else showLogin();
+    })();
+  </script>
 </body>
 </html>
