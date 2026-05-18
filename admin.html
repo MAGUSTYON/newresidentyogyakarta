@@ -399,6 +399,31 @@
             </div>
           </div>
 
+          <!-- Rating Settings -->
+          <div class="adminSection">
+            <div class="adminSectionHead">
+              <h3>⭐ Pengaturan Rating</h3>
+              <span class="badge" id="ratingPartBadge">0 part</span>
+            </div>
+            <div class="adminSectionBody">
+              <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">
+                Tambahkan part yang mau dirating minggu ini. Bisa berapa aja dan nomornya bebas. Form di halaman rating otomatis menyesuaikan.
+              </p>
+              <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <input id="addPartInput" type="number" min="1" step="1" placeholder="Nomor part (misal: 53)" style="flex:1;" />
+                <button class="btn primary" id="addPartBtn" style="white-space:nowrap;flex-shrink:0;">+ Tambah</button>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;margin-bottom:8px;">PART AKTIF MINGGU INI</div>
+                <div id="activePartsList" style="display:flex;flex-wrap:wrap;gap:8px;min-height:40px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;">
+                  <span style="color:var(--muted);font-size:12px;align-self:center;" id="activePartsEmpty">Belum ada part ditambahkan</span>
+                </div>
+              </div>
+              <button class="btn primary" id="saveActivePartsBtn" style="width:100%;">💾 Simpan ke Supabase</button>
+              <div class="statusMsg" id="ratingPartStatus"></div>
+            </div>
+          </div>
+
         </div>
 
         <!-- RIGHT: Folder List -->
@@ -797,9 +822,97 @@
       deleteFolder(currentFolderId, currentFolderName);
     });
 
+    // ── RATING SETTINGS (active parts list) ──
+    let activeParts = [];
+
+    function renderActivePartChips() {
+      const container = document.getElementById("activePartsList");
+      const emptyMsg  = document.getElementById("activePartsEmpty");
+      const badge     = document.getElementById("ratingPartBadge");
+
+      Array.from(container.children).forEach(el => {
+        if (el !== emptyMsg) el.remove();
+      });
+
+      if (activeParts.length === 0) {
+        emptyMsg.style.display = "";
+        badge.textContent = "0 part";
+        badge.className = "badge disabled";
+        return;
+      }
+
+      emptyMsg.style.display = "none";
+      badge.textContent = activeParts.length + " part aktif";
+      badge.className = "badge enabled";
+
+      activeParts.forEach(num => {
+        const chip = document.createElement("div");
+        chip.style.cssText = "display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 12px;border-radius:999px;border:1px solid rgba(242,161,179,.35);background:rgba(242,161,179,.1);font-size:13px;font-weight:700;color:var(--pink);";
+        chip.innerHTML = `Part ${num} <button data-part="${num}" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0;line-height:1;display:flex;align-items:center;" title="Hapus">✕</button>`;
+        chip.querySelector("button").addEventListener("click", () => {
+          activeParts = activeParts.filter(p => p !== num);
+          renderActivePartChips();
+        });
+        container.appendChild(chip);
+      });
+    }
+
+    async function loadRatingSettings() {
+      try {
+        const { data } = await supabase
+          .from("quotes_settings")
+          .select("active_parts")
+          .eq("id", 1)
+          .maybeSingle();
+        const raw = data?.active_parts;
+        activeParts = Array.isArray(raw) ? raw.map(Number).sort((a, b) => a - b) : [];
+      } catch (e) {
+        console.warn("Gagal load active_parts:", e);
+        activeParts = [];
+      }
+      renderActivePartChips();
+    }
+
+    document.getElementById("addPartBtn").addEventListener("click", () => {
+      const input = document.getElementById("addPartInput");
+      const val   = parseInt(input.value.trim(), 10);
+      if (isNaN(val) || val < 1) { showToast("Masukkan nomor part yang valid!", "error"); return; }
+      if (activeParts.includes(val)) { showToast(`Part ${val} sudah ada.`, "error"); return; }
+      activeParts.push(val);
+      activeParts.sort((a, b) => a - b);
+      input.value = "";
+      input.focus();
+      renderActivePartChips();
+    });
+
+    document.getElementById("addPartInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") document.getElementById("addPartBtn").click();
+    });
+
+    document.getElementById("saveActivePartsBtn").addEventListener("click", async () => {
+      const s = document.getElementById("ratingPartStatus");
+      if (activeParts.length === 0) { setStatus(s, "Tambahkan minimal 1 part dulu.", "error"); return; }
+      document.getElementById("saveActivePartsBtn").disabled = true;
+      setStatus(s, "Menyimpan...");
+      try {
+        const { error } = await supabase
+          .from("quotes_settings")
+          .upsert({ id: 1, active_parts: activeParts });
+        if (error) throw new Error(error.message);
+        const label = activeParts.map(p => "Part " + p).join(", ");
+        setStatus(s, "Tersimpan ✓ — " + label, "success");
+        showToast(activeParts.length + " part aktif disimpan ✓", "success");
+        setTimeout(() => setStatus(s, ""), 5000);
+      } catch (e) {
+        setStatus(s, "Gagal simpan: " + e.message, "error");
+      } finally {
+        document.getElementById("saveActivePartsBtn").disabled = false;
+      }
+    });
+
     // ── INIT ──
     async function initPanel() {
-      await loadFolders();
+      await Promise.all([loadFolders(), loadRatingSettings()]);
     }
 
     (async () => {
