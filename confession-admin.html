@@ -466,7 +466,7 @@
     async function loadConfessions() {
       const list = document.getElementById("confessionList");
       list.innerHTML = `<div class="empty"><div class="emptyIcon">⏳</div>Memuat pesan...</div>`;
-      const { data, error } = await supabase.from("confessions").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("confessions_nry").select("*").order("created_at", { ascending: false });
       if (error) { list.innerHTML = `<div class="empty" style="color:var(--red);">Gagal: ${error.message}</div>`; return; }
       confessions = data || [];
       renderStats();
@@ -559,7 +559,7 @@
     document.getElementById("modalAnswerBtn").addEventListener("click", async () => {
       if (!currentConfession) return;
       const newVal = !currentConfession.is_answered;
-      const { error } = await supabase.from("confessions").update({ is_answered: newVal }).eq("id", currentConfession.id);
+      const { error } = await supabase.from("confessions_nry").update({ is_answered: newVal }).eq("id", currentConfession.id);
       if (error) { showToast("Gagal: " + error.message, "error"); return; }
       currentConfession.is_answered = newVal;
       const idx = confessions.findIndex(c => c.id === currentConfession.id);
@@ -574,7 +574,7 @@
     document.getElementById("modalDeleteBtn").addEventListener("click", async () => {
       if (!currentConfession) return;
       if (!confirm("Hapus confession ini? Tidak bisa dibatalkan.")) return;
-      const { error } = await supabase.from("confessions").delete().eq("id", currentConfession.id);
+      const { error } = await supabase.from("confessions_nry").delete().eq("id", currentConfession.id);
       if (error) { showToast("Gagal hapus: " + error.message, "error"); return; }
       confessions = confessions.filter(c => c.id !== currentConfession.id);
       renderStats(); renderList();
