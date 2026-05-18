@@ -1,256 +1,267 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8438237515347728"
-     crossorigin="anonymous"></script>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Confession • New Resident Yogyakarta</title>
-
-  <link rel="stylesheet" href="styles.css" />
-
+  <title>Confession 💌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
-  /* ===== Sticky Header ===== */
-    .header{
-      position: sticky;
-      top: 0;
-      z-index: 3000;
-      background: rgba(7,6,17,.82);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,.14);
+    :root {
+      --bg-0: #0b0c14;
+      --bg-1: #12132a;
+      --pink: #f2a1b3;
+      --pink-2: #d47aa0;
+      --text: #ececf3;
+      --muted: #a7a7c0;
+      --border: rgba(255,182,193,.18);
+      --border-2: rgba(255,255,255,.14);
+      --green: #6ee7b7;
+      --red: #f87171;
+      --shadow: 0 10px 40px rgba(0,0,0,.5);
     }
-    .headerInner{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    .brand b{
-      font-family: Pacifico, cursive;
-      font-weight: 400;
-      font-size: 20px;
-      color: var(--pink);
-      line-height:1;
-    }
-    .brand small{
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%; font-family: "Inter", sans-serif; color: var(--text);
+      background:
+        radial-gradient(900px 500px at 10% 0%, rgba(242,161,179,.1), transparent 50%),
+        radial-gradient(700px 500px at 90% 100%, rgba(212,122,160,.07), transparent 50%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 50%, var(--bg-0));
+      background-attachment: fixed;
     }
 
-    .nav{
-      display:flex;
-      gap: 6px;
-      flex-wrap: wrap;
+    /* HEADER */
+    .siteHeader {
+      position: sticky; top: 0; z-index: 99;
+      background: rgba(11,12,20,.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
     }
-    .nav a{
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      color: var(--muted);
-      font-size: 13px;
-      transition: all .15s ease;
+    .headerWrap {
+      max-width: 560px; margin: 0 auto; height: 62px;
+      padding: 0 20px; display: flex; align-items: center; justify-content: center;
     }
-    .nav a:hover{
-      color: #fff;
-      background: rgba(255,255,255,.06);
-      border-color: rgba(255,255,255,.14);
+    .logoTitle { font-family: "Playfair Display", serif; font-size: 20px; color: var(--pink); font-style: italic; }
+
+    /* WRAP */
+    .pageWrap { max-width: 560px; margin: 0 auto; padding: 32px 18px 60px; }
+
+    /* CLOSED BANNER */
+    #closedBanner {
+      display: none;
+      background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25);
+      border-radius: 20px; padding: 32px 24px; text-align: center; margin-bottom: 24px;
     }
-    .nav a.active{
-      color: #0b0a12;
-      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
-      border-color: rgba(255,255,255,.18);
-      font-weight: 700;
+    #closedBanner .icon { font-size: 40px; margin-bottom: 12px; }
+    #closedBanner h3 { font-family: "Playfair Display", serif; color: var(--red); font-size: 22px; margin-bottom: 8px; }
+    #closedBanner p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* CARD */
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border: 1px solid var(--border); border-radius: 24px;
+      padding: 28px 24px; box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
     }
-    
-    /* === Quick add: modal + fab (kalau styles.css kamu belum ada) === */
-    .fab{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      width: 58px;
-      height: 58px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(180deg, #f2a3c7, #d98ab7);
-      color: #0b0a12;
-      font-size: 22px;
-      cursor: pointer;
-      box-shadow: 0 16px 40px rgba(0,0,0,.55);
-      z-index: 1000;
+    .cardTitle {
+      font-family: "Playfair Display", serif; font-style: italic;
+      color: var(--pink); font-size: 26px; text-align: center;
+      margin-bottom: 6px;
     }
-    .modal{
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
+    .cardSub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 28px; line-height: 1.6; }
+
+    /* FORM */
+    .formGroup { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .formLabel {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      letter-spacing: .08em; text-transform: uppercase;
     }
-    .modal.hidden{ display:none; }
-    .modalBox{
-      width: 100%;
-      max-width: 560px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(12,10,24,.92);
-      box-shadow: 0 28px 90px rgba(0,0,0,.7);
-      padding: 16px;
+    .formLabel span { color: var(--pink); margin-left: 3px; }
+    input, textarea {
+      width: 100%; background: rgba(255,255,255,.06);
+      border: 1px solid var(--border-2); border-radius: 14px;
+      padding: 13px 16px; color: var(--text); outline: none;
+      font-size: 15px; font-family: inherit; transition: .2s;
     }
-    .modalHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 12px;
+    input::placeholder, textarea::placeholder { color: rgba(167,167,192,.6); }
+    input:focus, textarea:focus { border-color: rgba(242,161,179,.45); background: rgba(255,255,255,.08); }
+    textarea { min-height: 120px; resize: vertical; }
+
+    /* CHAR COUNT */
+    .charCount { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; }
+    .charCount.warn { color: var(--red); }
+
+    /* SUBMIT */
+    .submitBtn {
+      width: 100%; padding: 15px; border-radius: 999px; border: none;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12; font-weight: 800; font-size: 16px;
+      cursor: pointer; transition: .2s ease; margin-top: 8px;
+      box-shadow: 0 8px 28px rgba(242,161,179,.35);
+      font-family: inherit;
     }
-    .iconBtn{
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      cursor: pointer;
+    .submitBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(242,161,179,.45); }
+    .submitBtn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* STATUS */
+    .statusMsg { font-size: 13px; font-weight: 600; text-align: center; margin-top: 12px; min-height: 18px; }
+    .statusMsg.success { color: var(--green); }
+    .statusMsg.error { color: var(--red); }
+
+    /* SUCCESS STATE */
+    #successState { display: none; text-align: center; padding: 16px 0; }
+    #successState .successIcon { font-size: 52px; margin-bottom: 14px; }
+    #successState h3 { font-family: "Playfair Display", serif; color: var(--pink); font-size: 24px; margin-bottom: 8px; }
+    #successState p { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
+    .sendAnotherBtn {
+      padding: 11px 24px; border-radius: 999px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
+      color: var(--text); font-weight: 700; font-size: 14px;
+      cursor: pointer; transition: .2s; font-family: inherit;
     }
-    .feedHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin: 12px 0 12px;
+    .sendAnotherBtn:hover { background: rgba(255,255,255,.12); }
+
+    /* NOTE */
+    .anonNote {
+      text-align: center; color: var(--muted); font-size: 12px;
+      margin-top: 20px; line-height: 1.6;
     }
+    .anonNote span { color: var(--pink); }
   </style>
 </head>
-
 <body>
-    <!-- ===== HEADER ===== -->
-  <header class="header">
-    <div class="headerInner">
 
-      <div class="brand">
-        <b>New Resident</b>
-        <small>Yogyakarta</small>
-      </div>
-
-      <nav class="nav">
-        <a href="index.html">Beranda</a>
-        <a href="quotes.html">Quotes</a>
-        <a class="active" href="confession.html">Confession</a>
-        <a href="event.html">Event</a>
-        <a href="profiles.html">Profil</a>
-        <a href="games.html">Games</a>
-      </nav>
-
+  <header class="siteHeader">
+    <div class="headerWrap">
+      <div class="logoTitle">confession 💌</div>
     </div>
   </header>
-  
-  <div class="container">
-    <div class="topbar">
-      <div>
-        <p class="kicker">NEW RESIDENT YOGYAKARTA</p>
-        <h1 class="title">Confession</h1>
-        <p class="sub">Semua confession tampil di sini. Klik tombol ✏️ untuk nulis.</p>
+
+  <div class="pageWrap">
+
+    <!-- CLOSED BANNER -->
+    <div id="closedBanner">
+      <div class="icon">🔒</div>
+      <h3>Confession Ditutup</h3>
+      <p>Maaf, confession sedang tidak dibuka saat ini.<br>Coba lagi nanti ya!</p>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card" id="formCard">
+      <div class="cardTitle">Kirim Confession 💌</div>
+      <div class="cardSub">Tulis apa yang ingin kamu ungkapkan — boleh anonim</div>
+
+      <div id="formState">
+        <div class="formGroup">
+          <label class="formLabel">To <span>*</span></label>
+          <input id="toInput" type="text" placeholder="Nama penerima" maxlength="100" />
+        </div>
+
+        <div class="formGroup">
+          <label class="formLabel">From <span style="color:var(--muted)">(opsional)</span></label>
+          <input id="fromInput" type="text" placeholder="Nama kamu atau anonim" maxlength="100" />
+        </div>
+
+        <div class="formGroup">
+          <label class="formLabel">Song <span style="color:var(--muted)">(opsional)</span></label>
+          <input id="songInput" type="text" placeholder="Lagu yang menggambarkan perasaan kamu" maxlength="150" />
+        </div>
+
+        <div class="formGroup">
+          <label class="formLabel">Message <span>*</span></label>
+          <textarea id="messageInput" placeholder="Tulis confessionmu di sini..." maxlength="1000"></textarea>
+          <div class="charCount" id="charCount">0 / 1000</div>
+        </div>
+
+        <button class="submitBtn" id="submitBtn">Kirim Confession 💌</button>
+        <div class="statusMsg" id="statusMsg"></div>
       </div>
 
-      <a class="btn secondary" href="index.html">← Beranda</a>
+      <!-- SUCCESS -->
+      <div id="successState">
+        <div class="successIcon">💌</div>
+        <h3>Terkirim!</h3>
+        <p>Confessionmu sudah tersampaikan.<br>Semoga hasilnya sesuai harapan 🌸</p>
+        <button class="sendAnotherBtn" id="sendAnotherBtn">Kirim lagi</button>
+      </div>
     </div>
 
-    <!-- Feed -->
-    <div class="feedHeader">
-      <h2 style="margin:0;">💬 Semua Confession</h2>
-      <button id="refreshBtn" class="btn secondary">Refresh</button>
-    </div>
-
-    <div id="list" class="list"></div>
-
-    <div style="margin-top:14px;">
-      <small>Tips: kosongin nama kalau mau anonim. Tempel link Spotify track biar muncul player.</small>
-    </div>
+    <div class="anonNote">Pesan dikirim dengan <span>aman</span> — identitasmu terjaga jika memilih anonim</div>
 
   </div>
 
-  <!-- Floating Action Button -->
-  <button id="fab" class="fab" aria-label="Tulis confession">✏️</button>
+  <script type="module">
+    import { supabase } from "./js/supabaseClient.js";
 
-  <!-- Modal Form -->
-  <div id="confessionModal" class="modal hidden" aria-hidden="true">
-    <div class="modalBox">
-      <div class="modalHeader">
-        <h2 style="margin:0;">Tulis Confession</h2>
-        <button id="closeModal" class="iconBtn" aria-label="Tutup">✕</button>
-      </div>
+    // Cek apakah confession sedang dibuka
+    async function checkSettings() {
+      try {
+        const { data } = await supabase.from("confession_settings").select("is_open").eq("id", 1).maybeSingle();
+        const isOpen = data?.is_open !== false;
+        if (!isOpen) {
+          document.getElementById("closedBanner").style.display = "block";
+          document.getElementById("formCard").style.display = "none";
+        }
+      } catch { /* biarkan terbuka jika gagal */ }
+    }
 
-      <div class="row">
-        <div>
-          <label>Nama (opsional)</label>
-          <input id="name" placeholder="Anonim jika kosong" />
-        </div>
-
-        <div>
-          <label>Link Lagu Spotify (opsional)</label>
-          <input id="spotify_url" placeholder="https://open.spotify.com/track/..." />
-          <small>Tempel link track Spotify untuk muncul player embed.</small>
-        </div>
-
-        <div class="grid2">
-          <div>
-            <label>Message</label>
-            <textarea id="message" placeholder="Tulis pesan kamu..."></textarea>
-          </div>
-          <div>
-            <label>Impression (opsional)</label>
-            <textarea id="impression" placeholder="Kesan/impresi kamu..."></textarea>
-          </div>
-        </div>
-
-        <button id="submitBtn" class="btn" style="width:100%;">Kirim</button>
-        <small id="status"></small>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal toggle script (tidak ganggu confession.js kamu) -->
-  <script>
-    const fab = document.getElementById("fab");
-    const modal = document.getElementById("confessionModal");
-    const closeModal = document.getElementById("closeModal");
-
-    fab.addEventListener("click", () => modal.classList.remove("hidden"));
-    closeModal.addEventListener("click", () => modal.classList.add("hidden"));
-
-    // klik background gelap untuk tutup
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.add("hidden");
+    // Char count
+    const messageInput = document.getElementById("messageInput");
+    const charCount = document.getElementById("charCount");
+    messageInput.addEventListener("input", () => {
+      const len = messageInput.value.length;
+      charCount.textContent = `${len} / 1000`;
+      charCount.className = "charCount" + (len > 900 ? " warn" : "");
     });
-  </script>
 
-  <!-- Your existing logic -->
-  <script type="module" src="confession.js"></script>
+    // Submit
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const to = document.getElementById("toInput").value.trim();
+      const from = document.getElementById("fromInput").value.trim();
+      const song = document.getElementById("songInput").value.trim();
+      const message = document.getElementById("messageInput").value.trim();
+      const status = document.getElementById("statusMsg");
+
+      if (!to) { status.textContent = "Kolom 'To' wajib diisi."; status.className = "statusMsg error"; return; }
+      if (!message) { status.textContent = "Pesan tidak boleh kosong."; status.className = "statusMsg error"; return; }
+
+      document.getElementById("submitBtn").disabled = true;
+      status.textContent = "Mengirim..."; status.className = "statusMsg";
+
+      const { error } = await supabase.from("confessions").insert({
+        to_name: to,
+        from_name: from || null,
+        song: song || null,
+        message
+      });
+
+      document.getElementById("submitBtn").disabled = false;
+
+      if (error) {
+        status.textContent = "Gagal kirim: " + error.message;
+        status.className = "statusMsg error";
+        return;
+      }
+
+      document.getElementById("formState").style.display = "none";
+      document.getElementById("successState").style.display = "block";
+    });
+
+    // Kirim lagi
+    document.getElementById("sendAnotherBtn").addEventListener("click", () => {
+      document.getElementById("toInput").value = "";
+      document.getElementById("fromInput").value = "";
+      document.getElementById("songInput").value = "";
+      document.getElementById("messageInput").value = "";
+      charCount.textContent = "0 / 1000";
+      charCount.className = "charCount";
+      document.getElementById("statusMsg").textContent = "";
+      document.getElementById("statusMsg").className = "statusMsg";
+      document.getElementById("submitBtn").disabled = false;
+      document.getElementById("successState").style.display = "none";
+      document.getElementById("formState").style.display = "block";
+    });
+
+    checkSettings();
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
