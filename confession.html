@@ -227,7 +227,7 @@
       document.getElementById("submitBtn").disabled = true;
       status.textContent = "Mengirim..."; status.className = "statusMsg";
 
-      const { error } = await supabase.from("confessions").insert({
+      const { error } = await supabase.from("confessions_nry").insert({
         to_name: to,
         from_name: from || null,
         song: song || null,
