@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin • Confession</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-0: #0b0c14;
+      --bg-1: #12132a;
+      --pink: #f2a1b3;
+      --pink-2: #d47aa0;
+      --text: #ececf3;
+      --muted: #a7a7c0;
+      --border: rgba(255,182,193,.18);
+      --border-2: rgba(255,255,255,.14);
+      --green: #6ee7b7;
+      --red: #f87171;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%; font-family: "Inter", sans-serif; color: var(--text);
+      background:
+        radial-gradient(1100px 520px at 12% -12%, rgba(242,161,179,.09), transparent 42%),
+        radial-gradient(900px 520px at 88% 112%, rgba(242,161,179,.06), transparent 44%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 52%, var(--bg-0));
+      background-attachment: fixed;
+    }
+
+    /* HEADER */
+    .siteHeader {
+      position: sticky; top: 0; z-index: 999;
+      background: linear-gradient(180deg, rgba(11,12,20,.92), rgba(11,12,20,.55));
+      backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .headerWrap {
+      max-width: 960px; margin: 0 auto; height: 68px; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    }
+    .logoTitle { font-weight: 800; font-size: 16px; color: var(--pink); }
+    .logoSub { font-size: 10px; letter-spacing: .28em; color: var(--muted); }
+    .pill {
+      text-decoration: none; color: var(--text); font-weight: 700;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+      transition: .2s; font-size: 13px; cursor: pointer;
+    }
+    .pill:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+    .pill.danger { border-color: rgba(248,113,113,.3); color: var(--red); }
+
+    /* WRAP */
+    .adminWrap { max-width: 960px; margin: 0 auto; padding: 24px 18px 60px; }
+
+    /* CARD */
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border: 1px solid var(--border); border-radius: 24px;
+      padding: 28px 24px; box-shadow: var(--shadow); backdrop-filter: blur(14px);
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 9px 16px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06);
+      color: var(--text); font-weight: 700; font-size: 13px;
+      cursor: pointer; transition: .2s; text-decoration: none; user-select: none;
+      font-family: "Inter", sans-serif;
+    }
+    .btn:hover { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+    .btn.primary { border: none; color: #1b0b12; background: linear-gradient(135deg, var(--pink), var(--pink-2)); box-shadow: 0 8px 24px rgba(242,161,179,.35); }
+    .btn.primary:hover { box-shadow: 0 12px 32px rgba(242,161,179,.45); }
+    .btn.danger { border-color: rgba(248,113,113,.3); color: var(--red); }
+    .btn.danger:hover { background: rgba(248,113,113,.12); }
+    .btn.success { border-color: rgba(110,231,183,.3); color: var(--green); }
+    .btn.success:hover { background: rgba(110,231,183,.1); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* INPUTS */
+    input, textarea {
+      width: 100%; background: rgba(255,255,255,.05);
+      border: 1px solid var(--border-2); border-radius: 14px;
+      padding: 11px 14px; color: var(--text); outline: none; font-size: 14px;
+      font-family: inherit;
+    }
+    input::placeholder { color: rgba(167,167,192,.7); }
+    input:focus { border-color: rgba(242,161,179,.4); }
+
+    /* STATUS MSG */
+    .statusMsg { font-size: 13px; min-height: 18px; margin-top: 8px; }
+    .statusMsg.success { color: var(--green); }
+    .statusMsg.error { color: var(--red); }
+
+    /* LOGIN */
+    #loginSection { max-width: 420px; margin: 80px auto; }
+    .formRow { display: flex; flex-direction: column; gap: 10px; }
+
+    /* STATS */
+    .statsRow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .statsRow { grid-template-columns: 1fr 1fr; } }
+    .statCard {
+      border-radius: 18px; padding: 14px 16px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.10);
+    }
+    .statNum { font-size: 28px; font-weight: 800; color: var(--pink); }
+    .statLabel { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: .04em; }
+
+    /* TOP BAR */
+    .topBarRow {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .topBarRow h2 { font-family: "Playfair Display", serif; color: var(--pink); font-size: 24px; }
+
+    /* TOGGLE */
+    .toggleWrap { display: flex; align-items: center; gap: 10px; }
+    .toggle {
+      position: relative; width: 52px; height: 28px; flex-shrink: 0;
+      border-radius: 999px; cursor: pointer; transition: .3s;
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2);
+    }
+    .toggle.on { background: linear-gradient(135deg, var(--green), #34d399); border-color: transparent; }
+    .toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; border-radius: 50%; background: #fff;
+      transition: .3s; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    }
+    .toggle.on::after { left: 27px; }
+    .toggleLabel { font-weight: 700; font-size: 14px; }
+
+    /* BADGE */
+    .badge {
+      padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      letter-spacing: .04em; white-space: nowrap;
+    }
+    .badge.open { background: rgba(110,231,183,.15); color: var(--green); border: 1px solid rgba(110,231,183,.3); }
+    .badge.closed { background: rgba(248,113,113,.12); color: var(--red); border: 1px solid rgba(248,113,113,.25); }
+    .badge.answered { background: rgba(110,231,183,.12); color: var(--green); border: 1px solid rgba(110,231,183,.25); font-size: 10px; }
+    .badge.unanswered { background: rgba(242,161,179,.1); color: var(--pink); border: 1px solid rgba(242,161,179,.25); font-size: 10px; }
+
+    /* FILTER ROW */
+    .filterRow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .filterBtn {
+      padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05);
+      color: var(--muted); cursor: pointer; transition: .2s; font-family: inherit;
+    }
+    .filterBtn.active { background: rgba(242,161,179,.15); border-color: rgba(242,161,179,.4); color: var(--pink); }
+
+    /* CONFESSION LIST */
+    .confessionList { display: flex; flex-direction: column; gap: 10px; }
+
+    .confessionCard {
+      border: 1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04);
+      border-radius: 18px; padding: 16px; cursor: pointer;
+      transition: .2s; position: relative;
+    }
+    .confessionCard:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.18); }
+    .confessionCard.answered { border-color: rgba(110,231,183,.2); }
+
+    .confCardTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .confCardTo { font-weight: 800; font-size: 15px; color: var(--pink); }
+    .confCardFrom { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .confCardSong { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .confCardSong span { color: var(--text); }
+    .confCardMessage {
+      font-size: 13px; color: var(--text); line-height: 1.6;
+      overflow: hidden; display: -webkit-box;
+      -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      margin-bottom: 10px;
+    }
+    .confCardFooter { display: flex; justify-content: space-between; align-items: center; }
+    .confCardDate { font-size: 11px; color: var(--muted); }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+    .emptyIcon { font-size: 40px; margin-bottom: 12px; }
+
+    /* MODAL */
+    .modal {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal.open { display: flex; }
+    .modalBox {
+      background: linear-gradient(180deg, #181929, #12132a);
+      border: 1px solid rgba(255,182,193,.2);
+      border-radius: 24px; padding: 28px; width: 100%; max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6); max-height: 90vh; overflow-y: auto;
+    }
+    .modalClose {
+      float: right; background: none; border: none; color: var(--muted);
+      font-size: 20px; cursor: pointer; line-height: 1; padding: 0 0 8px 8px;
+    }
+    .modalLabel { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+    .modalValue { font-size: 15px; color: var(--text); margin-bottom: 16px; line-height: 1.7; }
+    .modalValue.message { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 14px; font-size: 14px; }
+    .modalActions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.08); }
+    .modalDate { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+    /* OPEN/CLOSE SECTION */
+    .openCloseCard {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10);
+      border-radius: 20px; padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .openCloseInfo { flex: 1; }
+    .openCloseTitle { font-weight: 700; font-size: 15px; }
+    .openCloseDesc { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1c1d30; border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px; padding: 10px 22px;
+      font-size: 13px; font-weight: 600; color: var(--text);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      opacity: 0; transition: opacity .2s, transform .2s;
+      z-index: 9999; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(110,231,183,.3); }
+    .toast.error { border-color: rgba(248,113,113,.3); }
+
+    @media (max-width: 640px) {
+      .adminWrap { padding: 16px 14px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="siteHeader">
+    <div class="headerWrap">
+      <div>
+        <div class="logoTitle">Admin • Confession</div>
+        <div class="logoSub">PRIVATE PANEL</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a href="confession.html" class="pill" target="_blank" id="publicLink" style="display:none;">🔗 Halaman Publik</a>
+        <button class="pill danger" id="logoutBtn" style="display:none;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="adminWrap">
+
+    <!-- LOGIN -->
+    <div id="loginSection" class="card" style="max-width:420px;margin:80px auto;">
+      <h2 style="font-family:'Playfair Display',serif;color:var(--pink);font-size:26px;margin-bottom:6px;">Login Admin</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">Akses khusus admin</p>
+      <div class="formRow">
+        <input id="emailInput" type="email" placeholder="Email admin" />
+        <input id="passInput" type="password" placeholder="Password" />
+        <button class="btn primary" id="loginBtn">Login</button>
+        <div class="statusMsg" id="loginStatus"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" style="display:none;">
+
+      <!-- TOP BAR -->
+      <div class="topBarRow">
+        <h2>Confession Inbox 💌</h2>
+      </div>
+
+      <!-- OPEN/CLOSE TOGGLE -->
+      <div class="openCloseCard">
+        <div class="openCloseInfo">
+          <div class="openCloseTitle">Status Confession</div>
+          <div class="openCloseDesc">Atur apakah publik bisa mengirim confession sekarang</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span class="badge open" id="openCloseBadge">OPEN</span>
+          <div class="toggleWrap">
+            <div class="toggle on" id="openCloseToggle"></div>
+            <span class="toggleLabel" id="openCloseLabel">Buka</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="statsRow">
+        <div class="statCard">
+          <div class="statNum" id="statTotal">—</div>
+          <div class="statLabel">TOTAL PESAN</div>
+        </div>
+        <div class="statCard">
+          <div class="statNum" id="statUnanswered">—</div>
+          <div class="statLabel">BELUM DIJAWAB</div>
+        </div>
+        <div class="statCard">
+          <div class="statNum" id="statAnswered">—</div>
+          <div class="statLabel">SUDAH DIJAWAB</div>
+        </div>
+      </div>
+
+      <!-- FILTER + LIST -->
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+          <div style="font-family:'Playfair Display',serif;color:var(--pink);font-size:17px;font-weight:700;">Daftar Pesan</div>
+          <button class="btn" id="refreshBtn" style="font-size:12px;">🔄 Refresh</button>
+        </div>
+
+        <div class="filterRow">
+          <button class="filterBtn active" data-filter="all">Semua</button>
+          <button class="filterBtn" data-filter="unanswered">Belum Dijawab</button>
+          <button class="filterBtn" data-filter="answered">Sudah Dijawab</button>
+        </div>
+
+        <div class="confessionList" id="confessionList">
+          <div class="empty"><div class="emptyIcon">⏳</div>Memuat pesan...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div class="modal" id="detailModal">
+    <div class="modalBox">
+      <button class="modalClose" id="modalClose">✕</button>
+      <div style="margin-bottom:16px;">
+        <div class="modalLabel">To</div>
+        <div class="modalValue" id="modalTo">—</div>
+        <div class="modalLabel">From</div>
+        <div class="modalValue" id="modalFrom">—</div>
+        <div class="modalLabel">Song</div>
+        <div class="modalValue" id="modalSong">—</div>
+        <div class="modalLabel">Message</div>
+        <div class="modalValue message" id="modalMessage">—</div>
+      </div>
+      <div class="modalDate" id="modalDate"></div>
+      <div class="modalActions">
+        <button class="btn success" id="modalAnswerBtn">✓ Tandai Sudah Dijawab</button>
+        <button class="btn danger" id="modalDeleteBtn">🗑 Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { supabase } from "./js/supabaseClient.js";
+
+    // STATE
+    let confessions = [];
+    let currentFilter = "all";
+    let currentConfession = null;
+    let isOpen = true;
+
+    // TOAST
+    let toastTimer;
+    function showToast(msg, type = "") {
+      const t = document.getElementById("toast");
+      t.textContent = msg; t.className = "toast show " + type;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.className = "toast", 3000);
+    }
+
+    function setStatus(el, msg, type = "") {
+      el.textContent = msg; el.className = "statusMsg " + type;
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return "—";
+      return new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+
+    // STATS
+    function renderStats() {
+      const total = confessions.length;
+      const answered = confessions.filter(c => c.is_answered).length;
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("statAnswered").textContent = answered;
+      document.getElementById("statUnanswered").textContent = total - answered;
+    }
+
+    // AUTH
+    async function verifyAdmin() {
+      const { data: sess } = await supabase.auth.getSession();
+      if (!sess?.session) return false;
+      const email = sess.session.user?.email;
+      const { data } = await supabase.from("admins").select("email").eq("email", email).maybeSingle();
+      if (!data) { await supabase.auth.signOut(); return false; }
+      return true;
+    }
+
+    function showLogin(msg = "", type = "") {
+      document.getElementById("loginSection").style.display = "";
+      document.getElementById("adminPanel").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("publicLink").style.display = "none";
+      setStatus(document.getElementById("loginStatus"), msg, type);
+    }
+
+    function showPanel() {
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("adminPanel").style.display = "";
+      document.getElementById("logoutBtn").style.display = "";
+      document.getElementById("publicLink").style.display = "";
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("emailInput").value.trim();
+      const pass = document.getElementById("passInput").value;
+      const s = document.getElementById("loginStatus");
+      if (!email || !pass) { setStatus(s, "Email & password wajib diisi.", "error"); return; }
+      document.getElementById("loginBtn").disabled = true;
+      setStatus(s, "Login...");
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+      document.getElementById("loginBtn").disabled = false;
+      if (error || !data?.session) { setStatus(s, "Login gagal: " + (error?.message || "unknown"), "error"); return; }
+      const ok = await verifyAdmin();
+      if (!ok) { setStatus(s, "Akun ini bukan admin.", "error"); return; }
+      showPanel();
+      await Promise.all([loadSettings(), loadConfessions()]);
+    });
+
+    document.getElementById("passInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") document.getElementById("loginBtn").click();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await supabase.auth.signOut(); showLogin();
+    });
+
+    // SETTINGS (open/close)
+    async function loadSettings() {
+      try {
+        const { data } = await supabase.from("confession_settings").select("is_open").eq("id", 1).maybeSingle();
+        isOpen = data?.is_open !== false;
+      } catch { isOpen = true; }
+      renderOpenClose();
+    }
+
+    function renderOpenClose() {
+      const tog = document.getElementById("openCloseToggle");
+      const badge = document.getElementById("openCloseBadge");
+      const label = document.getElementById("openCloseLabel");
+      tog.className = "toggle" + (isOpen ? " on" : "");
+      badge.className = "badge " + (isOpen ? "open" : "closed");
+      badge.textContent = isOpen ? "OPEN" : "CLOSED";
+      label.textContent = isOpen ? "Buka" : "Tutup";
+    }
+
+    document.getElementById("openCloseToggle").addEventListener("click", async () => {
+      isOpen = !isOpen;
+      renderOpenClose();
+      const { error } = await supabase.from("confession_settings").update({ is_open: isOpen }).eq("id", 1);
+      if (error) {
+        showToast("Gagal simpan: " + error.message, "error");
+        isOpen = !isOpen; renderOpenClose();
+      } else {
+        showToast(isOpen ? "Confession dibuka ✓" : "Confession ditutup 🔒", isOpen ? "success" : "");
+      }
+    });
+
+    // LOAD CONFESSIONS
+    async function loadConfessions() {
+      const list = document.getElementById("confessionList");
+      list.innerHTML = `<div class="empty"><div class="emptyIcon">⏳</div>Memuat pesan...</div>`;
+      const { data, error } = await supabase.from("confessions").select("*").order("created_at", { ascending: false });
+      if (error) { list.innerHTML = `<div class="empty" style="color:var(--red);">Gagal: ${error.message}</div>`; return; }
+      confessions = data || [];
+      renderStats();
+      renderList();
+    }
+
+    // RENDER LIST
+    function renderList() {
+      const list = document.getElementById("confessionList");
+      let filtered = confessions;
+      if (currentFilter === "answered") filtered = confessions.filter(c => c.is_answered);
+      if (currentFilter === "unanswered") filtered = confessions.filter(c => !c.is_answered);
+
+      if (!filtered.length) {
+        list.innerHTML = `<div class="empty"><div class="emptyIcon">💌</div>${currentFilter === "all" ? "Belum ada confession masuk." : "Tidak ada pesan di kategori ini."}</div>`;
+        return;
+      }
+
+      list.innerHTML = "";
+      filtered.forEach(c => {
+        const card = document.createElement("div");
+        card.className = "confessionCard" + (c.is_answered ? " answered" : "");
+        card.innerHTML = `
+          <div class="confCardTop">
+            <div>
+              <div class="confCardTo">To: ${escHtml(c.to_name)}</div>
+              <div class="confCardFrom">From: ${c.from_name ? escHtml(c.from_name) : '<span style="color:var(--muted)">Anonim</span>'}</div>
+              ${c.song ? `<div class="confCardSong">🎵 <span>${escHtml(c.song)}</span></div>` : ""}
+            </div>
+            <span class="badge ${c.is_answered ? 'answered' : 'unanswered'}">${c.is_answered ? '✓ Dijawab' : 'Belum'}</span>
+          </div>
+          <div class="confCardMessage">${escHtml(c.message)}</div>
+          <div class="confCardFooter">
+            <div class="confCardDate">${fmtDate(c.created_at)}</div>
+          </div>
+        `;
+        card.addEventListener("click", () => openModal(c));
+        list.appendChild(card);
+      });
+    }
+
+    function escHtml(s = "") {
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+    }
+
+    // FILTER
+    document.querySelectorAll(".filterBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filterBtn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.filter;
+        renderList();
+      });
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", loadConfessions);
+
+    // MODAL
+    function openModal(c) {
+      currentConfession = c;
+      document.getElementById("modalTo").textContent = c.to_name || "—";
+      document.getElementById("modalFrom").textContent = c.from_name || "Anonim";
+      document.getElementById("modalSong").textContent = c.song || "—";
+      document.getElementById("modalMessage").textContent = c.message || "—";
+      document.getElementById("modalDate").textContent = fmtDate(c.created_at);
+
+      const answerBtn = document.getElementById("modalAnswerBtn");
+      if (c.is_answered) {
+        answerBtn.textContent = "↩ Tandai Belum Dijawab";
+        answerBtn.className = "btn";
+      } else {
+        answerBtn.textContent = "✓ Tandai Sudah Dijawab";
+        answerBtn.className = "btn success";
+      }
+
+      document.getElementById("detailModal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("detailModal").classList.remove("open");
+      currentConfession = null;
+    }
+
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("detailModal").addEventListener("click", e => {
+      if (e.target === document.getElementById("detailModal")) closeModal();
+    });
+
+    // TOGGLE ANSWERED
+    document.getElementById("modalAnswerBtn").addEventListener("click", async () => {
+      if (!currentConfession) return;
+      const newVal = !currentConfession.is_answered;
+      const { error } = await supabase.from("confessions").update({ is_answered: newVal }).eq("id", currentConfession.id);
+      if (error) { showToast("Gagal: " + error.message, "error"); return; }
+      currentConfession.is_answered = newVal;
+      const idx = confessions.findIndex(c => c.id === currentConfession.id);
+      if (idx !== -1) confessions[idx].is_answered = newVal;
+      renderStats();
+      renderList();
+      showToast(newVal ? "Ditandai sudah dijawab ✓" : "Ditandai belum dijawab", newVal ? "success" : "");
+      closeModal();
+    });
+
+    // DELETE
+    document.getElementById("modalDeleteBtn").addEventListener("click", async () => {
+      if (!currentConfession) return;
+      if (!confirm("Hapus confession ini? Tidak bisa dibatalkan.")) return;
+      const { error } = await supabase.from("confessions").delete().eq("id", currentConfession.id);
+      if (error) { showToast("Gagal hapus: " + error.message, "error"); return; }
+      confessions = confessions.filter(c => c.id !== currentConfession.id);
+      renderStats(); renderList();
+      showToast("Confession dihapus ✓", "success");
+      closeModal();
+    });
+
+    // INIT
+    (async () => {
+      const ok = await verifyAdmin();
+      if (ok) { showPanel(); await Promise.all([loadSettings(), loadConfessions()]); }
+      else showLogin();
+    })();
+  </script>
+</body>
+</html>
