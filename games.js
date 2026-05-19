@@ -192,23 +192,34 @@ async function checkAndSetBuzzState() {
   if (lastRoomStatus !== "live") return;
   if (!state.current_question_id) return;
 
-  // Cek ada jawaban pending (verdict null) untuk soal ini
-  const { data: pending } = await supabase
+  // Cek ada jawaban pending (verdict null DAN scored_at null) untuk soal ini
+  const { data: pendingRows, error: pendingErr } = await supabase
     .from("cc_answers")
-    .select("id")
+    .select("id, verdict, scored_at")
     .eq("question_id", state.current_question_id)
-    .is("verdict", null)
-    .limit(1)
-    .maybeSingle();
+    .is("scored_at", null)
+    .limit(5);
 
-  if (pending) {
-    // Masih ada jawaban pending → buzz tetap terkunci
+  console.log("[checkAndSetBuzzState] pending check:", pendingRows, pendingErr);
+
+  // Kalau error query → lock dulu, jangan buka sembarangan
+  if (pendingErr) {
     if (buzzBtn) buzzBtn.disabled = true;
-    if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+    if (buzzInfo) buzzInfo.textContent = "Menunggu...";
+    console.log("[checkAndSetBuzzState] LOCKED — query error:", pendingErr.message);
     return;
   }
 
-  // Tidak ada pending → buka buzz
+  const hasPending = Array.isArray(pendingRows) && pendingRows.length > 0;
+
+  if (hasPending) {
+    if (buzzBtn) buzzBtn.disabled = true;
+    if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+    console.log("[checkAndSetBuzzState] LOCKED — pending answer exists");
+    return;
+  }
+
+  console.log("[checkAndSetBuzzState] OPEN — no pending answers");
   if (buzzBtn) buzzBtn.disabled = false;
   if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
 }
