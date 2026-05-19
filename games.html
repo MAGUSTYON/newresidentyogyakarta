@@ -316,7 +316,7 @@
     .feedPage { display: none; }
     .feedPage.active { display: flex; flex-direction: column; gap: 10px; }
     #feedStatus { font-size: 12px; color: var(--muted); min-height: 16px; }
-    .answerList { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+    .answerList { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
     .ansItem {
       padding: 10px 12px;
       border-radius: 14px;
@@ -343,7 +343,7 @@
     .ansItem .text { font-size: 13px; color: var(--text); white-space: pre-wrap; }
 
     /* chat feed */
-    .chatFeed { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; margin-bottom: 10px; }
+    .chatFeed { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; margin-bottom: 10px; }
     .chatLine { font-size: 13px; color: var(--muted); padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.04); }
     .chatLine b { color: var(--text); }
 
@@ -354,15 +354,17 @@
     }
     .chatInputRow textarea {
       flex: 1;
-      min-height: 44px;
-      max-height: 100px;
+      min-height: 40px;
+      max-height: 80px;
       resize: none;
       border-radius: 14px;
-      padding: 11px 13px;
+      padding: 10px 13px;
+      font-size: 14px;
+      line-height: 1.4;
     }
     .chatSendBtn {
       flex-shrink: 0;
-      padding: 11px 18px;
+      padding: 10px 18px;
       border-radius: 999px;
       border: none;
       background: linear-gradient(135deg, var(--pink), var(--pink-2));
@@ -434,20 +436,34 @@
       padding-top: 10px;
       border-top: 1px solid rgba(255,255,255,.09);
     }
+    .answerInputWrap .inputRow {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
     .answerInputWrap textarea {
-      width: 100%;
-      min-height: 72px;
+      flex: 1;
+      min-height: 40px;
+      max-height: 80px;
       border-radius: 14px;
-      padding: 11px 13px;
+      padding: 10px 13px;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       color: var(--text);
-      resize: vertical;
+      resize: none;
+      font-size: 14px;
+      line-height: 1.4;
     }
     .answerInputWrap textarea:disabled {
-      opacity: .45;
+      opacity: .4;
       cursor: not-allowed;
     }
+    .answerInputWrap .sendBtn {
+      flex-shrink: 0;
+      padding: 10px 18px;
+      align-self: flex-end;
+    }
+    #answerStatus { font-size: 12px; color: var(--muted); margin-top: 6px; display: block; }
 
     /* ══════════════════════════════════════
        MOBILE
@@ -567,11 +583,11 @@
             </div>
             <!-- Answer input -->
             <div id="answerBox" class="answerInputWrap">
-              <textarea id="answerText" placeholder="Tulis jawaban kamu..." disabled></textarea>
-              <div class="answerActions">
-                <button id="sendAnswerBtn" class="sendBtn" type="button" disabled>Kirim Jawaban</button>
-                <span id="answerStatus"></span>
+              <div class="inputRow">
+                <textarea id="answerText" placeholder="Tulis jawaban kamu..." disabled></textarea>
+                <button id="sendAnswerBtn" class="sendBtn" type="button" disabled>Kirim</button>
               </div>
+              <span id="answerStatus"></span>
             </div>
           </section>
 
@@ -606,5 +622,25 @@
   </div>
 
   <script type="module" src="games.js"></script>
+  <script type="module">
+    // Patch: lock buzz after answer submitted, unlock only after admin verdict
+    // games.js already handles this via setAnswerEnabled(false) + re-enables on verdict.
+    // Extra guard: auto-disable buzz once answer textarea is cleared after submit.
+    // We hook into MutationObserver on #answerStatus to react to text changes.
+    const answerStatus = document.getElementById("answerStatus");
+    const buzzBtn = document.getElementById("buzzBtn");
+    const buzzInfo = document.getElementById("buzzInfo");
+
+    if (answerStatus && buzzBtn) {
+      new MutationObserver(() => {
+        const txt = answerStatus.textContent || "";
+        // If status says "terkirim / menunggu" → lock buzz
+        if (txt.includes("terkirim") || txt.includes("Menunggu verifikasi")) {
+          buzzBtn.disabled = true;
+          if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+        }
+      }).observe(answerStatus, { childList: true, subtree: true, characterData: true });
+    }
+  </script>
 </body>
 </html>
