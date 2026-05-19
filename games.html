@@ -428,6 +428,27 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 999px; }
 
+    /* answer input inside tab */
+    .answerInputWrap {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.09);
+    }
+    .answerInputWrap textarea {
+      width: 100%;
+      min-height: 72px;
+      border-radius: 14px;
+      padding: 11px 13px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      resize: vertical;
+    }
+    .answerInputWrap textarea:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
     /* ══════════════════════════════════════
        MOBILE
     ══════════════════════════════════════ */
@@ -527,14 +548,7 @@
           </div>
         </div>
 
-        <!-- Answer input (shown after buzz win) -->
-        <div class="answerSection" id="answerBox">
-          <textarea id="answerText" placeholder="Tulis jawaban kamu..." disabled></textarea>
-          <div class="answerActions">
-            <button id="sendAnswerBtn" class="sendBtn" type="button" disabled>Kirim Jawaban</button>
-            <span id="answerStatus"></span>
-          </div>
-        </div>
+
       </div>
 
       <!-- BOTTOM CARD: tabs -->
@@ -550,6 +564,14 @@
             <div id="feedStatus"></div>
             <div id="feedList" class="answerList">
               <div class="ansItem"><span class="text" style="color:var(--muted)">Belum ada jawaban.</span></div>
+            </div>
+            <!-- Answer input -->
+            <div id="answerBox" class="answerInputWrap">
+              <textarea id="answerText" placeholder="Tulis jawaban kamu..." disabled></textarea>
+              <div class="answerActions">
+                <button id="sendAnswerBtn" class="sendBtn" type="button" disabled>Kirim Jawaban</button>
+                <span id="answerStatus"></span>
+              </div>
             </div>
           </section>
 
