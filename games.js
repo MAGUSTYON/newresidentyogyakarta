@@ -302,10 +302,53 @@ function startBuzzCountdown() {
       return;
     }
 
+    // Hentikan countdown kalau jawaban sudah terkirim (pending admin)
+    if (activeBuzz && state.current_question_id) {
+      const { data: alreadySent } = await supabase
+        .from("cc_answers")
+        .select("id, verdict")
+        .eq("question_id", state.current_question_id)
+        .eq("player_id", activeBuzz.player_id)
+        .gte("created_at", activeBuzz.created_at)
+        .is("verdict", null)
+        .limit(1)
+        .maybeSingle();
+
+      if (alreadySent) {
+        clearBuzzCountdown();
+        if (buzzTimer) buzzTimer.textContent = "Menunggu ACC admin...";
+        if (buzzBtn) buzzBtn.disabled = true;
+        return;
+      }
+    }
+
     const leftMs = new Date(activeBuzz.expires_at).getTime() - Date.now();
 
     if (leftMs <= 0) {
       clearBuzzCountdown();
+
+      // Cek apakah ada jawaban pending sebelum release
+      if (activeBuzz) {
+        const { data: pendingOnExpiry } = await supabase
+          .from("cc_answers")
+          .select("id, verdict")
+          .eq("question_id", state.current_question_id)
+          .eq("player_id", activeBuzz.player_id)
+          .gte("created_at", activeBuzz.created_at)
+          .is("verdict", null)
+          .limit(1)
+          .maybeSingle();
+
+        if (pendingOnExpiry) {
+          // Ada jawaban pending → jangan release, tunggu admin
+          if (buzzTimer) buzzTimer.textContent = "Menunggu ACC admin...";
+          if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+          if (buzzBtn) buzzBtn.disabled = true;
+          setAnswerEnabled(false, "Jawaban terkirim. Menunggu verifikasi admin…");
+          return;
+        }
+      }
+
       await releaseActiveBuzz("expired");
       return;
     }
