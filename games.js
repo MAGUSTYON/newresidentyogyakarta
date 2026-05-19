@@ -186,6 +186,33 @@ function clearBuzzState() {
   resetBuzzVisual();
 }
 
+// Satu-satunya fungsi yang boleh enable buzzBtn.
+// Selalu cek pending answer dulu sebelum buka buzz.
+async function checkAndSetBuzzState() {
+  if (lastRoomStatus !== "live") return;
+  if (!state.current_question_id) return;
+
+  // Cek ada jawaban pending (verdict null) untuk soal ini
+  const { data: pending } = await supabase
+    .from("cc_answers")
+    .select("id")
+    .eq("question_id", state.current_question_id)
+    .is("verdict", null)
+    .limit(1)
+    .maybeSingle();
+
+  if (pending) {
+    // Masih ada jawaban pending → buzz tetap terkunci
+    if (buzzBtn) buzzBtn.disabled = true;
+    if (buzzInfo) buzzInfo.textContent = "Menunggu keputusan admin...";
+    return;
+  }
+
+  // Tidak ada pending → buka buzz
+  if (buzzBtn) buzzBtn.disabled = false;
+  if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
+}
+
 function showJoin(msg = "") {
   if (joinCard) {
     joinCard.hidden = false;
@@ -267,19 +294,13 @@ async function releaseActiveBuzz(reason = "expired") {
     clearBuzzCountdown();
 
     if (reason === "expired") {
-      resetBuzzVisual("Belum ada pemenang buzz.", "Waktu habis. Buzz terbuka lagi.");
-      if (lastRoomStatus === "live") {
-        if (buzzBtn) buzzBtn.disabled = false;
-        if (buzzInfo) buzzInfo.textContent = "Buzz terbuka lagi.";
-      }
-      setAnswerEnabled(false, "Waktu jawab habis. Tekan BUZZ lagi.");
+      resetBuzzVisual("Belum ada pemenang buzz.", "Waktu habis.");
+      setAnswerEnabled(false, "Waktu jawab habis.");
+      await checkAndSetBuzzState();
     } else if (reason === "wrong") {
       resetBuzzVisual("Belum ada pemenang buzz.", "");
-      if (lastRoomStatus === "live") {
-        if (buzzBtn) buzzBtn.disabled = false;
-        if (buzzInfo) buzzInfo.textContent = "Buzz terbuka lagi.";
-      }
-      setAnswerEnabled(false, "Salah. Buzz dibuka lagi.");
+      setAnswerEnabled(false, "Jawaban salah.");
+      await checkAndSetBuzzState();
     } else if (reason === "correct") {
       resetBuzzVisual("Jawaban benar.", "");
       setAnswerEnabled(false, "Jawaban benar.");
@@ -564,9 +585,8 @@ async function syncRoomUI(room) {
 
   if (!active) {
     resetBuzzVisual("Belum ada pemenang buzz.", "");
-    if (buzzBtn) buzzBtn.disabled = false;
-    if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
     setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
+    await checkAndSetBuzzState();
   }
 
   setChatEnabled(true);
@@ -931,11 +951,7 @@ function subscribeRealtime() {
 
         await loadAnswerFeed();
         await fetchActiveBuzz();
-
-        if (!activeBuzz && lastRoomStatus === "live") {
-          if (buzzBtn) buzzBtn.disabled = false;
-          if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
-        }
+        await checkAndSetBuzzState();
       }
     )
     .subscribe();
@@ -1010,10 +1026,7 @@ function subscribeRealtime() {
           setAnswerEnabled(false, "Menunggu pemenang buzz / ACC admin.");
         } else {
           setAnswerEnabled(false, "Tekan BUZZ dulu untuk menjawab.");
-          if (lastRoomStatus === "live") {
-            if (buzzBtn) buzzBtn.disabled = false;
-            if (buzzInfo) buzzInfo.textContent = "Buzz terbuka.";
-          }
+          await checkAndSetBuzzState();
         }
       }
     )
