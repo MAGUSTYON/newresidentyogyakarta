@@ -1,162 +1,583 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8438237515347728"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8438237515347728" crossorigin="anonymous"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Games • New Resident Yogyakarta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="games.css" />
-  <link rel="stylesheet" href="games-mobile.css" media="(max-width: 768px)">
+
+  <style>
+    /* ══════════════════════════════════════
+       PAGE SHELL
+    ══════════════════════════════════════ */
+    body { overflow-x: hidden; }
+
+    /* ══════════════════════════════════════
+       HEADER (pakai token styles.css)
+    ══════════════════════════════════════ */
+    .siteHeader {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: linear-gradient(180deg, rgba(11,12,20,.92), rgba(11,12,20,.55));
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .headerWrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 18px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .logoBlock { display: flex; flex-direction: column; line-height: 1.05; }
+    .logoTitle  { font-size: 15px; font-weight: 800; color: var(--pink); }
+    .logoSub    { font-size: 10px; letter-spacing: .26em; color: var(--muted); text-transform: uppercase; }
+    .pillNav    { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 0 13px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      transition: background .15s, transform .15s;
+    }
+    .pill:hover  { background: rgba(255,255,255,.12); transform: translateY(-1px); }
+    .pill.active { background: linear-gradient(135deg, var(--pink), var(--pink-2)); color: #1b0b12; border: none; }
+
+    /* ══════════════════════════════════════
+       JOIN SCREEN
+    ══════════════════════════════════════ */
+    #joinCard {
+      max-width: 480px;
+      margin: 60px auto 0;
+      padding: 0 18px;
+    }
+    .join-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--pink);
+      margin-bottom: 6px;
+    }
+    .join-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .join-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .field-label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .join-fields input { font-size: 15px; }
+    .join-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(242,161,179,.35);
+      transition: box-shadow .15s, transform .15s;
+    }
+    .join-btn:hover { box-shadow: 0 14px 36px rgba(242,161,179,.5); transform: translateY(-1px); }
+    .join-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    #joinStatus { margin-top: 10px; font-size: 13px; color: var(--muted); min-height: 18px; }
+
+    /* ══════════════════════════════════════
+       GAME LAYOUT
+    ══════════════════════════════════════ */
+    #gameCard {
+      display: none; /* shown via JS as grid */
+      max-width: 1100px;
+      margin: 18px auto;
+      padding: 0 18px 32px;
+      grid-template-columns: 260px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      #gameCard { grid-template-columns: 1fr; }
+    }
+
+    /* ── SIDEBAR ── */
+    .ccSide {
+      position: sticky;
+      top: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sideCard {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(12,10,24,.6);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+    .sideHead {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .sideHeadTitle { font-size: 13px; font-weight: 800; letter-spacing: .04em; color: var(--text); }
+    .meTag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .playerList {
+      padding: 8px;
+      max-height: calc(100vh - 260px);
+      overflow-y: auto;
+    }
+    .lb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.04);
+      margin-bottom: 6px;
+      transition: background .15s;
+    }
+    .lb-item:last-child { margin-bottom: 0; }
+    .lb-rank { font-size: 11px; color: var(--muted); min-width: 18px; font-weight: 700; }
+    .lb-name { flex: 1; font-size: 13px; font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-pts { font-size: 15px; font-weight: 800; color: var(--pink); }
+    #lbStatus { padding: 6px 14px 0; font-size: 11px; color: var(--muted); }
+
+    /* ── MAIN COLUMN ── */
+    .ccMain { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+
+    /* ── TOP CARD (room + question + buzz) ── */
+    .boardCard {
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(12,10,24,.7);
+      backdrop-filter: blur(14px);
+      padding: 16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.5);
+    }
+    .boardTopBar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .boardMeta { display: flex; flex-direction: column; gap: 3px; }
+    .boardMetaRoom { font-size: 12px; color: var(--muted); }
+    .boardMetaRoom span { color: var(--text); font-weight: 700; }
+    #gameStatus { font-size: 13px; color: var(--pink); font-weight: 600; }
+    .leaveBtn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+    .leaveBtn:hover { background: rgba(255,80,80,.15); border-color: rgba(255,80,80,.3); }
+
+    .questionWrap {
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(0,0,0,.2);
+      margin-bottom: 14px;
+    }
+    .questionLabel { font-size: 10px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+    #qText { font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--text); white-space: pre-wrap; min-height: 40px; }
+
+    .buzzRow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    #buzzBtn {
+      padding: 12px 28px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: .06em;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(242,161,179,.4);
+      transition: box-shadow .15s, transform .15s, opacity .15s;
+    }
+    #buzzBtn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; transform: none; }
+    #buzzBtn:not(:disabled):hover { box-shadow: 0 12px 32px rgba(242,161,179,.55); transform: translateY(-1px); }
+    .buzzMeta { font-size: 13px; color: var(--muted); }
+    #buzzOwner { font-size: 13px; color: var(--text); font-weight: 600; }
+    #buzzTimer  { font-size: 12px; color: var(--muted); }
+    #buzzInfo   { font-size: 12px; color: var(--muted); }
+
+    /* answer textarea (revealed after buzz) */
+    .answerSection {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.09);
+    }
+    .answerSection textarea {
+      width: 100%;
+      min-height: 80px;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      resize: vertical;
+    }
+    .answerActions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .sendBtn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .sendBtn:disabled { opacity: .45; cursor: not-allowed; }
+    #answerStatus { font-size: 12px; color: var(--muted); }
+
+    /* ── BOTTOM CARD (tabs: answers + chat) ── */
+    .bottomCard {
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(12,10,24,.6);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+    .tabBar {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+    .ccTab {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: .04em;
+      transition: background .15s;
+    }
+    .ccTab.active {
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      border-color: transparent;
+    }
+    .tabBody { padding: 12px; }
+
+    /* answers feed */
+    .feedPage { display: none; }
+    .feedPage.active { display: flex; flex-direction: column; gap: 10px; }
+    #feedStatus { font-size: 12px; color: var(--muted); min-height: 16px; }
+    .answerList { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+    .ansItem {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.04);
+    }
+    .ansItem .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .ansItem .meta b { font-size: 13px; }
+    .verdict {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .verdict.correct { background: rgba(80,220,120,.18); color: #5ddc8a; border: 1px solid rgba(80,220,120,.3); }
+    .verdict.wrong   { background: rgba(255,80,80,.15); color: #ff7070; border: 1px solid rgba(255,80,80,.25); }
+    .verdict.pending { background: rgba(255,200,80,.12); color: #ffc850; border: 1px solid rgba(255,200,80,.25); }
+    .ansItem .text { font-size: 13px; color: var(--text); white-space: pre-wrap; }
+
+    /* chat feed */
+    .chatFeed { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; margin-bottom: 10px; }
+    .chatLine { font-size: 13px; color: var(--muted); padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,.04); }
+    .chatLine b { color: var(--text); }
+
+    .chatInputRow {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+    .chatInputRow textarea {
+      flex: 1;
+      min-height: 44px;
+      max-height: 100px;
+      resize: none;
+      border-radius: 14px;
+      padding: 11px 13px;
+    }
+    .chatSendBtn {
+      flex-shrink: 0;
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      align-self: flex-end;
+    }
+
+    /* ══════════════════════════════════════
+       END OVERLAY
+    ══════════════════════════════════════ */
+    #endOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .overlayBox {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: rgba(12,10,24,.92);
+      box-shadow: 0 28px 80px rgba(0,0,0,.7);
+      overflow: hidden;
+    }
+    .overlayHead {
+      padding: 18px;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .overlayTitle { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--pink); }
+    #finalSub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .overlayCloseBtn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #finalList { padding: 14px; max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+
+    /* ══════════════════════════════════════
+       SCROLLBAR
+    ══════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.14); border-radius: 999px; }
+
+    /* ══════════════════════════════════════
+       MOBILE
+    ══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .ccSide { position: static; }
+      .playerList { max-height: 180px; }
+    }
+    @media (max-width: 520px) {
+      #joinCard { margin-top: 32px; }
+      .join-title { font-size: 26px; }
+      .boardCard, .bottomCard { border-radius: 18px; padding: 13px; }
+      #qText { font-size: 15px; }
+      #buzzBtn { padding: 11px 22px; font-size: 14px; }
+      .headerWrap { height: 56px; }
+    }
+  </style>
 </head>
+
 <body>
-  <div class="bg-pattern"></div>
-
-  <div class="app">
-    <!-- JOIN CARD -->
-    <section id="joinCard" class="panel join-card">
-      <h2>Cerdas Cermat (Live)</h2>
-      <p>Masukkan kode room dari admin dan nickname kamu.</p>
-
-      <div class="join-grid">
-        <div class="field">
-          <label for="roomCode">Kode Room</label>
-          <input id="roomCode" type="text" placeholder="ABCDE1" autocomplete="off" />
-        </div>
-
-        <div class="field">
-          <label for="nickname">Nickname</label>
-          <input id="nickname" type="text" placeholder="nama kamu" autocomplete="off" />
-        </div>
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="siteHeader">
+    <div class="headerWrap">
+      <div class="logoBlock">
+        <span class="logoTitle">New Resident</span>
+        <span class="logoSub">Yogyakarta</span>
       </div>
-
-      <div class="join-actions">
-        <button id="joinBtn" type="button">Join</button>
-        <div id="joinStatus"></div>
-      </div>
-    </section>
-
-    <!-- GAME -->
-    <div id="gameCard" class="game-shell" hidden>
-      <!-- PLAYERS -->
-      <aside class="panel players">
-        <div class="players-top">
-          <div>
-            <div class="players-title">Players</div>
-            <div id="lbStatus" class="players-sub">—</div>
-          </div>
-          <div id="meTag" class="players-me">—</div>
-        </div>
-
-        <div class="player-list" id="lbList">
-          <div class="player">
-            <div class="check">•</div>
-            <div class="avatar no-badge">🙂</div>
-            <div class="player-name">Belum ada peserta.<strong>0 poin</strong></div>
-            <div class="plus"></div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- MAIN -->
-      <section class="main">
-        <!-- BOARD -->
-        <div class="panel board">
-          <div class="board-top">
-            <div class="board-left-meta">
-              <div><b>Room:</b> <span id="roomLabel">-</span></div>
-              <div id="gameStatus">—</div>
-            </div>
-
-            <div style="display:flex; gap:18px; align-items:center;">
-              <button id="leaveBtn" class="mini-btn" type="button">Keluar</button>
-            </div>
-          </div>
-
-          <div class="board-center">
-            <div class="question-wrap">
-              <div class="question-label">PERTANYAAN</div>
-              <div id="qText" class="question-text">—</div>
-            </div>
-
-            <div class="ghost-logo">Gartic</div>
-          </div>
-
-          <div class="board-bottom-ui">
-            <button id="buzzBtn" class="buzz-btn" type="button" disabled>BUZZ</button>
-            <div id="buzzInfo" class="buzz-meta"></div>
-            <div id="buzzOwner" class="buzz-meta">Belum ada pemenang buzz.</div>
-            <div id="buzzTimer" class="buzz-meta small"></div>
-          </div>
-        </div>
-
-        <!-- BOTTOM / FEEDS -->
-        <div class="panel bottom feeds-panel">
-          <!-- desktop label + mobile tab -->
-          <div class="feeds-head">
-            <button id="tabAnswer" class="tab left feeds-chip active" type="button">Jawaban</button>
-            <button id="tabChat" class="tab right feeds-chip" type="button">Obrolan</button>
-          </div>
-
-          <div class="feeds-body">
-            <!-- ANSWERS -->
-            <section id="answersPanel" class="answers feed-page active">
-              <div id="feedStatus" class="small-status"></div>
-
-              <div id="feedList" class="answer-list">
-                <div class="answer-line pending">
-                  <div class="answer-user">System</div>
-                  <div class="answer-text">Belum ada jawaban.</div>
-                </div>
-              </div>
-
-              <div class="input-row input-wrap" id="answerBox" data-disabled="1">
-                <div class="input-box input-pill">
-                  <span class="pencil input-icon">✎</span>
-                  <textarea
-                    id="answerText"
-                    placeholder="Jawab disini..."
-                    disabled
-                  ></textarea>
-                  <button id="sendAnswerBtn" type="button" disabled>Kirim</button>
-                </div>
-              </div>
-
-              <div id="answerStatus" class="small-status input-status"></div>
-            </section>
-
-            <!-- CHAT -->
-            <section id="chatPanel" class="chat feed-page">
-              <div id="chatList" class="chat-list chat-feed">
-                <div class="chat-line chat-item">Belum ada chat.</div>
-              </div>
-
-              <div id="chatBox" class="chat-box input-wrap">
-                <span class="search-icon input-icon">💬</span>
-                <textarea
-                  id="chatText"
-                  placeholder="Tulis chat..."
-                  maxlength="300"
-                ></textarea>
-                <button id="sendChatBtn" type="button">Kirim</button>
-              </div>
-            </section>
-          </div>
-        </div>
-      </section>
+      <nav class="pillNav">
+        <a class="pill" href="index.html">Beranda</a>
+        <a class="pill" href="quotes.html">Quotes</a>
+        <a class="pill" href="rating.html">Rating</a>
+        <a class="pill active" href="games.html">Games</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <!-- END OVERLAY -->
+  <!-- ═══════ JOIN SCREEN ═══════ -->
+  <section id="joinCard">
+    <h1 class="join-title">Cerdas Cermat</h1>
+    <p class="join-sub">Masukkan kode room dari admin dan nickname kamu.</p>
+
+    <div class="join-fields">
+      <div>
+        <label class="field-label" for="roomCode">Kode Room</label>
+        <input id="roomCode" type="text" placeholder="Contoh: V8BXA9" autocomplete="off" />
+      </div>
+      <div>
+        <label class="field-label" for="nickname">Nickname</label>
+        <input id="nickname" type="text" placeholder="nama kamu" autocomplete="off" />
+      </div>
+    </div>
+
+    <button id="joinBtn" class="join-btn" type="button">Masuk Room</button>
+    <div id="joinStatus"></div>
+  </section>
+
+  <!-- ═══════ GAME SCREEN ═══════ -->
+  <div id="gameCard">
+
+    <!-- SIDEBAR: leaderboard -->
+    <aside class="ccSide">
+      <div class="sideCard">
+        <div class="sideHead">
+          <span class="sideHeadTitle">Players</span>
+          <div id="meTag" class="meTag">—</div>
+        </div>
+        <div id="lbStatus"></div>
+        <div class="playerList" id="lbList"></div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="ccMain">
+
+      <!-- BOARD CARD -->
+      <div class="boardCard">
+        <div class="boardTopBar">
+          <div class="boardMeta">
+            <div class="boardMetaRoom">Room: <span id="roomLabel">—</span></div>
+            <div id="gameStatus">—</div>
+          </div>
+          <button id="leaveBtn" class="leaveBtn" type="button">Keluar</button>
+        </div>
+
+        <!-- Question -->
+        <div class="questionWrap">
+          <div class="questionLabel">Pertanyaan</div>
+          <div id="qText">—</div>
+        </div>
+
+        <!-- Buzz row -->
+        <div class="buzzRow">
+          <button id="buzzBtn" type="button" disabled>BUZZ</button>
+          <div>
+            <div id="buzzOwner" class="buzzMeta">Belum ada pemenang buzz.</div>
+            <div id="buzzInfo" class="buzzMeta"></div>
+            <div id="buzzTimer" class="buzzMeta"></div>
+          </div>
+        </div>
+
+        <!-- Answer input (shown after buzz win) -->
+        <div class="answerSection" id="answerBox">
+          <textarea id="answerText" placeholder="Tulis jawaban kamu..." disabled></textarea>
+          <div class="answerActions">
+            <button id="sendAnswerBtn" class="sendBtn" type="button" disabled>Kirim Jawaban</button>
+            <span id="answerStatus"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM CARD: tabs -->
+      <div class="bottomCard">
+        <div class="tabBar">
+          <button id="tabAnswer" class="ccTab active" type="button">Jawaban</button>
+          <button id="tabChat"   class="ccTab"        type="button">Obrolan</button>
+        </div>
+        <div class="tabBody">
+
+          <!-- ANSWERS -->
+          <section id="answersPanel" class="feedPage active">
+            <div id="feedStatus"></div>
+            <div id="feedList" class="answerList">
+              <div class="ansItem"><span class="text" style="color:var(--muted)">Belum ada jawaban.</span></div>
+            </div>
+          </section>
+
+          <!-- CHAT -->
+          <section id="chatPanel" class="feedPage">
+            <div id="chatList" class="chatFeed">
+              <div class="chatLine">Belum ada chat.</div>
+            </div>
+            <div class="chatInputRow">
+              <textarea id="chatText" placeholder="Tulis chat..." maxlength="300"></textarea>
+              <button id="sendChatBtn" class="chatSendBtn" type="button">Kirim</button>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div><!-- /ccMain -->
+  </div><!-- /gameCard -->
+
+  <!-- ═══════ END OVERLAY ═══════ -->
   <div id="endOverlay">
     <div class="overlayBox">
       <div class="overlayHead">
         <div>
-          <div class="overlayTitle">Sesi Berakhir</div>
-          <div id="finalSub" class="overlaySub">—</div>
+          <div class="overlayTitle">Sesi Berakhir 🎉</div>
+          <div id="finalSub">—</div>
         </div>
-        <button id="closeOverlay" type="button">✕</button>
+        <button id="closeOverlay" class="overlayCloseBtn" type="button">✕</button>
       </div>
       <div id="finalList"></div>
     </div>
