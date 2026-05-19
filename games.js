@@ -732,30 +732,27 @@ async function loadChatFeed() {
     return;
   }
 
+  // Render semua, skip yang sudah ada di DOM (cegah duplikat dari optimistic append)
   if (chatList) {
-    chatList.innerHTML = data
-      .map((c) => {
-        const name = esc(c.cc_players?.nickname || "Player");
-        const msg = esc(c.message);
-        const time = new Date(c.created_at).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
+    const existingTimes = new Set(
+      Array.from(chatList.querySelectorAll(".chat-msg")).map(el => el.dataset.time)
+    );
 
-        return `
-          <div class="ansItem">
-            <div class="meta">
-              <b>${name}</b>
-              <span style="opacity:.65;font-size:11px;">${time}</span>
-            </div>
-            <div style="white-space:pre-wrap;">${msg}</div>
-          </div>
-        `;
-      })
-      .join("");
+    // Kalau belum ada chat sama sekali, clear placeholder
+    if (!existingTimes.size) chatList.innerHTML = "";
+
+    data.forEach((c) => {
+      // Skip kalau sudah di-append optimistically (match by time ±2s)
+      const cTime = new Date(c.created_at).getTime();
+      const isDupe = Array.from(existingTimes).some(t => Math.abs(new Date(t).getTime() - cTime) < 2000
+        && chatList.querySelector(`[data-time="${t}"]`)?.querySelector("b")?.textContent === esc(c.cc_players?.nickname || "Player")
+      );
+      if (isDupe) return;
+
+      const name = c.cc_players?.nickname || "Player";
+      appendChatLine(name, c.message, c.created_at);
+    });
   }
-
-  scrollChatToBottom();
 }
 
 async function sendChat() {
@@ -763,6 +760,10 @@ async function sendChat() {
 
   const text = (chatText?.value || "").trim();
   if (!text) return;
+
+  // Langsung append ke UI dulu sebelum tunggu DB/realtime
+  if (chatText) chatText.value = "";
+  appendChatLine(state.nickname || "Kamu", text, new Date().toISOString());
 
   if (sendChatBtn) sendChatBtn.disabled = true;
 
@@ -776,10 +777,35 @@ async function sendChat() {
 
   if (error) {
     console.log("Chat insert error:", error.message);
-    return;
   }
+}
 
-  if (chatText) chatText.value = "";
+// Append satu baris chat ke #chatList tanpa re-render semua
+function appendChatLine(nickname, message, createdAt) {
+  if (!chatList) return;
+
+  // Hapus placeholder "Belum ada chat" kalau masih ada
+  const placeholder = chatList.querySelector(".chat-placeholder");
+  if (placeholder) placeholder.remove();
+
+  const time = new Date(createdAt).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const div = document.createElement("div");
+  div.className = "ansItem chat-msg";
+  div.dataset.nick = nickname;
+  div.dataset.time = createdAt;
+  div.innerHTML = `
+    <div class="meta">
+      <b>${esc(nickname)}</b>
+      <span style="opacity:.65;font-size:11px;">${time}</span>
+    </div>
+    <div style="white-space:pre-wrap;">${esc(message)}</div>
+  `;
+  chatList.appendChild(div);
+  scrollChatToBottom();
 }
 
 /* ===== GAME ACTIONS ===== */
@@ -993,8 +1019,28 @@ function subscribeRealtime() {
         table: "cc_chats",
         filter: `room_id=eq.${state.room_id}`,
       },
-      async () => {
-        await loadChatFeed();
+      async (payload) => {
+        // Kalau ada data lengkap dari realtime payload, append langsung
+        const c = payload.new;
+        if (c?.message && c?.player_id) {
+          // Fetch nickname dulu kalau tidak ada di payload
+          let nickname = "Player";
+          if (c.player_id) {
+            const { data: pRow } = await supabase
+              .from("cc_players")
+              .select("nickname")
+              .eq("id", c.player_id)
+              .maybeSingle();
+            nickname = pRow?.nickname || "Player";
+          }
+          // Cek apakah sudah di-append optimistically oleh pengirim sendiri
+          const isOwnMsg = c.player_id === state.player_id;
+          if (!isOwnMsg) {
+            appendChatLine(nickname, c.message, c.created_at);
+          }
+        } else {
+          await loadChatFeed();
+        }
       }
     )
     .subscribe();
