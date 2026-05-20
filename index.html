@@ -131,6 +131,29 @@
 .prologue p{
   margin: 10px 0;             /* balikin jarak antar paragraf */
 }
+
+    .footerLinks{
+  margin-top:60px;
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.footerLinks a{
+  color:var(--muted);
+  text-decoration:none;
+  transition:.2s ease;
+}
+
+.footerLinks a:hover{
+  color:var(--pink);
+}
     
   </style>
 </head>
@@ -207,13 +230,21 @@
 
     <div style="margin-top:18px;">
       <small>© New Resident Yogyakarta</small>
-      <small><a href="policy.html">Privacy Policy</a></small>
-      <small href="about.html">About Us</small>
-      <small href="kontak.html">Contact Us</small>
     </div>
 
   </main>
+<footer class="footerLinks">
 
+  <a href="about.html">About</a>
+  <span>•</span>
+
+  <a href="kontak.html">Contact</a>
+  <span>•</span>
+
+  <a href="policy.html">Privacy Policy</a>
+
+</footer>
+  
 </body>
 </html>
 
