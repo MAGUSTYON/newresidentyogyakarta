@@ -136,7 +136,22 @@ function renderItem(item) {
   const name    = item.name && item.name.trim() ? escapeHtml(item.name.trim()) : "Anonim";
   const created = new Date(item.created_at).toLocaleString("id-ID");
   const reason  = escapeHtml(item.reason || "-");
-  const scores  = item.scores || {};
+
+  // Support data lama (kolom part1-part7 + start_part) maupun data baru (scores JSONB)
+  let scores = item.scores || null;
+  if (!scores || Object.keys(scores).length === 0) {
+    // Fallback: bangun dari kolom lama
+    const startPart = Number(item.start_part || 1);
+    const legacyKeys = ["part1","part2","part3","part4","part5","part6","part7"];
+    const built = {};
+    legacyKeys.forEach(function(k, i) {
+      if (item[k] !== null && item[k] !== undefined) {
+        built[String(startPart + i)] = Number(item[k]);
+      }
+    });
+    scores = Object.keys(built).length > 0 ? built : {};
+  }
+
   const partNums = Object.keys(scores).map(Number).sort((a, b) => a - b);
   const avg     = averageScore(scores);
 
@@ -195,10 +210,24 @@ async function submitRating() {
     scores[String(num)] = sanitizeScore(el ? el.value : null);
   }
 
+  // Juga isi kolom part1-part7 lama biar tidak NOT NULL error
+  // Map ACTIVE_PARTS[0..6] ke part1..part7 secara urutan
+  const legacyPayload = {};
+  const LEGACY_KEYS = ["part1","part2","part3","part4","part5","part6","part7"];
+  ACTIVE_PARTS.forEach(function(num, i) {
+    if (i < 7) legacyPayload[LEGACY_KEYS[i]] = scores[String(num)] || 0;
+  });
+  // Isi sisa kolom yang tidak terpakai dengan 0
+  LEGACY_KEYS.forEach(function(k) {
+    if (!(k in legacyPayload)) legacyPayload[k] = 0;
+  });
+
   const payload = {
     name:   elName ? elName.value.trim() || null : null,
     reason: elReason ? elReason.value : "",
     scores,
+    start_part: ACTIVE_PARTS.length > 0 ? ACTIVE_PARTS[0] : 1,
+    ...legacyPayload,
   };
 
   elSubmit.disabled = true;
