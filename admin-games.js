@@ -237,22 +237,19 @@ if (!updated){ ansStatus.textContent = "Jawaban ini sudah dinilai sebelumnya."; 
 
         if (pUpErr){ ansStatus.textContent = pUpErr.message; return; }
 
-        ansStatus.textContent = "✅ Benar (+1) — pindah soal…";
-
         // otomatis next soal atau end live
-        questions = await fetchQuestions();
-        const currentIndex = room.question_index || 0;
-        const isLastQuestion = currentIndex >= questions.length - 1;
+        const freshQuestions = await fetchQuestions();
+        const currentIndex = room.question_index ?? 0;
+        const isLast = currentIndex >= freshQuestions.length - 1;
 
-        if (isLastQuestion) {
-          // sudah soal terakhir -> end live
+        if (isLast) {
+          ansStatus.textContent = "✅ Benar (+1) — soal habis, mengakhiri live…";
           await endLive();
-          ansStatus.textContent = "✅ Benar (+1) — semua soal selesai, live ended!";
         } else {
-          // masih ada soal berikutnya -> next soal
+          ansStatus.textContent = "✅ Benar (+1) — lanjut soal berikutnya…";
           await nextQuestion();
         }
-        return; // sudah re-render di nextQuestion/endLive
+        return;
       }
 
       // kalau SALAH -> buka buzz lagi untuk soal ini:
@@ -317,7 +314,14 @@ async function nextQuestion(){
   questions = await fetchQuestions();
   if (!questions.length) return;
 
-  const nextIndex = Math.min((room.question_index || 0) + 1, questions.length - 1);
+  const nextIndex = (room.question_index ?? 0) + 1;
+
+  // Kalau sudah melewati soal terakhir, end live saja
+  if (nextIndex >= questions.length) {
+    await endLive();
+    return;
+  }
+
   const nextQ = questions[nextIndex];
 
   // bersihin buzz & jawaban pending (biar soal baru clean)
