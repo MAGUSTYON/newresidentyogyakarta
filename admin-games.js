@@ -237,7 +237,22 @@ if (!updated){ ansStatus.textContent = "Jawaban ini sudah dinilai sebelumnya."; 
 
         if (pUpErr){ ansStatus.textContent = pUpErr.message; return; }
 
-        ansStatus.textContent = "✅ Benar (+1)";
+        ansStatus.textContent = "✅ Benar (+1) — pindah soal…";
+
+        // otomatis next soal atau end live
+        questions = await fetchQuestions();
+        const currentIndex = room.question_index || 0;
+        const isLastQuestion = currentIndex >= questions.length - 1;
+
+        if (isLastQuestion) {
+          // sudah soal terakhir -> end live
+          await endLive();
+          ansStatus.textContent = "✅ Benar (+1) — semua soal selesai, live ended!";
+        } else {
+          // masih ada soal berikutnya -> next soal
+          await nextQuestion();
+        }
+        return; // sudah re-render di nextQuestion/endLive
       }
 
       // kalau SALAH -> buka buzz lagi untuk soal ini:
