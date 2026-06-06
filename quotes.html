@@ -855,11 +855,203 @@
   <!-- MAIN -->
   <main class="mainContent" id="mainContent">
 
+    <!-- QUOTES OF THE DAY SLIDER -->
+    <div id="quotesOfTheDay" style="margin-bottom:32px;">
+      <div style="margin-bottom:14px;">
+        <div class="pageTitle" style="font-size:24px;">💬 Quotes of the Day</div>
+        <div class="pageSub">Penggalan kata-kata dari New Resident Yogyakarta</div>
+      </div>
+
+      <div class="qSliderWrap">
+        <div class="qSliderTrack" id="qSliderTrack">
+
+          <div class="qSlide active">
+            <div class="qMark">"</div>
+            <p class="qText">Bawalah lukamu ke Jogja, biar Jogja yang menyembuhkannya. Dan kalau Jogja pun tidak sanggup — setidaknya kamu tidak sendirian menghadapinya.</p>
+            <p class="qSrc">— New Resident Yogyakarta</p>
+          </div>
+
+          <div class="qSlide">
+            <div class="qMark">"</div>
+            <p class="qText">Kamu tidak harus baik-baik saja setiap saat. Kadang cukup bertahan dulu, lalu perlahan-lahan bangun kembali. Tidak perlu buru-buru.</p>
+            <p class="qSrc">— New Resident Yogyakarta</p>
+          </div>
+
+          <div class="qSlide">
+            <div class="qMark">"</div>
+            <p class="qText">Ada orang-orang yang hadir bukan untuk menetap, tapi untuk mengajarkan kita bahwa kita masih layak untuk dicintai.</p>
+            <p class="qSrc">— New Resident Yogyakarta</p>
+          </div>
+
+          <div class="qSlide">
+            <div class="qMark">"</div>
+            <p class="qText">Jogja punya caranya sendiri membuat orang jatuh cinta — pada kotanya, pada orang-orangnya, atau pada dirinya sendiri yang baru.</p>
+            <p class="qSrc">— New Resident Yogyakarta</p>
+          </div>
+
+          <div class="qSlide">
+            <div class="qMark">"</div>
+            <p class="qText">Tidak semua yang hilang itu kerugian. Kadang yang hilang justru memberi ruang untuk hal yang lebih baik masuk ke hidupmu.</p>
+            <p class="qSrc">— New Resident Yogyakarta</p>
+          </div>
+
+          <div class="qSlide">
+            <div class="qMark">"</div>
+            <p class="qText">Sembuh itu bukan soal melupakan. Sembuh adalah ketika kamu bisa mengingat tanpa ikut tenggelam di dalamnya.</p>
+            <p class="qSrc">— New Resident Yogyakarta</p>
+          </div>
+
+        </div>
+
+        <!-- Nav arrows -->
+        <button class="qArrow qArrowPrev" id="qPrev">‹</button>
+        <button class="qArrow qArrowNext" id="qNext">›</button>
+
+        <!-- Dots -->
+        <div class="qDots" id="qDots"></div>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,.08); margin-top:28px; padding-top:24px;">
+        <div class="pageTitle" style="font-size:24px; margin-bottom:4px;">📁 Folder Quotes Komunitas</div>
+        <div class="pageSub" style="margin-bottom:0;">Quotes yang diupload oleh komunitas NRY</div>
+      </div>
+    </div>
+
+    <style>
+      /* ===== QUOTES SLIDER ===== */
+      .qSliderWrap {
+        position: relative;
+        background: rgba(242,161,179,.06);
+        border: 1px solid rgba(242,161,179,.2);
+        border-radius: 20px;
+        overflow: hidden;
+        min-height: 160px;
+      }
+      .qSliderTrack {
+        position: relative;
+        min-height: 160px;
+      }
+      .qSlide {
+        position: absolute;
+        inset: 0;
+        padding: 24px 56px 28px 28px;
+        opacity: 0;
+        transition: opacity .5s ease;
+        pointer-events: none;
+      }
+      .qSlide.active {
+        opacity: 1;
+        pointer-events: auto;
+        position: relative;
+      }
+      .qMark {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        line-height: 1;
+        color: var(--pink);
+        opacity: .6;
+        margin-bottom: 4px;
+      }
+      .qText {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 15px;
+        color: rgba(255,255,255,.9);
+        line-height: 1.75;
+      }
+      .qSrc {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 12px;
+        font-weight: 700;
+        letter-spacing: .07em;
+      }
+      .qArrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.12);
+        color: var(--pink);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        transition: background .15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        z-index: 2;
+      }
+      .qArrow:hover { background: rgba(242,161,179,.18); }
+      .qArrowPrev { left: 10px; }
+      .qArrowNext { right: 10px; }
+      .qDots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 0 14px;
+      }
+      .qDot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(242,161,179,.25);
+        border: none;
+        cursor: pointer;
+        transition: background .2s, transform .2s;
+        padding: 0;
+      }
+      .qDot.active {
+        background: var(--pink);
+        transform: scale(1.3);
+      }
+    </style>
+
+    <script>
+      (function() {
+        const slides = document.querySelectorAll('.qSlide');
+        const dotsWrap = document.getElementById('qDots');
+        let current = 0;
+        let timer;
+
+        // Build dots
+        slides.forEach((_, i) => {
+          const d = document.createElement('button');
+          d.className = 'qDot' + (i === 0 ? ' active' : '');
+          d.addEventListener('click', () => goTo(i));
+          dotsWrap.appendChild(d);
+        });
+
+        function goTo(n) {
+          slides[current].classList.remove('active');
+          dotsWrap.children[current].classList.remove('active');
+          current = (n + slides.length) % slides.length;
+          slides[current].classList.add('active');
+          dotsWrap.children[current].classList.add('active');
+          resetTimer();
+        }
+
+        function resetTimer() {
+          clearInterval(timer);
+          timer = setInterval(() => goTo(current + 1), 4000);
+        }
+
+        document.getElementById('qPrev').addEventListener('click', () => goTo(current - 1));
+        document.getElementById('qNext').addEventListener('click', () => goTo(current + 1));
+
+        resetTimer();
+      })();
+    </script>
+
     <!-- FOLDER VIEW -->
     <div id="folderView">
       <div class="pageTopbar">
         <div>
-          <div class="pageTitle">Quotes NRY</div>
+          <div class="pageTitle" style="display:none;">Quotes NRY</div>
           <div class="pageSub" id="folderCount">Memuat folder...</div>
         </div>
       </div>
