@@ -862,53 +862,47 @@
         <div class="pageSub">Penggalan kata-kata dari New Resident Yogyakarta</div>
       </div>
 
-      <div class="qSliderWrap">
-        <div class="qSliderTrack" id="qSliderTrack">
+      <!-- Marquee wrapper -->
+      <div class="qMarqueeOuter">
+        <div class="qMarqueeTrack" id="qMarqueeTrack">
 
-          <div class="qSlide active">
+          <div class="qBubble">
             <div class="qMark">"</div>
             <p class="qText">Bawalah lukamu ke Jogja, biar Jogja yang menyembuhkannya. Dan kalau Jogja pun tidak sanggup — setidaknya kamu tidak sendirian menghadapinya.</p>
             <p class="qSrc">— New Resident Yogyakarta</p>
           </div>
 
-          <div class="qSlide">
+          <div class="qBubble">
             <div class="qMark">"</div>
             <p class="qText">Kamu tidak harus baik-baik saja setiap saat. Kadang cukup bertahan dulu, lalu perlahan-lahan bangun kembali. Tidak perlu buru-buru.</p>
             <p class="qSrc">— New Resident Yogyakarta</p>
           </div>
 
-          <div class="qSlide">
+          <div class="qBubble">
             <div class="qMark">"</div>
             <p class="qText">Ada orang-orang yang hadir bukan untuk menetap, tapi untuk mengajarkan kita bahwa kita masih layak untuk dicintai.</p>
             <p class="qSrc">— New Resident Yogyakarta</p>
           </div>
 
-          <div class="qSlide">
+          <div class="qBubble">
             <div class="qMark">"</div>
             <p class="qText">Jogja punya caranya sendiri membuat orang jatuh cinta — pada kotanya, pada orang-orangnya, atau pada dirinya sendiri yang baru.</p>
             <p class="qSrc">— New Resident Yogyakarta</p>
           </div>
 
-          <div class="qSlide">
+          <div class="qBubble">
             <div class="qMark">"</div>
             <p class="qText">Tidak semua yang hilang itu kerugian. Kadang yang hilang justru memberi ruang untuk hal yang lebih baik masuk ke hidupmu.</p>
             <p class="qSrc">— New Resident Yogyakarta</p>
           </div>
 
-          <div class="qSlide">
+          <div class="qBubble">
             <div class="qMark">"</div>
             <p class="qText">Sembuh itu bukan soal melupakan. Sembuh adalah ketika kamu bisa mengingat tanpa ikut tenggelam di dalamnya.</p>
             <p class="qSrc">— New Resident Yogyakarta</p>
           </div>
 
         </div>
-
-        <!-- Nav arrows -->
-        <button class="qArrow qArrowPrev" id="qPrev">‹</button>
-        <button class="qArrow qArrowNext" id="qNext">›</button>
-
-        <!-- Dots -->
-        <div class="qDots" id="qDots"></div>
       </div>
 
       <div style="border-top:1px solid rgba(255,255,255,.08); margin-top:28px; padding-top:24px;">
@@ -918,132 +912,72 @@
     </div>
 
     <style>
-      /* ===== QUOTES SLIDER ===== */
-      .qSliderWrap {
-        position: relative;
-        background: rgba(242,161,179,.06);
-        border: 1px solid rgba(242,161,179,.2);
-        border-radius: 20px;
+      /* ===== MARQUEE ===== */
+      .qMarqueeOuter {
         overflow: hidden;
-        min-height: 160px;
+        /* fade kiri & kanan */
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        cursor: grab;
       }
-      .qSliderTrack {
-        position: relative;
-        min-height: 160px;
+      .qMarqueeOuter:active { cursor: grabbing; }
+
+      .qMarqueeTrack {
+        display: flex;
+        gap: 14px;
+        width: max-content;
+        animation: qScroll 30s linear infinite;
       }
-      .qSlide {
-        position: absolute;
-        inset: 0;
-        padding: 24px 56px 28px 28px;
-        opacity: 0;
-        transition: opacity .5s ease;
-        pointer-events: none;
+      .qMarqueeOuter:hover .qMarqueeTrack { animation-play-state: paused; }
+
+      @keyframes qScroll {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
       }
-      .qSlide.active {
-        opacity: 1;
-        pointer-events: auto;
-        position: relative;
+
+      .qBubble {
+        width: 280px;
+        flex-shrink: 0;
+        background: rgba(242,161,179,.07);
+        border: 1px solid rgba(242,161,179,.22);
+        border-radius: 20px;
+        padding: 18px 20px 16px;
+        transition: background .2s, border-color .2s;
+      }
+      .qBubble:hover {
+        background: rgba(242,161,179,.13);
+        border-color: rgba(242,161,179,.4);
       }
       .qMark {
         font-family: 'Playfair Display', serif;
-        font-size: 3rem;
+        font-size: 2.4rem;
         line-height: 1;
         color: var(--pink);
-        opacity: .6;
+        opacity: .65;
         margin-bottom: 4px;
       }
       .qText {
         font-family: 'Playfair Display', serif;
         font-style: italic;
-        font-size: 15px;
-        color: rgba(255,255,255,.9);
-        line-height: 1.75;
+        font-size: 13.5px;
+        color: rgba(255,255,255,.88);
+        line-height: 1.7;
       }
       .qSrc {
         font-size: 11px;
         color: var(--muted);
-        margin-top: 12px;
+        margin-top: 10px;
         font-weight: 700;
         letter-spacing: .07em;
-      }
-      .qArrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255,255,255,.07);
-        border: 1px solid rgba(255,255,255,.12);
-        color: var(--pink);
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        font-size: 18px;
-        line-height: 1;
-        cursor: pointer;
-        transition: background .15s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        z-index: 2;
-      }
-      .qArrow:hover { background: rgba(242,161,179,.18); }
-      .qArrowPrev { left: 10px; }
-      .qArrowNext { right: 10px; }
-      .qDots {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        padding: 10px 0 14px;
-      }
-      .qDot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: rgba(242,161,179,.25);
-        border: none;
-        cursor: pointer;
-        transition: background .2s, transform .2s;
-        padding: 0;
-      }
-      .qDot.active {
-        background: var(--pink);
-        transform: scale(1.3);
       }
     </style>
 
     <script>
+      /* Duplikat bubble supaya loop mulus */
       (function() {
-        const slides = document.querySelectorAll('.qSlide');
-        const dotsWrap = document.getElementById('qDots');
-        let current = 0;
-        let timer;
-
-        // Build dots
-        slides.forEach((_, i) => {
-          const d = document.createElement('button');
-          d.className = 'qDot' + (i === 0 ? ' active' : '');
-          d.addEventListener('click', () => goTo(i));
-          dotsWrap.appendChild(d);
-        });
-
-        function goTo(n) {
-          slides[current].classList.remove('active');
-          dotsWrap.children[current].classList.remove('active');
-          current = (n + slides.length) % slides.length;
-          slides[current].classList.add('active');
-          dotsWrap.children[current].classList.add('active');
-          resetTimer();
-        }
-
-        function resetTimer() {
-          clearInterval(timer);
-          timer = setInterval(() => goTo(current + 1), 4000);
-        }
-
-        document.getElementById('qPrev').addEventListener('click', () => goTo(current - 1));
-        document.getElementById('qNext').addEventListener('click', () => goTo(current + 1));
-
-        resetTimer();
+        const track = document.getElementById('qMarqueeTrack');
+        const clone = track.innerHTML;
+        track.innerHTML += clone;
       })();
     </script>
 
