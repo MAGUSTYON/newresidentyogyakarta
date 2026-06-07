@@ -819,6 +819,22 @@ body {
     font-size: 12.5px;
   }
 }
+    /* ===== Footer ===== */
+    .footerLinks {
+      margin-top: 60px; text-align: center; font-size: 13px;
+      color: var(--muted); display:flex; justify-content:center;
+      align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .footerLinks a { color:var(--muted); text-decoration:none; transition:.2s; }
+    .footerLinks a:hover { color:var(--pink); }
+
+    h2 { font-size: 22px; }
+    h4 { font-size: 16px; font-family: 'Playfair Display', serif; color: var(--pink); font-weight: 700; }
+
+    @media(max-width:520px){
+      .penulisInner { grid-template-columns: 1fr; }
+      .heroBanner { padding: 24px 18px; }
+    }
 
 
 
