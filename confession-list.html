@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Confession Board 💌 • New Resident Yogyakarta</title>
-  <meta name="description" content="Baca semua confession yang sudah dikirim di komunitas New Resident Yogyakarta." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-0: #0b0c14;
@@ -202,9 +199,34 @@
     }
     .ctaBtn:hover { box-shadow: 0 6px 22px rgba(242,161,179,.45); transform: translateY(-1px); }
 
+    /* FLOATING BTN */
+    .floatingBtn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: #1b0b12;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: inherit;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(242,161,179,.45);
+      transition: .2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .floatingBtn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(242,161,179,.55); }
+
     @media (max-width: 480px) {
       .pageHero h1 { font-size: 26px; }
       .ctaBar { flex-direction: column; text-align: center; }
+      .floatingBtn { bottom: 18px; right: 18px; padding: 12px 18px; font-size: 13px; }
     }
   </style>
 </head>
@@ -250,6 +272,9 @@
     </div>
 
   </div>
+
+  <!-- FLOATING BUTTON -->
+  <a href="confession.html" class="floatingBtn">✉ Kirim Confession</a>
 
   <!-- MODAL -->
   <div class="modal" id="detailModal">
