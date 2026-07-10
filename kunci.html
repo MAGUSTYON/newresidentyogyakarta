@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kunci Terakhir — Jejak Aden</title>
+<style>
+  :root{
+    --void: #0b1220;
+    --deep: #101a2e;
+    --parchment: #e8d9b5;
+    --parchment-dim: #cdbb8f;
+    --gold: #c9a24b;
+    --gold-bright: #e6c667;
+    --ember: #b3532e;
+    --ink: #1c140a;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(201,162,75,0.08), transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(179,83,46,0.10), transparent 55%),
+      var(--void);
+    font-family: 'Iowan Old Style','Palatino Linotype',Georgia,serif;
+    color: var(--parchment);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+    overflow-x:hidden;
+  }
+
+  /* faint compass lines in background */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(201,162,75,0.035) 0px, rgba(201,162,75,0.035) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, rgba(201,162,75,0.035) 0px, rgba(201,162,75,0.035) 1px, transparent 1px, transparent 64px);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    max-width: 620px;
+    width:100%;
+  }
+
+  .eyebrow{
+    text-align:center;
+    letter-spacing: 0.32em;
+    text-transform:uppercase;
+    font-size: 11px;
+    color: var(--gold);
+    font-family: 'Trebuchet MS', sans-serif;
+    margin-bottom: 14px;
+    opacity:0.85;
+  }
+
+  .scroll{
+    position:relative;
+    background: linear-gradient(180deg, #14203a, #0e1729 60%, #0b1220);
+    border: 1px solid rgba(201,162,75,0.35);
+    border-radius: 6px;
+    padding: 46px 40px 38px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.55),
+      inset 0 0 60px rgba(201,162,75,0.05);
+  }
+
+  .scroll::before, .scroll::after{
+    content:"";
+    position:absolute; left:14px; right:14px; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(201,162,75,0.5), transparent);
+  }
+  .scroll::before{ top:14px; }
+  .scroll::after{ bottom:14px; }
+
+  h1{
+    font-family: 'Trajan Pro','Cinzel',Georgia,serif;
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 34px);
+    text-align:center;
+    letter-spacing:0.04em;
+    color: var(--gold-bright);
+    margin: 0 0 6px;
+    text-shadow: 0 0 22px rgba(230,198,103,0.25);
+  }
+
+  .sub{
+    text-align:center;
+    color: var(--parchment-dim);
+    font-size: 14px;
+    font-style: italic;
+    margin: 0 0 34px;
+  }
+
+  .divider{
+    width: 90px; height:1px;
+    margin: 0 auto 30px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .story p{
+    font-size: 16.5px;
+    line-height: 1.85;
+    margin: 0 0 18px;
+    color: var(--parchment);
+  }
+  .story p:last-child{ margin-bottom:0; }
+  .story em{ color: var(--gold-bright); font-style:italic; }
+
+  /* --- wax seal interaction --- */
+  .seal-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin: 38px 0 8px;
+  }
+
+  .seal{
+    width: 92px; height: 92px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #c96a45, var(--ember) 60%, #7c3419 100%);
+    box-shadow: 0 8px 22px rgba(179,83,46,0.4), inset 0 -6px 10px rgba(0,0,0,0.35), inset 0 4px 8px rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    border:none;
+    position:relative;
+    transition: transform .35s ease;
+    font-family:'Cinzel',Georgia,serif;
+    color:#f4e2c8;
+    font-size:12px;
+    letter-spacing:0.14em;
+  }
+  .seal:hover{ transform: scale(1.05) rotate(-2deg); }
+  .seal:active{ transform: scale(0.96); }
+  .seal-hint{
+    margin-top:12px;
+    font-size:12px;
+    color: var(--parchment-dim);
+    letter-spacing:0.06em;
+    font-style:italic;
+  }
+
+  .revealed{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition: max-height .7s ease, opacity .6s ease .1s;
+  }
+  .revealed.open{
+    max-height: 900px;
+    opacity:1;
+    margin-top: 30px;
+  }
+
+  .riddle-box{
+    border-left: 2px solid var(--gold);
+    padding: 4px 0 4px 20px;
+    margin-bottom: 26px;
+  }
+  .riddle-box p{
+    font-style: italic;
+    font-size: 16px;
+    line-height:1.9;
+    color: var(--parchment);
+    margin:0 0 14px;
+  }
+  .riddle-box p:last-child{ margin-bottom:0; }
+
+  .answer-line{
+    text-align:center;
+    font-family:'Trebuchet MS',sans-serif;
+    font-size: 12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color: var(--gold);
+    margin: 26px 0 18px;
+  }
+
+  .portal{
+    display:block;
+    text-align:center;
+    text-decoration:none;
+    padding: 15px 20px;
+    border-radius: 4px;
+    font-family:'Trebuchet MS',sans-serif;
+    font-size: 13.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    transition: all .25s ease;
+    border: 1px solid var(--gold);
+  }
+
+  .portal.active{
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    color: var(--ink);
+    font-weight:600;
+    box-shadow: 0 10px 26px rgba(201,162,75,0.25);
+  }
+  .portal.active:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+
+  .portal.locked{
+    color: var(--parchment-dim);
+    background: transparent;
+    cursor: default;
+    opacity: 0.65;
+    border-style: dashed;
+  }
+
+  .cipher-box{
+    border: 1px dashed rgba(201,162,75,0.4);
+    border-radius: 4px;
+    padding: 22px 22px 20px;
+    margin-bottom: 26px;
+    background: rgba(201,162,75,0.04);
+  }
+
+  .cipher-lead{
+    font-size: 14.5px;
+    line-height:1.8;
+    font-style: italic;
+    color: var(--parchment-dim);
+    margin: 0 0 16px;
+  }
+
+  .cipher-code{
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    word-break: break-all;
+    background: var(--void);
+    border: 1px solid rgba(201,162,75,0.25);
+    border-radius: 3px;
+    padding: 14px 16px;
+    color: var(--parchment);
+    margin-bottom: 18px;
+  }
+
+  .sym{
+    color: var(--gold-bright);
+    font-weight: bold;
+    padding: 0 1px;
+  }
+
+  .legend{
+    list-style:none;
+    margin:0 0 16px;
+    padding:0;
+  }
+  .legend li{
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--parchment);
+    margin-bottom: 10px;
+    padding-left: 18px;
+    position: relative;
+  }
+  .legend li::before{
+    content: "—";
+    position:absolute;
+    left:0;
+    color: var(--gold);
+  }
+
+  .tag{
+    font-family:'Trebuchet MS',sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    margin-left: 4px;
+    opacity: 0.9;
+  }
+  .tag.purple{ color:#b39ddb; }
+  .tag.green{ color:#8fd19e; }
+
+  .cipher-note{
+    font-size: 13px;
+    font-style: italic;
+    color: var(--parchment-dim);
+    margin: 0;
+    text-align:center;
+  }
+
+  .footnote{
+    text-align:center;
+    font-size: 12.5px;
+    color: var(--parchment-dim);
+    line-height:1.8;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(201,162,75,0.25);
+  }
+  .footnote b{ color: var(--gold-bright); font-weight:600; }
+
+  @media (prefers-reduced-motion: reduce){
+    .seal, .revealed, .portal{ transition:none; }
+  }
+
+  @media (max-width:480px){
+    .scroll{ padding: 34px 22px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="eyebrow">Jejak Terakhir · Peta Aden</div>
+
+  <div class="scroll">
+    <h1>Gerbang Kunci</h1>
+    <p class="sub">Kau telah membawa kata sandi sejauh ini.</p>
+    <div class="divider"></div>
+
+    <div class="story">
+      <p>Aden berdiri di depan pintu terakhir. Tak ada gagang, tak ada lubang kunci — hanya sebuah <em>segel lilin merah</em> yang menempel diam, seolah menunggu seseorang cukup berani untuk membukanya.</p>
+      <p>Ia teringat pesan sang penjaga: <em>"Kata yang kau bawa dari highlight itu bukan untuk diketik lagi. Ia untuk dipatahkan — pecahkan segelnya, dan pintu akan bicara sendiri."</em></p>
+    </div>
+
+    <div class="seal-wrap">
+      <button class="seal" id="sealBtn" aria-label="Pecahkan segel">PECAHKAN</button>
+      <div class="seal-hint">tekan segel untuk melanjutkan</div>
+    </div>
+
+    <div class="revealed" id="revealBox">
+      <div class="riddle-box">
+        <p>Segel pecah, dan suara berbisik dari balik pintu:</p>
+        <p>"Aku bukan harta, aku hanya tempat berkumpul. Di dalamku ada wajah-wajah lain yang mengejar kabar yang sama denganmu. Aku ramai, aku bising, tapi hanya bisa dimasuki lewat undangan."</p>
+        <p>"Temukan aku, masuklah, lalu tangkap suasana di dalamku sebagai bukti bahwa kau benar-benar sampai."</p>
+      </div>
+
+      <div class="answer-line">Portal Perkumpulan</div>
+
+      <div class="cipher-box">
+        <p class="cipher-lead">Pintu itu tak mau terbuka begitu saja. Alamatnya tertulis, tapi sebagian hurufnya telah ditelan kabut — hanya lambang yang tersisa di tempatnya:</p>
+
+        <div class="cipher-code">https://chat.whatsapp.com/<span class="sym">♡♡</span>5J9bSPmFjC6h7kC4Tmm<span class="sym">✪</span>?s=cl&amp;p=a&amp;ilr=4&amp;a<span class="sym">♪♪</span>=3</div>
+
+        <ul class="legend">
+          <li><span class="sym">♡♡</span> = fitur yang ada di YouTube, Instagram, maupun Status WhatsApp <span class="tag purple">(huruf besar × 2)</span></li>
+          <li><span class="sym">✪</span> = lambang pada tabel periodik dengan nomor atom 7 <span class="tag purple">(huruf besar)</span></li>
+          <li><span class="sym">♪♪</span> = bagian yang paling dinanti saat sebuah album K-Pop dirilis <span class="tag green">(huruf kecil × 2)</span></li>
+        </ul>
+
+        <p class="cipher-note">Ganti setiap lambang dengan jawabannya, satukan kembali seluruh alamat itu, lalu bukalah di peramban.</p>
+      </div>
+
+      <div class="footnote">
+        Begitu portal terbuka: masuklah ke dalam grup, ambil <b>tangkapan layar</b> suasananya, lalu kirimkan sebagai bukti melalui <b>DM ke @mawul</b> untuk mengklaim harta karunmu.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sealBtn = document.getElementById('sealBtn');
+  const revealBox = document.getElementById('revealBox');
+  const portalBtn = document.getElementById('portalBtn');
+
+  // Isi GC_LINK saat grup/link sudah siap. Kosongkan ("") agar tombol tetap terkunci.
+  const GC_LINK = "";
+
+  if (GC_LINK && GC_LINK.trim() !== "") {
+    portalBtn.href = GC_LINK;
+    portalBtn.target = "_blank";
+    portalBtn.rel = "noopener";
+    portalBtn.classList.remove('locked');
+    portalBtn.classList.add('active');
+    portalBtn.textContent = "Masuki Portal Perkumpulan →";
+  }
+
+  sealBtn.addEventListener('click', () => {
+    revealBox.classList.add('open');
+    sealBtn.disabled = true;
+    sealBtn.style.opacity = '0.5';
+    sealBtn.style.cursor = 'default';
+    sealBtn.textContent = 'TERPECAH';
+    revealBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+</script>
+
+</body>
+</html>
