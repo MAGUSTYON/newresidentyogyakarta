@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pencarian Harta Nyileyovers</title>
+<style>
+  :root{
+    --void: #0b1220;
+    --deep: #101a2e;
+    --parchment: #e8d9b5;
+    --parchment-dim: #cdbb8f;
+    --gold: #c9a24b;
+    --gold-bright: #e6c667;
+    --ember: #b3532e;
+    --ink: #1c140a;
+    --silver: #b9c2cc;
+    --bronze: #b08d57;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(201,162,75,0.08), transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(179,83,46,0.10), transparent 55%),
+      var(--void);
+    font-family: 'Iowan Old Style','Palatino Linotype',Georgia,serif;
+    color: var(--parchment);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(201,162,75,0.035) 0px, rgba(201,162,75,0.035) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, rgba(201,162,75,0.035) 0px, rgba(201,162,75,0.035) 1px, transparent 1px, transparent 64px);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    max-width: 620px;
+    width:100%;
+  }
+
+  .eyebrow{
+    text-align:center;
+    letter-spacing: 0.32em;
+    text-transform:uppercase;
+    font-size: 11px;
+    color: var(--gold);
+    font-family: 'Trebuchet MS', sans-serif;
+    margin-bottom: 14px;
+    opacity:0.85;
+  }
+
+  .scroll{
+    position:relative;
+    background: linear-gradient(180deg, #14203a, #0e1729 60%, #0b1220);
+    border: 1px solid rgba(201,162,75,0.35);
+    border-radius: 6px;
+    padding: 46px 40px 38px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.55),
+      inset 0 0 60px rgba(201,162,75,0.05);
+  }
+
+  .scroll::before, .scroll::after{
+    content:"";
+    position:absolute; left:14px; right:14px; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(201,162,75,0.5), transparent);
+  }
+  .scroll::before{ top:14px; }
+  .scroll::after{ bottom:14px; }
+
+  h1{
+    font-family: 'Trajan Pro','Cinzel',Georgia,serif;
+    font-weight: 400;
+    font-size: clamp(26px, 4vw, 34px);
+    text-align:center;
+    letter-spacing:0.04em;
+    color: var(--gold-bright);
+    margin: 0 0 6px;
+    text-shadow: 0 0 22px rgba(230,198,103,0.25);
+  }
+
+  .sub{
+    text-align:center;
+    color: var(--parchment-dim);
+    font-size: 14px;
+    font-style: italic;
+    margin: 0 0 34px;
+  }
+
+  .divider{
+    width: 90px; height:1px;
+    margin: 0 auto 30px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .story{
+    text-align:center;
+    margin-bottom: 40px;
+  }
+  .story p{
+    font-size: 17px;
+    line-height: 1.85;
+    margin: 0;
+    color: var(--parchment);
+  }
+
+  .section-label{
+    text-align:center;
+    font-family:'Trebuchet MS',sans-serif;
+    font-size: 12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color: var(--gold);
+    margin: 0 0 22px;
+  }
+
+  .prizes{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+
+  .prize-row{
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    padding: 16px 18px;
+    border: 1px solid rgba(201,162,75,0.25);
+    border-radius: 5px;
+    background: rgba(201,162,75,0.03);
+  }
+
+  .prize-row.rank-1{ border-color: rgba(230,198,103,0.55); background: rgba(230,198,103,0.06); }
+  .prize-row.rank-2{ border-color: rgba(185,194,204,0.4); background: rgba(185,194,204,0.05); }
+  .prize-row.rank-3{ border-color: rgba(176,141,87,0.4); background: rgba(176,141,87,0.05); }
+
+  .medal{
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel',Georgia,serif;
+    font-size: 14px;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .rank-1 .medal{ background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold) 70%); color: var(--ink); box-shadow: 0 0 16px rgba(230,198,103,0.4); }
+  .rank-2 .medal{ background: radial-gradient(circle at 35% 30%, #dfe4e9, var(--silver) 70%); color: var(--ink); box-shadow: 0 0 12px rgba(185,194,204,0.3); }
+  .rank-3 .medal{ background: radial-gradient(circle at 35% 30%, #d1ab74, var(--bronze) 70%); color: var(--ink); box-shadow: 0 0 12px rgba(176,141,87,0.3); }
+
+  .prize-info{
+    flex:1;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .prize-title{
+    font-size: 15.5px;
+    letter-spacing:0.02em;
+    color: var(--parchment);
+  }
+
+  .prize-amount{
+    font-family:'Trebuchet MS',sans-serif;
+    font-size: 17px;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+
+  .rank-1 .prize-amount{ color: var(--gold-bright); }
+  .rank-2 .prize-amount{ color: var(--silver); }
+  .rank-3 .prize-amount{ color: var(--bronze); }
+
+  .footnote{
+    text-align:center;
+    font-size: 12.5px;
+    color: var(--parchment-dim);
+    line-height:1.8;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(201,162,75,0.25);
+  }
+
+  @media (max-width:480px){
+    .scroll{ padding: 34px 22px 28px; }
+    .prize-info{ flex-direction: column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="eyebrow">Nyileyovers Presents</div>
+
+  <div class="scroll">
+    <h1>Pencarian Harta Nyileyovers</h1>
+    <p class="sub">sebuah misteri, menanti untuk dipecahkan</p>
+    <div class="divider"></div>
+
+    <div class="story">
+      <p>Bantu Aden memecahkan misteri untuk mendapatkan harta karun.</p>
+    </div>
+
+    <div class="section-label">Harta yang Menanti</div>
+
+    <div class="prizes">
+      <div class="prize-row rank-1">
+        <div class="medal">1</div>
+        <div class="prize-info">
+          <span class="prize-title">Juara 1</span>
+          <span class="prize-amount">Rp 30.000</span>
+        </div>
+      </div>
+      <div class="prize-row rank-2">
+        <div class="medal">2</div>
+        <div class="prize-info">
+          <span class="prize-title">Juara 2</span>
+          <span class="prize-amount">Rp 20.000</span>
+        </div>
+      </div>
+      <div class="prize-row rank-3">
+        <div class="medal">3</div>
+        <div class="prize-info">
+          <span class="prize-title">Juara 3</span>
+          <span class="prize-amount">Rp 10.000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      Ikuti setiap jejak, pecahkan setiap sandi — harta hanya menunggu mereka yang teliti.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
