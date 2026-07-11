@@ -315,74 +315,29 @@
 
   <div class="scroll">
     <h1>Gerbang Kunci</h1>
-    <p class="sub">Kau telah membawa kata sandi sejauh ini.</p>
+    <p class="sub">Pecahkan sandi di bawah untuk menemukan pintunya.</p>
     <div class="divider"></div>
 
-    <div class="story">
-      <p>Aden berdiri di depan pintu terakhir. Tak ada gagang, tak ada lubang kunci — hanya sebuah <em>segel lilin merah</em> yang menempel diam, seolah menunggu seseorang cukup berani untuk membukanya.</p>
-      <p>Ia teringat pesan sang penjaga: <em>"Kata yang kau bawa dari highlight itu bukan untuk diketik lagi. Ia untuk dipatahkan — pecahkan segelnya, dan pintu akan bicara sendiri."</em></p>
+    <div class="cipher-box">
+      <div class="cipher-code">https://chat.whatsapp.com/<span class="sym">♡♡</span>5J9bSPmFjC6h7kC4Tmm<span class="sym">✪</span>?s=cl&amp;p=a&amp;ilr=4&amp;a<span class="sym">♪♪</span>=3</div>
+
+      <ul class="legend">
+        <li><span class="sym">♡♡</span> = fitur yang ada di YouTube, Instagram, maupun Status WhatsApp <span class="tag purple">(huruf besar × 2)</span></li>
+        <li><span class="sym">✪</span> = lambang pada tabel periodik dengan nomor atom 7 <span class="tag purple">(huruf besar)</span></li>
+        <li><span class="sym">♪♪</span> = bagian yang paling dinanti saat sebuah album K-Pop dirilis <span class="tag green">(huruf kecil × 2)</span></li>
+      </ul>
+
+      <p class="cipher-note">Ganti setiap lambang dengan jawabannya, satukan kembali seluruh alamat itu, lalu bukalah di peramban.</p>
     </div>
 
-    <div class="seal-wrap">
-      <button class="seal" id="sealBtn" aria-label="Pecahkan segel">PECAHKAN</button>
-      <div class="seal-hint">tekan segel untuk melanjutkan</div>
-    </div>
-
-    <div class="revealed" id="revealBox">
-      <div class="riddle-box">
-        <p>Segel pecah, dan suara berbisik dari balik pintu:</p>
-        <p>"Aku bukan harta, aku hanya tempat berkumpul. Di dalamku ada wajah-wajah lain yang mengejar kabar yang sama denganmu. Aku ramai, aku bising, tapi hanya bisa dimasuki lewat undangan."</p>
-        <p>"Temukan aku, masuklah, lalu tangkap suasana di dalamku sebagai bukti bahwa kau benar-benar sampai."</p>
-      </div>
-
-      <div class="answer-line">Portal Perkumpulan</div>
-
-      <div class="cipher-box">
-        <p class="cipher-lead">Pintu itu tak mau terbuka begitu saja. Alamatnya tertulis, tapi sebagian hurufnya telah ditelan kabut — hanya lambang yang tersisa di tempatnya:</p>
-
-        <div class="cipher-code">https://chat.whatsapp.com/<span class="sym">♡♡</span>5J9bSPmFjC6h7kC4Tmm<span class="sym">✪</span>?s=cl&amp;p=a&amp;ilr=4&amp;a<span class="sym">♪♪</span>=3</div>
-
-        <ul class="legend">
-          <li><span class="sym">♡♡</span> = fitur yang ada di YouTube, Instagram, maupun Status WhatsApp <span class="tag purple">(huruf besar × 2)</span></li>
-          <li><span class="sym">✪</span> = lambang pada tabel periodik dengan nomor atom 7 <span class="tag purple">(huruf besar)</span></li>
-          <li><span class="sym">♪♪</span> = bagian yang paling dinanti saat sebuah album K-Pop dirilis <span class="tag green">(huruf kecil × 2)</span></li>
-        </ul>
-
-        <p class="cipher-note">Ganti setiap lambang dengan jawabannya, satukan kembali seluruh alamat itu, lalu bukalah di peramban.</p>
-      </div>
-
-      <div class="footnote">
-        Begitu portal terbuka: masuklah ke dalam grup, ambil <b>tangkapan layar</b> suasananya, lalu kirimkan sebagai bukti melalui <b>DM ke @mawul</b> untuk mengklaim harta karunmu.
-      </div>
+    <div class="footnote">
+      Begitu portal terbuka: masuklah ke dalam 
     </div>
   </div>
 </div>
 
 <script>
-  const sealBtn = document.getElementById('sealBtn');
-  const revealBox = document.getElementById('revealBox');
-  const portalBtn = document.getElementById('portalBtn');
-
-  // Isi GC_LINK saat grup/link sudah siap. Kosongkan ("") agar tombol tetap terkunci.
-  const GC_LINK = "";
-
-  if (GC_LINK && GC_LINK.trim() !== "") {
-    portalBtn.href = GC_LINK;
-    portalBtn.target = "_blank";
-    portalBtn.rel = "noopener";
-    portalBtn.classList.remove('locked');
-    portalBtn.classList.add('active');
-    portalBtn.textContent = "Masuki Portal Perkumpulan →";
-  }
-
-  sealBtn.addEventListener('click', () => {
-    revealBox.classList.add('open');
-    sealBtn.disabled = true;
-    sealBtn.style.opacity = '0.5';
-    sealBtn.style.cursor = 'default';
-    sealBtn.textContent = 'TERPECAH';
-    revealBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+  // (tidak ada interaksi tambahan — teka-teki tampil langsung)
 </script>
 
 </body>
