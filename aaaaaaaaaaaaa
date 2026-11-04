@@ -1,3 +1,5 @@
 Get-AppXPackage -AllUsers *WindowsStore* | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
 
 Get-AppXPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+
+$URL = "https://microsoft.com"; $Filter = "Microsoft.WindowsStore"; $req = Invoke-WebRequest -Uri "https://microsoft.com" -Method Post -Body "{\"ResourceId\":\"$URL\"}" -ContentType "application/json"; $json = $req.Content | ConvertFrom-Json; $file = $json.Files | Where-Object { $_.FileName -like "*$Filter*.appxbundle" -or $_.FileName -like "*$Filter*.msixbundle" } | Select-Object -First 1; if ($file) { Invoke-WebRequest -Uri $file.Url -OutFile "$env:TEMP\Store.msixbundle"; Add-AppxPackage -Path "$env:TEMP\Store.msixbundle" } else { Write-Error "Gagal mengambil installer." }
